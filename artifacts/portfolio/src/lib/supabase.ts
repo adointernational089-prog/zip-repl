@@ -1,20 +1,39 @@
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
 
 export async function uploadProjectImage(file: File): Promise<string> {
-  const ext = file.name.split(".").pop() || "jpg";
-  const fileName = `projects/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      try {
+        const dataUrl = ev.target?.result as string;
+        const base64 = dataUrl.split(",")[1];
+        const token = localStorage.getItem("bishals_hub_token");
 
-  const { error } = await supabase.storage
-    .from("project-images")
-    .upload(fileName, file, { cacheControl: "3600", upsert: false });
+        const res = await fetch(`${BASE}/api/upload/image`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            base64,
+            mimeType: file.type,
+            fileName: file.name,
+          }),
+        });
 
-  if (error) throw new Error(error.message);
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error || `Upload failed (${res.status})`);
+        }
 
-  const { data } = supabase.storage.from("project-images").getPublicUrl(fileName);
-  return data.publicUrl;
+        const { url } = await res.json();
+        resolve(url);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
 }
