@@ -1,25 +1,26 @@
 import { Router } from "express";
-import { query } from "../lib/db.js";
+import { getSupabase } from "../lib/db.js";
 import { requireAdmin, type AuthRequest } from "../middlewares/requireAuth.js";
 
 const router = Router();
 
 router.get("/stats", requireAdmin, async (req: AuthRequest, res) => {
   try {
-    const [msgs, users, apps, unread] = await Promise.all([
-      query("SELECT COUNT(*)::int AS count FROM messages"),
-      query("SELECT COUNT(*)::int AS count FROM users"),
-      query("SELECT COUNT(*)::int AS count FROM apps"),
-      query(`
-        SELECT COUNT(*)::int AS count FROM messages m
-        WHERE NOT EXISTS (SELECT 1 FROM replies r WHERE r.message_id = m.id)
-      `),
+    const sb = getSupabase();
+    const [msgs, users, apps, replies] = await Promise.all([
+      sb.from("messages").select("id", { count: "exact", head: true }),
+      sb.from("users").select("id", { count: "exact", head: true }),
+      sb.from("apps").select("id", { count: "exact", head: true }),
+      sb.from("replies").select("message_id"),
     ]);
+    const repliedMessageIds = new Set((replies.data || []).map((r: any) => r.message_id));
+    const { data: allMsgs } = await sb.from("messages").select("id");
+    const unread = (allMsgs || []).filter((m: any) => !repliedMessageIds.has(m.id)).length;
     res.json({
-      total_messages: msgs.rows[0].count,
-      total_users: users.rows[0].count,
-      total_apps: apps.rows[0].count,
-      unread_messages: unread.rows[0].count,
+      total_messages: msgs.count ?? 0,
+      total_users: users.count ?? 0,
+      total_apps: apps.count ?? 0,
+      unread_messages: unread,
     });
   } catch (err) {
     req.log?.error({ err }, "Admin stats error");
@@ -29,8 +30,13 @@ router.get("/stats", requireAdmin, async (req: AuthRequest, res) => {
 
 router.get("/users", requireAdmin, async (req: AuthRequest, res) => {
   try {
-    const result = await query("SELECT id, email, name, role, created_at FROM users ORDER BY created_at DESC");
-    res.json(result.rows);
+    const sb = getSupabase();
+    const { data, error } = await sb
+      .from("users")
+      .select("id, email, name, role, created_at")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    res.json(data);
   } catch (err) {
     req.log?.error({ err }, "List users error");
     res.status(500).json({ error: "Internal server error" });

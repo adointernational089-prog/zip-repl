@@ -1,13 +1,15 @@
 import { Router } from "express";
-import { query } from "../lib/db.js";
+import { getSupabase } from "../lib/db.js";
 import { requireAdmin, type AuthRequest } from "../middlewares/requireAuth.js";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
   try {
-    const result = await query("SELECT * FROM projects ORDER BY sort_order ASC, created_at DESC");
-    const projects = result.rows.map((p: any) => ({
+    const sb = getSupabase();
+    const { data, error } = await sb.from("projects").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false });
+    if (error) throw error;
+    const projects = (data || []).map((p: any) => ({
       ...p,
       images: p.images ? JSON.parse(p.images) : [],
     }));
@@ -25,20 +27,22 @@ router.post("/", requireAdmin, async (req: AuthRequest, res) => {
     return;
   }
   try {
-    const result = await query(
-      "INSERT INTO projects (title, description, images, tech_stack, link_url, status, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *",
-      [
+    const sb = getSupabase();
+    const { data, error } = await sb
+      .from("projects")
+      .insert({
         title,
-        description || null,
-        JSON.stringify(images || []),
-        tech_stack || null,
-        link_url || null,
-        status || "in-progress",
-        sort_order ?? 0,
-      ]
-    );
-    const p = result.rows[0];
-    res.status(201).json({ ...p, images: JSON.parse(p.images || "[]") });
+        description: description || null,
+        images: JSON.stringify(images || []),
+        tech_stack: tech_stack || null,
+        link_url: link_url || null,
+        status: status || "in-progress",
+        sort_order: sort_order ?? 0,
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    res.status(201).json({ ...data, images: JSON.parse(data.images || "[]") });
   } catch (err) {
     req.log?.error({ err }, "Create project error");
     res.status(500).json({ error: "Internal server error" });
@@ -49,25 +53,27 @@ router.put("/:id", requireAdmin, async (req: AuthRequest, res) => {
   const { id } = req.params;
   const { title, description, images, tech_stack, link_url, status, sort_order } = req.body;
   try {
-    const result = await query(
-      "UPDATE projects SET title=$1, description=$2, images=$3, tech_stack=$4, link_url=$5, status=$6, sort_order=$7 WHERE id=$8 RETURNING *",
-      [
+    const sb = getSupabase();
+    const { data, error } = await sb
+      .from("projects")
+      .update({
         title,
-        description || null,
-        JSON.stringify(images || []),
-        tech_stack || null,
-        link_url || null,
-        status || "in-progress",
-        sort_order ?? 0,
-        id,
-      ]
-    );
-    if (result.rows.length === 0) {
+        description: description || null,
+        images: JSON.stringify(images || []),
+        tech_stack: tech_stack || null,
+        link_url: link_url || null,
+        status: status || "in-progress",
+        sort_order: sort_order ?? 0,
+      })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    if (!data) {
       res.status(404).json({ error: "Project not found" });
       return;
     }
-    const p = result.rows[0];
-    res.json({ ...p, images: JSON.parse(p.images || "[]") });
+    res.json({ ...data, images: JSON.parse(data.images || "[]") });
   } catch (err) {
     req.log?.error({ err }, "Update project error");
     res.status(500).json({ error: "Internal server error" });
@@ -77,7 +83,9 @@ router.put("/:id", requireAdmin, async (req: AuthRequest, res) => {
 router.delete("/:id", requireAdmin, async (req: AuthRequest, res) => {
   const { id } = req.params;
   try {
-    await query("DELETE FROM projects WHERE id=$1", [id]);
+    const sb = getSupabase();
+    const { error } = await sb.from("projects").delete().eq("id", id);
+    if (error) throw error;
     res.json({ success: true });
   } catch (err) {
     req.log?.error({ err }, "Delete project error");

@@ -1,19 +1,14 @@
-import pg from "pg";
+import { createClient } from "@supabase/supabase-js";
 
-const { Pool } = pg;
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL must be set");
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set");
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-export async function query(text: string, params?: unknown[]) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query(text, params);
-    return result;
-  } finally {
-    client.release();
-  }
+export function getSupabase() {
+  return createClient(supabaseUrl!, supabaseServiceKey!, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 }

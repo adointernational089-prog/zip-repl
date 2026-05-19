@@ -1,19 +1,23 @@
 import { Router } from "express";
-import { query } from "../lib/db.js";
+import { getSupabase } from "../lib/db.js";
 import { requireAuth, requireAdmin, type AuthRequest } from "../middlewares/requireAuth.js";
 
 const router = Router();
 
 router.get("/", requireAdmin, async (req: AuthRequest, res) => {
   try {
-    const result = await query(`
-      SELECT m.*, COUNT(r.id)::int AS reply_count
-      FROM messages m
-      LEFT JOIN replies r ON r.message_id = m.id
-      GROUP BY m.id
-      ORDER BY m.created_at DESC
-    `);
-    res.json(result.rows);
+    const sb = getSupabase();
+    const { data: messages, error } = await sb
+      .from("messages")
+      .select("*, replies(id)")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    const result = (messages || []).map((m: any) => ({
+      ...m,
+      reply_count: m.replies ? m.replies.length : 0,
+      replies: undefined,
+    }));
+    res.json(result);
   } catch (err) {
     req.log?.error({ err }, "List messages error");
     res.status(500).json({ error: "Internal server error" });
@@ -27,11 +31,14 @@ router.post("/", async (req, res) => {
     return;
   }
   try {
-    const result = await query(
-      "INSERT INTO messages (name, email, message, user_id) VALUES ($1, $2, $3, $4) RETURNING *, 0 AS reply_count",
-      [name, email, message, user_id || null]
-    );
-    res.status(201).json(result.rows[0]);
+    const sb = getSupabase();
+    const { data, error } = await sb
+      .from("messages")
+      .insert({ name, email, message, user_id: user_id || null })
+      .select()
+      .single();
+    if (error) throw error;
+    res.status(201).json({ ...data, reply_count: 0 });
   } catch (err) {
     req.log?.error({ err }, "Send message error");
     res.status(500).json({ error: "Internal server error" });
@@ -40,15 +47,19 @@ router.post("/", async (req, res) => {
 
 router.get("/my", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const result = await query(`
-      SELECT m.*, COUNT(r.id)::int AS reply_count
-      FROM messages m
-      LEFT JOIN replies r ON r.message_id = m.id
-      WHERE m.user_id = $1
-      GROUP BY m.id
-      ORDER BY m.created_at DESC
-    `, [req.user!.userId]);
-    res.json(result.rows);
+    const sb = getSupabase();
+    const { data: messages, error } = await sb
+      .from("messages")
+      .select("*, replies(id)")
+      .eq("user_id", req.user!.userId)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    const result = (messages || []).map((m: any) => ({
+      ...m,
+      reply_count: m.replies ? m.replies.length : 0,
+      replies: undefined,
+    }));
+    res.json(result);
   } catch (err) {
     req.log?.error({ err }, "Get my messages error");
     res.status(500).json({ error: "Internal server error" });
@@ -58,21 +69,23 @@ router.get("/my", requireAuth, async (req: AuthRequest, res) => {
 router.get("/:id", requireAuth, async (req: AuthRequest, res) => {
   const { id } = req.params;
   try {
-    const msgResult = await query("SELECT * FROM messages WHERE id=$1 LIMIT 1", [id]);
-    if (msgResult.rows.length === 0) {
+    const sb = getSupabase();
+    const { data: msg, error: msgErr } = await sb.from("messages").select("*").eq("id", id).single();
+    if (msgErr || !msg) {
       res.status(404).json({ error: "Message not found" });
       return;
     }
-    const msg = msgResult.rows[0];
     if (req.user!.role !== "admin" && msg.user_id !== req.user!.userId) {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
-    const repliesResult = await query(
-      "SELECT * FROM replies WHERE message_id=$1 ORDER BY created_at ASC",
-      [id]
-    );
-    res.json({ ...msg, replies: repliesResult.rows });
+    const { data: replies, error: repliesErr } = await sb
+      .from("replies")
+      .select("*")
+      .eq("message_id", id)
+      .order("created_at", { ascending: true });
+    if (repliesErr) throw repliesErr;
+    res.json({ ...msg, replies: replies || [] });
   } catch (err) {
     req.log?.error({ err }, "Get message error");
     res.status(500).json({ error: "Internal server error" });
@@ -87,23 +100,25 @@ router.post("/:id/replies", requireAuth, async (req: AuthRequest, res) => {
     return;
   }
   try {
-    const msgResult = await query("SELECT id, user_id FROM messages WHERE id=$1 LIMIT 1", [id]);
-    if (msgResult.rows.length === 0) {
+    const sb = getSupabase();
+    const { data: msg, error: msgErr } = await sb.from("messages").select("id, user_id").eq("id", id).single();
+    if (msgErr || !msg) {
       res.status(404).json({ error: "Message not found" });
       return;
     }
-    const msg = msgResult.rows[0];
     const isAdmin = req.user!.role === "admin";
     if (!isAdmin && msg.user_id !== req.user!.userId) {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
     const senderName = isAdmin ? "Bishal Bishwokarma" : req.user!.email;
-    const result = await query(
-      "INSERT INTO replies (message_id, content, sender_role, sender_name, user_id) VALUES ($1,$2,$3,$4,$5) RETURNING *",
-      [id, content, req.user!.role, senderName, req.user!.userId]
-    );
-    res.status(201).json(result.rows[0]);
+    const { data, error } = await sb
+      .from("replies")
+      .insert({ message_id: id, content, sender_role: req.user!.role, sender_name: senderName, user_id: req.user!.userId })
+      .select()
+      .single();
+    if (error) throw error;
+    res.status(201).json(data);
   } catch (err) {
     req.log?.error({ err }, "Reply error");
     res.status(500).json({ error: "Internal server error" });

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
-import { query } from "../lib/db.js";
+import { getSupabase } from "../lib/db.js";
 
 const router = Router();
 
@@ -13,17 +13,21 @@ router.post("/setup-admin", async (req, res) => {
   try {
     const ADMIN_EMAIL = "bishalbishwokarma089@gmail.com";
     const ADMIN_PASSWORD = "bishal@ado@9802485583";
-    const existing = await query("SELECT id, role FROM users WHERE email=$1 LIMIT 1", [ADMIN_EMAIL]);
-    if (existing.rows.length === 0) {
+    const sb = getSupabase();
+    const { data: existing } = await sb.from("users").select("id, role").eq("email", ADMIN_EMAIL).limit(1).single();
+    if (!existing) {
       const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
-      await query(
-        "INSERT INTO users (email, name, password_hash, role) VALUES ($1,$2,$3,$4)",
-        [ADMIN_EMAIL, "Bishal Bishwokarma", passwordHash, "admin"]
-      );
+      const { error } = await sb.from("users").insert({
+        email: ADMIN_EMAIL,
+        name: "Bishal Bishwokarma",
+        password_hash: passwordHash,
+        role: "admin",
+      });
+      if (error) throw error;
       res.json({ success: true, message: "Admin user created" });
     } else {
-      if (existing.rows[0].role !== "admin") {
-        await query("UPDATE users SET role='admin' WHERE email=$1", [ADMIN_EMAIL]);
+      if (existing.role !== "admin") {
+        await sb.from("users").update({ role: "admin" }).eq("email", ADMIN_EMAIL);
       }
       res.json({ success: true, message: "Admin already exists" });
     }
