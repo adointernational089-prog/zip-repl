@@ -98,9 +98,9 @@ export default function Home() {
 
           {/* Right — profile photo with glow */}
           <div className="flex justify-center animate-slide-right">
-            <div className="relative" style={{ width: 320, height: 420 }}>
+            <div className="relative" style={{ width: 420, height: 540 }}>
               {/* Glow backdrop */}
-              <div className="absolute inset-0 rounded-3xl blur-2xl opacity-40 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(0,212,255,0.5) 0%, transparent 70%)", transform: "scale(0.9) translateY(10px)" }} />
+              <div className="absolute inset-0 rounded-3xl blur-3xl opacity-50 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(0,212,255,0.55) 0%, transparent 70%)", transform: "scale(0.9) translateY(12px)" }} />
               <img
                 src="/bishal-photo-nobg.png"
                 alt="Bishal Bishwokarma"
@@ -109,7 +109,7 @@ export default function Home() {
                   height: "100%",
                   objectFit: "contain",
                   objectPosition: "center bottom",
-                  filter: "drop-shadow(0 0 18px rgba(0,212,255,0.55)) drop-shadow(0 0 40px rgba(0,212,255,0.25))",
+                  filter: "drop-shadow(0 0 22px rgba(0,212,255,0.65)) drop-shadow(0 0 55px rgba(0,212,255,0.3))",
                   position: "relative",
                   zIndex: 1,
                 }}
@@ -314,45 +314,89 @@ export default function Home() {
         </section>
       )}
 
-      {/* ───── SERVICES ───── */}
-      <section id="services" className="py-20 scroll-mt-16" style={{ background: projects.length > 0 ? "#06060f" : "#08081a" }}>
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <PillBadge color="orange">FREELANCE</PillBadge>
-          <h2 className="text-3xl font-black mt-4 mb-2 animate-fade-in-up">What I Can Do For You</h2>
-          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10 animate-fade-in-up delay-100">Services tailored to your needs, delivered with quality.</p>
+      {/* ───── SERVICES & PRICING ───── */}
+      <section id="services" className="py-24 scroll-mt-16 relative overflow-hidden" style={{ background: projects.length > 0 ? "#06060f" : "#08081a" }}>
+        {/* Background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full opacity-10 blur-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse, #7c3aed 0%, #2563eb 50%, transparent 80%)" }} />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-            <div className="animate-fade-in-up delay-100">
-              <ServiceCard
-                icon={<Monitor className="w-6 h-6" style={{ color: "#38bdf8" }} />}
-                title="Web App Development"
-                desc="Full-stack web applications built with modern frameworks. From idea to deployment."
-                items={["Responsive Design", "Database Integration", "Authentication", "API Development"]}
-              />
-            </div>
-            <div className="animate-fade-in-up delay-200">
-              <ServiceCard
-                icon={<Smartphone className="w-6 h-6" style={{ color: "#38bdf8" }} />}
-                title="Simple Software Solutions"
-                desc="Custom software tools and utilities tailored to solve specific real-world problems."
-                items={["Desktop Tools", "Automation Scripts", "Data Processing", "Utility Apps"]}
-              />
-            </div>
-            <div className="animate-fade-in-up delay-300">
-              <ServiceCard
-                icon={<Palette className="w-6 h-6" style={{ color: "#38bdf8" }} />}
-                title="Designing"
-                desc="Creative UI/UX design, graphics, and visual content that brings ideas to life beautifully."
-                items={["UI/UX Design", "Graphic Design", "Logo & Branding", "Social Media Content"]}
-              />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          {/* Header */}
+          <div className="text-center mb-14">
+            <PillBadge color="orange">FREELANCE</PillBadge>
+            <h2 className="text-4xl font-black mt-4 mb-3 animate-fade-in-up">Services &amp; Pricing</h2>
+            <p className="animate-fade-in-up delay-100" style={{ color: "#94a3b8", fontSize: "0.95rem" }}>
+              Professional digital solutions designed to elevate your business
+            </p>
+            <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full animate-fade-in-up delay-200" style={{ background: "rgba(56,189,248,0.08)", border: "1px solid rgba(56,189,248,0.25)" }}>
+              <Star className="w-3.5 h-3.5" style={{ color: "#facc15" }} />
+              <span className="text-xs font-medium" style={{ color: "#93c5fd" }}>Flexible pricing based on project complexity and requirements</span>
             </div>
           </div>
 
-          <a href="#contact">
-            <button className="flex items-center gap-2 mx-auto px-8 py-3 rounded-lg font-semibold text-white animate-fade-in-up delay-400" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
-              Let's Work Together <ArrowRight className="w-4 h-4" />
-            </button>
-          </a>
+          {/* Cards grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+            <PricingCard
+              icon="🎨"
+              title="Thumbnail & Post Design"
+              price="Starting from Rs. 500"
+              description="Eye-catching thumbnails and social media post designs that increase engagement and attract audience attention."
+              tag="Quick Service"
+              tagColor="green"
+              delay="delay-100"
+            />
+            <PricingCard
+              icon="🌐"
+              title="Personal Website Development"
+              price="Rs. 8,000 – Rs. 15,000"
+              description="Modern, responsive and fully customized personal websites with clean UI, fast performance and essential features."
+              tag="Most Popular"
+              tagColor="blue"
+              featured
+              delay="delay-150"
+            />
+            <PricingCard
+              icon="🏢"
+              title="Company Website Development"
+              price="Rs. 20,000 – Rs. 30,000"
+              description="Professional business websites with branding, scalability and user-focused design to grow your online presence."
+              delay="delay-200"
+            />
+            <PricingCard
+              icon="📱"
+              title="Mobile App Development"
+              price="Rs. 25,000 – Rs. 40,000"
+              description="High-quality mobile apps with smooth UI/UX, performance optimization and essential features."
+              delay="delay-250"
+            />
+            <PricingCard
+              icon="🖥️"
+              title="Office Management Software"
+              price="Rs. 30,000 – Rs. 50,000"
+              description="Custom-built systems to manage office operations, automate workflows and improve efficiency."
+              delay="delay-300"
+            />
+            <PricingCard
+              icon="🚚"
+              title="Logistics Software"
+              price="Rs. 50,000 – Rs. 1,00,000"
+              description="Powerful logistics systems with tracking, analytics, automation and scalable architecture."
+              tag="Advanced"
+              tagColor="purple"
+              delay="delay-350"
+            />
+            <PricingCard
+              icon="🔧"
+              title="Maintenance & Monthly Support"
+              price="Rs. 2,000 – Rs. 8,000 / month"
+              description="Ongoing support, updates, bug fixes and performance improvements to keep your product running smoothly."
+              delay="delay-400"
+            />
+          </div>
+
+          {/* Footer note */}
+          <p className="text-center text-xs animate-fade-in-up" style={{ color: "#475569" }}>
+            * Final pricing may vary depending on features, complexity and customization level.
+          </p>
         </div>
       </section>
 
@@ -536,22 +580,96 @@ function SkillItem({ icon, label }: { icon: string; label: string }) {
   );
 }
 
-function ServiceCard({ icon, title, desc, items }: { icon: React.ReactNode; title: string; desc: string; items: string[] }) {
+function PricingCard({
+  icon, title, price, description, tag, tagColor, featured, delay
+}: {
+  icon: string; title: string; price: string; description: string;
+  tag?: string; tagColor?: "green" | "blue" | "purple"; featured?: boolean; delay?: string;
+}) {
+  const tagStyles = {
+    green:  { bg: "rgba(34,197,94,0.15)",  border: "rgba(34,197,94,0.4)",  text: "#86efac" },
+    blue:   { bg: "rgba(59,130,246,0.2)",  border: "rgba(59,130,246,0.6)",  text: "#93c5fd" },
+    purple: { bg: "rgba(139,92,246,0.15)", border: "rgba(139,92,246,0.4)", text: "#c4b5fd" },
+  };
+  const ts = tag && tagColor ? tagStyles[tagColor] : null;
+
   return (
-    <div className="rounded-2xl p-6 text-left h-full" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
-      <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ background: "#131e3a", border: "1px solid rgba(56,189,248,0.2)" }}>
-        {icon}
+    <div
+      className={`relative rounded-2xl p-6 flex flex-col gap-4 transition-all duration-300 group animate-fade-in-up ${delay || ""}`}
+      style={{
+        background: featured
+          ? "linear-gradient(135deg, rgba(30,64,175,0.25) 0%, rgba(124,58,237,0.15) 100%)"
+          : "rgba(13,13,31,0.8)",
+        border: featured ? "1px solid rgba(99,102,241,0.5)" : "1px solid rgba(255,255,255,0.08)",
+        backdropFilter: "blur(12px)",
+        boxShadow: featured ? "0 0 30px rgba(99,102,241,0.15), inset 0 0 30px rgba(99,102,241,0.03)" : "none",
+      }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
+        (e.currentTarget as HTMLElement).style.boxShadow = featured
+          ? "0 0 40px rgba(99,102,241,0.3), inset 0 0 30px rgba(99,102,241,0.05)"
+          : "0 8px 30px rgba(0,0,0,0.4), 0 0 20px rgba(56,189,248,0.08)";
+        (e.currentTarget as HTMLElement).style.border = featured
+          ? "1px solid rgba(99,102,241,0.8)"
+          : "1px solid rgba(56,189,248,0.25)";
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+        (e.currentTarget as HTMLElement).style.boxShadow = featured ? "0 0 30px rgba(99,102,241,0.15), inset 0 0 30px rgba(99,102,241,0.03)" : "none";
+        (e.currentTarget as HTMLElement).style.border = featured ? "1px solid rgba(99,102,241,0.5)" : "1px solid rgba(255,255,255,0.08)";
+      }}
+    >
+      {/* Featured glow line */}
+      {featured && (
+        <div className="absolute top-0 left-6 right-6 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(139,92,246,0.8), rgba(59,130,246,0.8), transparent)" }} />
+      )}
+
+      {/* Icon + tag row */}
+      <div className="flex items-start justify-between">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+          {icon}
+        </div>
+        {tag && ts && (
+          <span className="text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider uppercase" style={{ background: ts.bg, border: `1px solid ${ts.border}`, color: ts.text }}>
+            {tag}
+          </span>
+        )}
       </div>
-      <h3 className="font-bold text-base mb-2">{title}</h3>
-      <p className="text-sm mb-4 leading-relaxed" style={{ color: "#64748b" }}>{desc}</p>
-      <ul className="space-y-1.5">
-        {items.map((item) => (
-          <li key={item} className="flex items-center gap-2 text-xs" style={{ color: "#94a3b8" }}>
-            <ChevronRight className="w-3 h-3" style={{ color: "#38bdf8" }} />
-            {item}
-          </li>
-        ))}
-      </ul>
+
+      {/* Title */}
+      <div>
+        <h3 className="font-bold text-base mb-1 group-hover:text-white transition-colors">{title}</h3>
+        <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>{description}</p>
+      </div>
+
+      {/* Price */}
+      <div className="mt-auto pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+        <p className="font-black text-lg mb-3" style={{ color: featured ? "#a5b4fc" : "#38bdf8" }}>{price}</p>
+        <a href="https://wa.me/9802485583" target="_blank" rel="noreferrer" className="block">
+          <button
+            className="w-full py-2.5 rounded-xl text-sm font-bold transition-all"
+            style={{
+              background: featured
+                ? "linear-gradient(90deg, #6366f1, #8b5cf6)"
+                : "rgba(56,189,248,0.1)",
+              color: featured ? "#fff" : "#38bdf8",
+              border: featured ? "none" : "1px solid rgba(56,189,248,0.25)",
+            }}
+            onMouseEnter={e => {
+              if (!featured) {
+                (e.currentTarget as HTMLElement).style.background = "rgba(56,189,248,0.2)";
+              }
+            }}
+            onMouseLeave={e => {
+              if (!featured) {
+                (e.currentTarget as HTMLElement).style.background = "rgba(56,189,248,0.1)";
+              }
+            }}
+          >
+            Hire Me →
+          </button>
+        </a>
+      </div>
     </div>
   );
 }

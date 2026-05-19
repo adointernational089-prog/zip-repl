@@ -1,0 +1,74 @@
+Create a premium, modern and slightly futuristic "Services & Pricing" section for my personal website "Bishal's Hub".
+
+Design Style:
+- Clean, high-end SaaS style UI
+- Glassmorphism or soft shadow cards
+- Smooth hover animations (scale + glow)
+- Gradient accents (blue/purple)
+- Fully responsive (mobile + desktop)
+
+Section Title:
+"Services & Pricing"
+
+Subtitle:
+"Professional digital solutions designed to elevate your business"
+
+Pricing Note (top highlight):
+"Flexible pricing based on project complexity and requirements"
+
+Services:
+
+1. Service Name: Thumbnail & Post Design  
+   Price: Starting from Rs. 500  
+   Tag: "Quick Service"  
+   Description: Eye-catching thumbnails and social media post designs that increase engagement and attract audience attention.
+
+2. Service Name: Personal Website Development  
+   Price: Rs. 8,000 – Rs. 15,000  
+   Tag: "Most Popular"  
+   Description: Modern, responsive and fully customized personal websites with clean UI, fast performance and essential features.
+
+3. Service Name: Company Website Development  
+   Price: Rs. 20,000 – Rs. 30,000  
+   Description: Professional business websites with branding, scalability and user-focused design to grow your online presence.
+
+4. Service Name: Mobile App Development  
+   Price: Rs. 25,000 – Rs. 40,000  
+   Description: High-quality mobile apps with smooth UI/UX, performance optimization and essential features.
+
+5. Service Name: Office Management Software  
+   Price: Rs. 30,000 – Rs. 50,000  
+   Description: Custom-built systems to manage office operations, automate workflows and improve efficiency.
+
+6. Service Name: Logistics Software (Advanced)  
+   Price: Rs. 50,000 – Rs. 1,00,000  
+   Tag: "Advanced"  
+   Description: Powerful logistics systems with tracking, analytics, automation and scalable architecture.
+
+7. Service Name: Maintenance & Monthly Support  
+   Price: Rs. 2,000 – Rs. 8,000 / month  
+   Description: Ongoing support, updates, bug fixes and performance improvements.
+
+Card Features:
+- Each service in separate card
+- Show price prominently
+- Add small icon per service
+- Add "Hire Me" button
+- Add hover animation
+
+Buttons:
+- "Hire Me" → link to WhatsApp: https://wa.me/9802485583
+- "View Details" (optional)
+
+Highlight:
+- Add glowing border or badge for "Most Popular"
+- Add premium feel (like SaaS landing pages)
+
+Footer Note:
+"Final pricing may vary depending on features, complexity and customization level."
+
+Animation:
+- Smooth fade-in on scroll
+- Slight motion effects for better user experience
+
+Make the section visually attractive, premium, and trustworthy so clients feel confident paying higher prices.

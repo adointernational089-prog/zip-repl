@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { uploadProjectImage } from "@/lib/supabase";
 import {
   Loader2, Plus, Pencil, Trash2, X, Check, FolderOpen,
-  Upload, ImageIcon, ExternalLink, Globe
+  Upload, ImageIcon, Globe, CloudUpload
 } from "lucide-react";
 
 interface ProjectForm {
@@ -36,6 +37,7 @@ export default function AdminProjects() {
   const [form, setForm] = useState<ProjectForm>(emptyForm);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [urlInput, setUrlInput] = useState("");
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: projects = [], isLoading: projLoading, refetch } = useListProjects({
@@ -45,21 +47,29 @@ export default function AdminProjects() {
   const createMutation = useCreateProject({
     mutation: {
       onSuccess: () => { toast({ title: "Project created!" }); closeForm(); refetch(); },
-      onError: () => toast({ title: "Error", description: "Failed to create project.", variant: "destructive" }),
+      onError: (err: any) => toast({
+        title: "Failed to create project",
+        description: err?.response?.data?.error || "Please try again.",
+        variant: "destructive"
+      }),
     },
   });
 
   const updateMutation = useUpdateProject(editId || "", {
     mutation: {
       onSuccess: () => { toast({ title: "Project updated!" }); closeForm(); refetch(); },
-      onError: () => toast({ title: "Error", description: "Failed to update project.", variant: "destructive" }),
+      onError: (err: any) => toast({
+        title: "Failed to update project",
+        description: err?.response?.data?.error || "Please try again.",
+        variant: "destructive"
+      }),
     },
   });
 
   const deleteMutation = useDeleteProject(deleteConfirm || "", {
     mutation: {
       onSuccess: () => { toast({ title: "Project deleted." }); setDeleteConfirm(null); refetch(); },
-      onError: () => toast({ title: "Error", description: "Failed to delete project.", variant: "destructive" }),
+      onError: () => toast({ title: "Error", description: "Failed to delete.", variant: "destructive" }),
     },
   });
 
@@ -103,25 +113,40 @@ export default function AdminProjects() {
     setForm(f => ({ ...f, images: f.images.filter((_, i) => i !== idx) }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    files.forEach(file => {
-      if (file.size > 3 * 1024 * 1024) {
-        toast({ title: "File too large", description: "Max 3MB per image.", variant: "destructive" });
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const dataUrl = ev.target?.result as string;
-        setForm(f => ({ ...f, images: [...f.images, dataUrl] }));
-      };
-      reader.readAsDataURL(file);
-    });
+    if (!files.length) return;
     e.target.value = "";
+
+    setUploading(true);
+    const uploaded: string[] = [];
+
+    for (const file of files) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast({ title: "File too large", description: `${file.name} exceeds 10MB.`, variant: "destructive" });
+        continue;
+      }
+      try {
+        const url = await uploadProjectImage(file);
+        uploaded.push(url);
+      } catch (err: any) {
+        toast({
+          title: "Upload failed",
+          description: err.message || "Could not upload image to Supabase Storage.",
+          variant: "destructive"
+        });
+      }
+    }
+
+    if (uploaded.length > 0) {
+      setForm(f => ({ ...f, images: [...f.images, ...uploaded] }));
+      toast({ title: `${uploaded.length} image${uploaded.length > 1 ? "s" : ""} uploaded!` });
+    }
+    setUploading(false);
   };
 
   const handleSubmit = () => {
-    if (!form.title) {
+    if (!form.title.trim()) {
       toast({ title: "Project title is required.", variant: "destructive" });
       return;
     }
@@ -140,7 +165,7 @@ export default function AdminProjects() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-black mb-1">Latest Projects</h1>
-          <p className="text-muted-foreground text-sm">Manage your working projects shown on the homepage.</p>
+          <p className="text-muted-foreground text-sm">Manage projects shown on the homepage. Images are stored in Supabase Storage.</p>
         </div>
         <Button
           onClick={() => { setShowForm(true); setEditId(null); setForm(emptyForm); setUrlInput(""); }}
@@ -193,7 +218,7 @@ export default function AdminProjects() {
               </div>
 
               <div>
-                <Label>Tech Stack <span className="text-muted-foreground text-xs">(optional)</span></Label>
+                <Label>Tech Stack <span className="text-muted-foreground text-xs">(comma-separated)</span></Label>
                 <Input
                   value={form.tech_stack}
                   onChange={(e) => setForm({ ...form, tech_stack: e.target.value })}
@@ -215,36 +240,61 @@ export default function AdminProjects() {
                 </select>
               </div>
 
-              {/* Screenshots */}
+              {/* Screenshots — Supabase Upload */}
               <div className="md:col-span-2">
-                <Label className="mb-2 block">Screenshots / Photos</Label>
+                <Label className="mb-2 block">
+                  Screenshots / Photos
+                  <span className="ml-2 text-[10px] text-primary/60 font-normal">Uploaded to Supabase Storage</span>
+                </Label>
+
+                {/* Upload area */}
+                <div
+                  className="flex flex-col items-center justify-center py-6 rounded-xl border-2 border-dashed border-white/15 hover:border-primary/40 transition-colors cursor-pointer mb-3"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {uploading ? (
+                    <div className="flex items-center gap-2 text-primary">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span className="text-sm font-medium">Uploading to Supabase...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <CloudUpload className="w-8 h-8 mb-2 text-muted-foreground/50" />
+                      <p className="text-sm font-medium text-muted-foreground">Click to upload images</p>
+                      <p className="text-xs text-muted-foreground/50 mt-1">PNG, JPG, WebP up to 10MB each</p>
+                    </>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileUpload}
+                    disabled={uploading}
+                  />
+                </div>
+
+                {/* Or paste URL */}
                 <div className="flex gap-2 mb-3">
                   <Input
                     value={urlInput}
                     onChange={(e) => setUrlInput(e.target.value)}
-                    placeholder="Paste image URL..."
-                    className="bg-background border-white/10 focus:border-primary flex-1"
+                    placeholder="Or paste an image URL..."
+                    className="bg-background border-white/10 focus:border-primary flex-1 text-sm"
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addImageUrl())}
                   />
-                  <Button type="button" onClick={addImageUrl} variant="outline" className="border-white/10 hover:border-primary shrink-0">
+                  <Button type="button" onClick={addImageUrl} variant="outline" className="border-white/10 hover:border-primary shrink-0 text-sm">
                     Add URL
                   </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="border-white/10 hover:border-primary shrink-0 gap-2"
-                  >
-                    <Upload className="w-4 h-4" /> Upload
-                  </Button>
-                  <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} />
                 </div>
 
-                {form.images.length > 0 ? (
+                {/* Preview grid */}
+                {form.images.length > 0 && (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {form.images.map((img, idx) => (
                       <div key={idx} className="relative group rounded-xl overflow-hidden border border-white/10" style={{ aspectRatio: "16/9" }}>
-                        <img src={img} alt={`screenshot ${idx + 1}`} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = ""; }} />
+                        <img src={img} alt={`screenshot ${idx + 1}`} className="w-full h-full object-cover" />
                         <button
                           onClick={() => removeImage(idx)}
                           className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white hover:bg-red-500/80"
@@ -254,21 +304,16 @@ export default function AdminProjects() {
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-8 rounded-xl border border-dashed border-white/10 text-muted-foreground">
-                    <ImageIcon className="w-8 h-8 mb-2 opacity-40" />
-                    <p className="text-sm">No screenshots yet — paste a URL or upload files above</p>
-                  </div>
                 )}
               </div>
             </div>
 
-            <div className="flex gap-3 mt-5">
-              <Button onClick={handleSubmit} disabled={isPending} className="bg-primary hover:bg-primary/90 text-black font-bold">
+            <div className="flex gap-3 mt-6">
+              <Button onClick={handleSubmit} disabled={isPending || uploading} className="bg-primary hover:bg-primary/90 text-black font-bold">
                 {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
                 {editId ? "Update Project" : "Create Project"}
               </Button>
-              <Button variant="outline" onClick={closeForm} className="border-white/10">Cancel</Button>
+              <Button variant="outline" onClick={closeForm} disabled={isPending} className="border-white/10">Cancel</Button>
             </div>
           </CardContent>
         </Card>
@@ -289,7 +334,6 @@ export default function AdminProjects() {
             <Card key={proj.id} className="bg-card border-white/10 hover:border-white/20 transition-all">
               <CardContent className="p-5">
                 <div className="flex items-start gap-4">
-                  {/* Preview */}
                   <div className="w-24 h-16 rounded-lg overflow-hidden bg-white/5 border border-white/10 flex-shrink-0">
                     {proj.images?.[0] ? (
                       <img src={proj.images[0]} alt={proj.title} className="w-full h-full object-cover" />
@@ -311,11 +355,11 @@ export default function AdminProjects() {
                     </div>
                     {proj.description && <p className="text-xs text-muted-foreground line-clamp-1 mb-1">{proj.description}</p>}
                     {proj.tech_stack && <p className="text-xs text-primary/70">{proj.tech_stack}</p>}
-                    <p className="text-[10px] text-muted-foreground/60 mt-1">{proj.images?.length || 0} screenshot{proj.images?.length !== 1 ? "s" : ""}</p>
+                    <p className="text-[10px] text-muted-foreground/50 mt-1">{proj.images?.length || 0} image{proj.images?.length !== 1 ? "s" : ""}</p>
                   </div>
 
                   {proj.link_url && (
-                    <a href={proj.link_url} target="_blank" rel="noreferrer" className="text-primary hover:text-primary/80 transition-colors">
+                    <a href={proj.link_url} target="_blank" rel="noreferrer" className="text-primary hover:text-primary/80">
                       <Globe className="w-4 h-4" />
                     </a>
                   )}
@@ -327,9 +371,9 @@ export default function AdminProjects() {
                   </Button>
                   {deleteConfirm === proj.id ? (
                     <div className="flex items-center gap-1 ml-auto">
-                      <span className="text-xs text-muted-foreground">Sure?</span>
+                      <span className="text-xs text-muted-foreground">Delete?</span>
                       <Button size="sm" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} className="bg-destructive/20 text-destructive hover:bg-destructive/30 h-7 px-2 text-xs">
-                        {deleteMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Delete"}
+                        {deleteMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Confirm"}
                       </Button>
                       <Button size="sm" variant="ghost" onClick={() => setDeleteConfirm(null)} className="h-7 px-2 text-xs">Cancel</Button>
                     </div>
