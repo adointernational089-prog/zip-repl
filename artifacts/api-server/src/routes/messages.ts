@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getSupabase } from "../lib/db.js";
 import { requireAuth, requireAdmin, type AuthRequest } from "../middlewares/requireAuth.js";
+import { sendReplyNotification, sendNewMessageAlert } from "../lib/email.js";
 
 const router = Router();
 
@@ -38,6 +39,9 @@ router.post("/", async (req, res) => {
       .select()
       .single();
     if (error) throw error;
+
+    sendNewMessageAlert({ senderName: name, senderEmail: email, messageContent: message }).catch(() => {});
+
     res.status(201).json({ ...data, reply_count: 0 });
   } catch (err) {
     req.log?.error({ err }, "Send message error");
@@ -101,23 +105,50 @@ router.post("/:id/replies", requireAuth, async (req: AuthRequest, res) => {
   }
   try {
     const sb = getSupabase();
-    const { data: msg, error: msgErr } = await sb.from("messages").select("id, user_id").eq("id", id).single();
+
+    const { data: msg, error: msgErr } = await sb
+      .from("messages")
+      .select("id, user_id, email, name, message")
+      .eq("id", id)
+      .single();
+
     if (msgErr || !msg) {
       res.status(404).json({ error: "Message not found" });
       return;
     }
+
     const isAdmin = req.user!.role === "admin";
     if (!isAdmin && msg.user_id !== req.user!.userId) {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
+
     const senderName = isAdmin ? "Bishal Bishwokarma" : req.user!.email;
+
     const { data, error } = await sb
       .from("replies")
-      .insert({ message_id: id, content, sender_role: req.user!.role, sender_name: senderName, user_id: req.user!.userId })
+      .insert({
+        message_id: id,
+        content,
+        sender_role: req.user!.role,
+        sender_name: senderName,
+        user_id: req.user!.userId,
+      })
       .select()
       .single();
+
     if (error) throw error;
+
+    if (isAdmin && msg.email) {
+      sendReplyNotification({
+        toEmail: msg.email,
+        toName: msg.name || "there",
+        originalMessage: msg.message || "",
+        replyContent: content,
+        replyFrom: "Bishal Bishwokarma",
+      }).catch(() => {});
+    }
+
     res.status(201).json(data);
   } catch (err) {
     req.log?.error({ err }, "Reply error");

@@ -97,8 +97,8 @@ export default function Home() {
           </div>
 
           {/* Right — profile photo with glow */}
-          <div className="flex justify-center animate-slide-right">
-            <div className="relative" style={{ width: 420, height: 540 }}>
+          <div className="flex justify-center animate-slide-right order-first md:order-last">
+            <div className="relative w-full" style={{ maxWidth: 380, height: "clamp(280px, 55vw, 500px)" }}>
               {/* Glow backdrop */}
               <div className="absolute inset-0 rounded-3xl blur-3xl opacity-50 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(0,212,255,0.55) 0%, transparent 70%)", transform: "scale(0.9) translateY(12px)" }} />
               <img
@@ -404,11 +404,34 @@ export default function Home() {
       <section id="education" className="py-20 scroll-mt-16" style={{ background: "#06060f" }}>
         <div className="max-w-3xl mx-auto px-6 text-center">
           <PillBadge color="pink">BACKGROUND</PillBadge>
-          <h2 className="text-3xl font-black mt-4 mb-14 animate-fade-in-up">My Education</h2>
+          <h2 className="text-3xl font-black mt-4 mb-10 sm:mb-14 animate-fade-in-up">My Education</h2>
 
-          <div className="relative">
+          {/* Mobile: simple vertical list */}
+          <div className="flex flex-col gap-4 sm:hidden">
+            {[
+              { period: "Upto SEE", title: "School Education", school: "Manakamana English Boarding School, Bhakunde, Lamjung" },
+              { period: "2021–2023", title: "+2 in Bio-Science", school: "Prerana College, Bharatpur, Chitwan" },
+              { period: "2023–Present", title: "Bachelor in IT", school: "Phoenix College of Management [Lincoln University], Maitidev, Kathmandu" },
+            ].map((item, i) => (
+              <div key={i} className="flex gap-3 text-left">
+                <div className="flex flex-col items-center">
+                  <div className="w-3 h-3 rounded-full flex-shrink-0 mt-1" style={{ background: "#38bdf8", boxShadow: "0 0 8px #38bdf8" }} />
+                  {i < 2 && <div className="flex-1 w-px mt-1" style={{ background: "rgba(255,255,255,0.1)" }} />}
+                </div>
+                <div className="pb-4 flex-1">
+                  <div className="rounded-xl p-4" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+                    <span className="text-xs font-semibold" style={{ color: "#38bdf8" }}>{item.period}</span>
+                    <p className="font-bold text-sm mt-1 mb-1">{item.title}</p>
+                    <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>{item.school}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: alternating timeline */}
+          <div className="relative hidden sm:block">
             <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2" style={{ background: "rgba(255,255,255,0.08)" }} />
-
             <div className="space-y-10">
               <div className="flex items-center gap-6">
                 <div className="flex-1 animate-slide-left">
@@ -417,7 +440,6 @@ export default function Home() {
                 <div className="w-3 h-3 rounded-full flex-shrink-0 z-10" style={{ background: "#38bdf8", boxShadow: "0 0 8px #38bdf8" }} />
                 <div className="flex-1" />
               </div>
-
               <div className="flex items-center gap-6">
                 <div className="flex-1" />
                 <div className="w-3 h-3 rounded-full flex-shrink-0 z-10" style={{ background: "#38bdf8", boxShadow: "0 0 8px #38bdf8" }} />
@@ -425,7 +447,6 @@ export default function Home() {
                   <EduCard side="right" period="2021-2023" title="+2 in Bio-Science" school="Prerana College, Bharatpur, Chitwan" />
                 </div>
               </div>
-
               <div className="flex items-center gap-6">
                 <div className="flex-1 animate-slide-left">
                   <EduCard side="left" period="2023-Present" title="Bachelor in IT" school="Phoenix College of Management [Lincoln University], Maitidev, Kathmandu" />
@@ -485,7 +506,7 @@ export default function Home() {
             {/* Right — form */}
             <div className="rounded-2xl p-6 animate-slide-right" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
               <form onSubmit={handleSend} className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>NAME</label>
                     <input
