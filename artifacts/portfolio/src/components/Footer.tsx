@@ -48,7 +48,6 @@ export function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
           <p>© 2026 BishalBishwokarma. All rights reserved.</p>
-          <p>Built with React + Tailwind ❤</p>
         </div>
       </div>
     </footer>

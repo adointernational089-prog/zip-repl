@@ -89,14 +89,17 @@ export default function Home() {
 
           {/* Right — photo placeholder card */}
           <div className="flex justify-center">
-            <div className="rounded-3xl flex items-center justify-center" style={{
+            <div className="rounded-3xl overflow-hidden" style={{
               width: 280,
               height: 360,
-              background: "linear-gradient(145deg, #1a1a3e 0%, #0f172a 40%, #1e1b4b 70%, #312e81 100%)",
               border: "1px solid rgba(99,102,241,0.3)",
-              boxShadow: "0 0 60px rgba(99,102,241,0.15), inset 0 1px 0 rgba(255,255,255,0.05)"
+              boxShadow: "0 0 60px rgba(99,102,241,0.15)"
             }}>
-              <span style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.8rem" }}>Your Photo Here</span>
+              <img
+                src="/bishal-photo.jpg"
+                alt="Bishal Bishwokarma"
+                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+              />
             </div>
           </div>
         </div>
@@ -302,11 +305,13 @@ export default function Home() {
               <div className="pt-2">
                 <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "#64748b" }}>CONNECT</p>
                 <div className="space-y-2">
-                  <SocialRow
-                    icon={<div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ background: "#1877f2" }}>f</div>}
-                    name="Facebook"
-                    handle="bishal.bishwokarma"
-                  />
+                  <a href="https://www.facebook.com/bishal.bishwokarma.359" target="_blank" rel="noreferrer" className="block">
+                    <SocialRow
+                      icon={<div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ background: "#1877f2" }}>f</div>}
+                      name="Facebook"
+                      handle="bishal.bishwokarma"
+                    />
+                  </a>
                   <SocialRow
                     icon={<div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-sm" style={{ background: "#25d366" }}>✆</div>}
                     name="WhatsApp"
