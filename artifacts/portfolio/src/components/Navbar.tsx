@@ -1,63 +1,63 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
-import { Flame, LogOut, LayoutDashboard, Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { LogOut, LayoutDashboard, Settings, User } from "lucide-react";
 
 export function Navbar() {
   const { user, logout, isAdmin } = useAuth();
   const [location] = useLocation();
-
   const isHome = location === "/";
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="bg-primary/10 p-2 rounded-lg group-hover:bg-primary/20 transition-colors">
-            <Flame className="w-5 h-5 text-primary drop-shadow-[0_0_8px_rgba(0,191,255,0.8)]" />
+    <nav className="sticky top-0 z-50 w-full bg-[#06060f]/90 backdrop-blur-md border-b border-white/5">
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0" style={{background: "linear-gradient(135deg, #ff6b6b, #ffa347, #ff6bcb, #6b6bff)"}}>
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="text-white text-sm font-black">B</span>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-lg leading-none tracking-tight">Bishal's Hub</span>
-            <span className="text-[10px] text-primary font-mono tracking-widest uppercase">SAAS PORTAL</span>
+          <div className="flex flex-col leading-none">
+            <span className="font-bold text-sm text-white tracking-tight">Bishal's Hub</span>
+            <span className="text-[9px] text-slate-400 tracking-[0.18em] uppercase font-medium">SAAS PORTAL</span>
           </div>
         </Link>
 
         {isHome && (
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-            <a href="#about" className="hover:text-primary transition-colors">About</a>
-            <a href="#skills" className="hover:text-primary transition-colors">Skills</a>
-            <a href="#projects" className="hover:text-primary transition-colors">Projects</a>
-            <a href="#services" className="hover:text-primary transition-colors">Services</a>
-            <a href="#contact" className="hover:text-primary transition-colors">Contact</a>
+          <div className="hidden md:flex items-center gap-1 text-sm">
+            <a href="#hero" className="px-3 py-1.5 rounded-full border border-white/20 text-white font-medium text-xs">Home</a>
+            <a href="#about" className="px-3 py-1.5 text-slate-400 hover:text-white transition-colors text-xs">About</a>
+            <a href="#skills" className="px-3 py-1.5 text-slate-400 hover:text-white transition-colors text-xs">Skills</a>
+            <a href="#projects" className="px-3 py-1.5 text-slate-400 hover:text-white transition-colors text-xs">Projects</a>
+            <a href="#services" className="px-3 py-1.5 text-slate-400 hover:text-white transition-colors text-xs">Services</a>
+            <a href="#contact" className="px-3 py-1.5 text-slate-400 hover:text-white transition-colors text-xs">Contact</a>
           </div>
         )}
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           {user ? (
             <>
               {isAdmin && (
                 <Link href="/admin">
-                  <Button variant="ghost" size="sm" className="hidden sm:flex text-muted-foreground hover:text-primary">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Admin Panel
-                  </Button>
+                  <button className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-400 hover:text-white transition-colors">
+                    <Settings className="w-3.5 h-3.5" />Admin
+                  </button>
                 </Link>
               )}
               <Link href="/dashboard">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                  <LayoutDashboard className="w-4 h-4 mr-2" />
-                  Dashboard
-                </Button>
+                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-400 hover:text-white transition-colors">
+                  <LayoutDashboard className="w-3.5 h-3.5" />Dashboard
+                </button>
               </Link>
-              <Button variant="ghost" size="icon" onClick={logout} title="Log Out" className="text-muted-foreground hover:text-destructive">
-                <LogOut className="w-4 h-4" />
-              </Button>
+              <button onClick={logout} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-400 hover:text-red-400 transition-colors">
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
             </>
           ) : (
             <Link href="/login">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-[0_0_15px_rgba(0,191,255,0.3)] hover:shadow-[0_0_25px_rgba(0,191,255,0.5)] transition-all">
-                Sign In / Sign Up &rarr;
-              </Button>
+              <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-white transition-all" style={{background: "linear-gradient(90deg, #0ea5e9, #2563eb)"}}>
+                <User className="w-3 h-3" />
+                Sign In / Sign Up →
+              </button>
             </Link>
           )}
         </div>

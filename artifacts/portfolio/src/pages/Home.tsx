@@ -2,416 +2,369 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { useSendMessage } from "@workspace/api-client-react";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Code2, Globe, Server, Database, Brain, Zap, Shield, Star,
-  Github, ExternalLink, Mail, Phone, MapPin, GraduationCap,
-  Briefcase, Terminal, Cpu, Layers, Smartphone, ChevronRight,
-  ArrowRight, Sparkles, Flame
+  Code2, Wrench, Lightbulb, Monitor, Smartphone, Palette,
+  Mail, Phone, MapPin, ArrowRight, Facebook, Send,
+  Globe, GitBranch, Figma, Server, CheckSquare, MessageSquare,
+  Briefcase, Star, Rocket, Flame, ChevronRight
 } from "lucide-react";
-
-const skills = [
-  { category: "Frontend", icon: Globe, items: ["React", "TypeScript", "Tailwind CSS", "Next.js", "Vite"] },
-  { category: "Backend", icon: Server, items: ["Node.js", "Express", "Python", "REST APIs", "GraphQL"] },
-  { category: "Database", icon: Database, items: ["PostgreSQL", "MongoDB", "Supabase", "Redis", "Drizzle ORM"] },
-  { category: "DevOps", icon: Terminal, items: ["Docker", "Linux", "Git", "CI/CD", "Nginx"] },
-  { category: "AI/ML", icon: Brain, items: ["TensorFlow", "PyTorch", "OpenAI API", "LangChain", "Scikit-learn"] },
-  { category: "Mobile", icon: Smartphone, items: ["React Native", "Expo", "iOS", "Android"] },
-];
-
-const projects = [
-  {
-    title: "Bishal's Hub",
-    description: "A full-stack SaaS portfolio platform with user authentication, admin panel, and messaging system.",
-    tech: ["React", "TypeScript", "Express", "PostgreSQL"],
-    live: "#",
-    github: "#",
-    featured: true,
-  },
-  {
-    title: "AI Chat Assistant",
-    description: "An intelligent chat assistant powered by OpenAI with context-aware responses and conversation history.",
-    tech: ["Next.js", "OpenAI", "Supabase", "Tailwind"],
-    live: "#",
-    github: "#",
-    featured: true,
-  },
-  {
-    title: "E-Commerce Platform",
-    description: "Full-featured e-commerce platform with payment integration, inventory management, and analytics dashboard.",
-    tech: ["React", "Node.js", "MongoDB", "Stripe"],
-    live: "#",
-    github: "#",
-    featured: false,
-  },
-  {
-    title: "Task Manager Pro",
-    description: "A productivity app with real-time collaboration, Kanban boards, and smart notifications.",
-    tech: ["React", "WebSockets", "PostgreSQL", "Redis"],
-    live: "#",
-    github: "#",
-    featured: false,
-  },
-];
-
-const services = [
-  { icon: Globe, title: "Web Development", desc: "Crafting fast, responsive, and beautiful web apps using modern stacks." },
-  { icon: Smartphone, title: "Mobile Development", desc: "Cross-platform mobile apps with React Native and Expo." },
-  { icon: Server, title: "API Development", desc: "Scalable RESTful and GraphQL APIs for your product's backend." },
-  { icon: Brain, title: "AI Integration", desc: "Integrating LLMs and ML models into real-world applications." },
-  { icon: Shield, title: "Security & Auth", desc: "Secure authentication systems, JWT, OAuth, and data protection." },
-  { icon: Cpu, title: "System Design", desc: "Architecting scalable, maintainable software systems from the ground up." },
-];
-
-const education = [
-  {
-    degree: "Secondary Education (SEE)",
-    school: "Shree Janajyoti Secondary School",
-    year: "2024",
-    location: "Kathmandu, Nepal",
-    gpa: "3.6 GPA",
-  },
-];
 
 export default function Home() {
   const { toast } = useToast();
-  const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
 
   const sendMsgMutation = useSendMessage({
     mutation: {
       onSuccess: () => {
         toast({ title: "Message sent!", description: "I'll get back to you shortly." });
-        setContactForm({ name: "", email: "", message: "" });
+        setForm({ name: "", email: "", message: "" });
       },
-      onError: () => {
-        toast({ title: "Error", description: "Failed to send message. Try again.", variant: "destructive" });
-      },
+      onError: () => toast({ title: "Error", description: "Failed to send message. Try again.", variant: "destructive" }),
     },
   });
 
-  const handleContact = (e: React.FormEvent) => {
+  const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactForm.name || !contactForm.email || !contactForm.message) return;
-    sendMsgMutation.mutate({ data: contactForm });
+    if (!form.name || !form.email || !form.message) return;
+    sendMsgMutation.mutate({ data: form });
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen" style={{ background: "#06060f", color: "#ffffff" }}>
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,191,255,0.15)_0%,transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(147,51,234,0.1)_0%,transparent_60%)]" />
-        <div className="absolute inset-0" style={{
-          backgroundImage: "radial-gradient(rgba(0,191,255,0.08) 1px, transparent 1px)",
-          backgroundSize: "40px 40px"
-        }} />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="h-px w-12 bg-primary" />
-              <span className="text-primary font-mono text-sm tracking-widest uppercase">Full Stack Developer</span>
+      {/* ───── HERO ───── */}
+      <section id="hero" className="pt-16 pb-20 relative overflow-hidden">
+        {/* subtle radial glows */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] rounded-full opacity-20 blur-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse, #0ea5e9 0%, transparent 70%)" }} />
+
+        {/* Large centered name */}
+        <div className="text-center pt-8 pb-6">
+          <h1 className="font-black leading-none tracking-tight select-none" style={{ fontSize: "clamp(3rem, 10vw, 6.5rem)" }}>
+            <span className="text-white">Bishal </span>
+            <span style={{
+              color: "#00d4ff",
+              textShadow: "0 0 40px rgba(0,212,255,0.8), 0 0 80px rgba(0,212,255,0.4), 0 0 120px rgba(0,212,255,0.2)"
+            }}>Bishwokarma</span>
+          </h1>
+        </div>
+
+        {/* Two-column below */}
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center mt-4">
+          {/* Left */}
+          <div>
+            {/* Role badge */}
+            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border text-xs font-medium" style={{ borderColor: "#1e40af", background: "rgba(30,64,175,0.15)", color: "#93c5fd" }}>
+              <span style={{ color: "#facc15" }}>✦</span>
+              <span>IT Student · Web App Developer · Designer</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-none tracking-tight">
-              Hi, I'm{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-300 to-purple-400 drop-shadow-[0_0_30px_rgba(0,191,255,0.5)]">
-                Bishal
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-4 font-medium">
-              Building digital products that <span className="text-primary">make a difference</span>
+
+            <h2 className="font-black leading-tight mb-4" style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)" }}>
+              I build{" "}
+              <span style={{ color: "#00d4ff" }}>powerful</span>
+              {" "}web apps &amp; digital solutions
+            </h2>
+
+            <p className="mb-8 leading-relaxed" style={{ color: "#94a3b8", fontSize: "0.95rem" }}>
+              IT student creating practical, real-world applications that solve real problems. Based in{" "}
+              <span style={{ color: "#38bdf8" }}>Kathmandu</span>,{" "}
+              <span style={{ color: "#38bdf8" }}>Nepal</span>.
             </p>
-            <p className="text-muted-foreground max-w-2xl mb-10 text-lg leading-relaxed">
-              Student developer & future entrepreneur from Kathmandu, Nepal. Passionate about
-              creating scalable web applications, AI integrations, and SaaS products.
-            </p>
-            <div className="flex flex-wrap gap-4">
+
+            <div className="flex flex-wrap gap-3">
               <a href="#projects">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-black font-bold shadow-[0_0_25px_rgba(0,191,255,0.4)] hover:shadow-[0_0_40px_rgba(0,191,255,0.6)] transition-all px-8">
-                  View Projects <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
+                <button className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
+                  View Projects <ArrowRight className="w-4 h-4" />
+                </button>
               </a>
               <a href="#contact">
-                <Button size="lg" variant="outline" className="border-white/20 hover:border-primary hover:text-primary font-semibold px-8 transition-all">
-                  Get In Touch
-                </Button>
+                <button className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold transition-all hover:border-white/40" style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "#cbd5e1" }}>
+                  Contact Me <MessageSquare className="w-4 h-4" />
+                </button>
               </a>
-              <Link href="/login">
-                <Button size="lg" variant="ghost" className="text-muted-foreground hover:text-primary font-semibold px-8 transition-all">
-                  <Flame className="mr-2 w-4 h-4" />
-                  My Apps Hub
-                </Button>
-              </Link>
             </div>
-            <div className="flex gap-8 mt-16">
-              {[["5+", "Projects"], ["2+", "Years Coding"], ["∞", "Curiosity"]].map(([num, label]) => (
-                <div key={label}>
-                  <p className="text-3xl font-black text-primary">{num}</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-widest">{label}</p>
-                </div>
-              ))}
+          </div>
+
+          {/* Right — photo placeholder card */}
+          <div className="flex justify-center">
+            <div className="rounded-3xl flex items-center justify-center" style={{
+              width: 280,
+              height: 360,
+              background: "linear-gradient(145deg, #1a1a3e 0%, #0f172a 40%, #1e1b4b 70%, #312e81 100%)",
+              border: "1px solid rgba(99,102,241,0.3)",
+              boxShadow: "0 0 60px rgba(99,102,241,0.15), inset 0 1px 0 rgba(255,255,255,0.05)"
+            }}>
+              <span style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.8rem" }}>Your Photo Here</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="py-24 scroll-mt-16">
-        <div className="container mx-auto px-4">
-          <SectionHeader label="Who I Am" title="About Me" />
-          <div className="grid md:grid-cols-2 gap-16 items-center max-w-5xl mx-auto">
-            <div>
-              <div className="relative">
-                <div className="w-full aspect-square max-w-sm mx-auto rounded-2xl bg-gradient-to-br from-primary/20 to-purple-500/20 border border-white/10 flex items-center justify-center overflow-hidden">
-                  <div className="text-[120px] select-none">👨‍💻</div>
-                </div>
-                <div className="absolute -bottom-4 -right-4 bg-primary/10 border border-primary/30 rounded-xl p-4 backdrop-blur">
-                  <p className="text-xs text-primary font-mono">Available for projects</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                    <span className="text-sm font-semibold">Open to work</span>
-                  </div>
-                </div>
+      {/* ───── ABOUT ───── */}
+      <section id="about" className="py-20 scroll-mt-16" style={{ background: "#06060f" }}>
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <PillBadge color="cyan">ABOUT ME</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-10">Who I Am</h2>
+
+          <div className="rounded-2xl p-7 text-left" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <p style={{ color: "#cbd5e1", lineHeight: 1.8, fontSize: "0.92rem" }}>
+              I'm <strong className="text-white">Bishal Bishwokarma</strong>, an{" "}
+              <span style={{ color: "#38bdf8" }}>IT student</span>{" "}
+              from Kathmandu, Nepal and passionate about modern technology. I build apps, software, and designs that solve real problems. I bring both technical skills and communication ability to every project. My goal is to be a good and successful person by delivering value through technology.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ───── SKILLS ───── */}
+      <section id="skills" className="py-20 scroll-mt-16" style={{ background: "#08081a" }}>
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <PillBadge color="cyan">MY ARSENAL</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-2">Skills &amp; Tools</h2>
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Technologies and abilities I use to bring ideas to life.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Programming */}
+            <SkillCard title="Programming" icon={<Code2 className="w-5 h-5" style={{ color: "#38bdf8" }} />}>
+              <div className="grid grid-cols-2 gap-2">
+                <SkillItem icon="⊞" label="HTML / CSS" />
+                <SkillItem icon=">_" label="Python" />
+                <SkillItem icon="</>" label="C" />
+                <SkillItem icon="▦" label="SQL" />
               </div>
+            </SkillCard>
+
+            {/* Tools & Platforms */}
+            <SkillCard title="Tools & Platforms" icon={<Wrench className="w-5 h-5" style={{ color: "#38bdf8" }} />}>
+              <div className="grid grid-cols-2 gap-2">
+                <SkillItem icon="⬡" label="Supabase" />
+                <SkillItem icon="⊕" label="Git / GitHub" />
+                <SkillItem icon="◈" label="Figma" />
+                <SkillItem icon="▣" label="Canva" />
+                <SkillItem icon="△" label="Vercel" />
+              </div>
+            </SkillCard>
+
+            {/* Other Skills */}
+            <SkillCard title="Other Skills" icon={<Lightbulb className="w-5 h-5" style={{ color: "#38bdf8" }} />}>
+              <div className="grid grid-cols-2 gap-2">
+                <SkillItem icon="💡" label="Problem Solving" />
+                <SkillItem icon="□" label="Communication" />
+                <SkillItem icon="⊞" label="Project Management" />
+                <SkillItem icon="★" label="Fast Learner" />
+              </div>
+            </SkillCard>
+          </div>
+        </div>
+      </section>
+
+      {/* ───── PROJECTS ───── */}
+      <section id="projects" className="py-20 scroll-mt-16" style={{ background: "#06060f" }}>
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <PillBadge color="green">PORTFOLIO</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-2">Featured Projects</h2>
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Apps and tools from Bishal's Hub.</p>
+
+          <div className="max-w-sm mx-auto rounded-2xl p-10 flex flex-col items-center" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 text-3xl" style={{ background: "linear-gradient(135deg, #1d4ed8, #7c3aed)" }}>
+              🚀
             </div>
-            <div>
-              <h3 className="text-2xl font-bold mb-4">Bishal Bishwokarma</h3>
-              <p className="text-muted-foreground mb-4 leading-relaxed">
-                I'm a passionate full-stack developer and aspiring entrepreneur based in Kathmandu, Nepal.
-                I specialize in building modern web applications, APIs, and SaaS products using cutting-edge technologies.
+            <h3 className="text-lg font-bold mb-2">Apps Coming Soon</h3>
+            <p style={{ color: "#64748b", fontSize: "0.85rem", lineHeight: 1.6 }} className="mb-6">
+              New projects are being prepared. Sign in to explore Bishal's Hub when apps go live.
+            </p>
+            <Link href="/login">
+              <button className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-white" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
+                Get Early Access <ArrowRight className="w-4 h-4" />
+              </button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ───── ECOSYSTEM BANNER ───── */}
+      <section className="py-8" style={{ background: "#08081a" }}>
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="rounded-2xl p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-3">
+                <Flame className="w-4 h-4" style={{ color: "#fb923c" }} />
+                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: "#94a3b8" }}>MY ECOSYSTEM</span>
+              </div>
+              <h3 className="text-2xl font-black mb-2">Bishal's Hub</h3>
+              <p style={{ color: "#64748b", fontSize: "0.875rem", maxWidth: 360 }}>
+                A curated collection of my apps, tools, and digital creations. Sign in to explore the full ecosystem.
               </p>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                When I'm not coding, I'm exploring AI/ML concepts, learning new frameworks,
-                or working on side projects that solve real-world problems.
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { icon: MapPin, text: "Kathmandu, Nepal" },
-                  { icon: Mail, text: "bishalbishwokarma089@gmail.com" },
-                  { icon: Phone, text: "+977 9802485583" },
-                  { icon: GraduationCap, text: "Student Developer" },
-                ].map(({ icon: Icon, text }) => (
-                  <div key={text} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Icon className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="truncate">{text}</span>
-                  </div>
-                ))}
+            </div>
+            <Link href="/login">
+              <button className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white whitespace-nowrap" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
+                Enter the Hub <ArrowRight className="w-4 h-4" />
+              </button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ───── SERVICES ───── */}
+      <section id="services" className="py-20 scroll-mt-16" style={{ background: "#08081a" }}>
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <PillBadge color="orange">FREELANCE</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-2">What I Can Do For You</h2>
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Services tailored to your needs, delivered with quality.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+            <ServiceCard
+              icon={<Monitor className="w-6 h-6" style={{ color: "#38bdf8" }} />}
+              title="Web App Development"
+              desc="Full-stack web applications built with modern frameworks. From idea to deployment."
+              items={["Responsive Design", "Database Integration", "Authentication", "API Development"]}
+            />
+            <ServiceCard
+              icon={<Smartphone className="w-6 h-6" style={{ color: "#38bdf8" }} />}
+              title="Simple Software Solutions"
+              desc="Custom software tools and utilities tailored to solve specific real-world problems."
+              items={["Desktop Tools", "Automation Scripts", "Data Processing", "Utility Apps"]}
+            />
+            <ServiceCard
+              icon={<Palette className="w-6 h-6" style={{ color: "#38bdf8" }} />}
+              title="Designing"
+              desc="Creative UI/UX design, graphics, and visual content that brings ideas to life beautifully."
+              items={["UI/UX Design", "Graphic Design", "Logo & Branding", "Social Media Content"]}
+            />
+          </div>
+
+          <a href="#contact">
+            <button className="flex items-center gap-2 mx-auto px-8 py-3 rounded-lg font-semibold text-white" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
+              Let's Work Together <ArrowRight className="w-4 h-4" />
+            </button>
+          </a>
+        </div>
+      </section>
+
+      {/* ───── EDUCATION ───── */}
+      <section id="education" className="py-20 scroll-mt-16" style={{ background: "#06060f" }}>
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <PillBadge color="pink">BACKGROUND</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-14">My Education</h2>
+
+          <div className="relative">
+            {/* Center line */}
+            <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2" style={{ background: "rgba(255,255,255,0.08)" }} />
+
+            <div className="space-y-10">
+              {/* Item 1 — Left */}
+              <div className="flex items-center gap-6">
+                <div className="flex-1">
+                  <EduCard side="left" period="Upto SEE" title="School Education" school="Manakamana English Boarding School, Bhakunde, Lamjung" />
+                </div>
+                <div className="w-3 h-3 rounded-full flex-shrink-0 z-10" style={{ background: "#38bdf8", boxShadow: "0 0 8px #38bdf8" }} />
+                <div className="flex-1" />
               </div>
-              <div className="flex gap-3 mt-6">
-                <a href="https://github.com" target="_blank" rel="noreferrer">
-                  <Button variant="outline" size="sm" className="border-white/20 hover:border-primary hover:text-primary">
-                    <Github className="w-4 h-4 mr-2" />GitHub
-                  </Button>
-                </a>
-                <a href="mailto:bishalbishwokarma089@gmail.com">
-                  <Button variant="outline" size="sm" className="border-white/20 hover:border-primary hover:text-primary">
-                    <Mail className="w-4 h-4 mr-2" />Email
-                  </Button>
-                </a>
+
+              {/* Item 2 — Right */}
+              <div className="flex items-center gap-6">
+                <div className="flex-1" />
+                <div className="w-3 h-3 rounded-full flex-shrink-0 z-10" style={{ background: "#38bdf8", boxShadow: "0 0 8px #38bdf8" }} />
+                <div className="flex-1">
+                  <EduCard side="right" period="2021-2023" title="+2 in Bio-Science" school="Prerana College, Bharatpur, Chitwan" />
+                </div>
+              </div>
+
+              {/* Item 3 — Left */}
+              <div className="flex items-center gap-6">
+                <div className="flex-1">
+                  <EduCard side="left" period="2023-Present" title="Bachelor in IT" school="Phoenix College of Management [Lincoln University], Maitidev, Kathmandu" />
+                </div>
+                <div className="w-3 h-3 rounded-full flex-shrink-0 z-10" style={{ background: "#38bdf8", boxShadow: "0 0 8px #38bdf8" }} />
+                <div className="flex-1" />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Skills Section */}
-      <section id="skills" className="py-24 scroll-mt-16 bg-card/30">
-        <div className="container mx-auto px-4">
-          <SectionHeader label="What I Know" title="Skills & Technologies" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {skills.map(({ category, icon: Icon, items }) => (
-              <Card key={category} className="bg-card border-white/10 hover:border-primary/50 transition-all group">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                      <Icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <CardTitle className="text-base">{category}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {items.map((item) => (
-                      <Badge key={item} variant="secondary" className="bg-white/5 text-foreground/80 hover:bg-primary/20 hover:text-primary transition-colors text-xs">
-                        {item}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ───── CONTACT ───── */}
+      <section id="contact" className="py-20 scroll-mt-16" style={{ background: "#08081a" }}>
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <PillBadge color="cyan">GET IN TOUCH</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-2">Contact</h2>
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Have an idea? Let's build it together.</p>
 
-      {/* Projects Section */}
-      <section id="projects" className="py-24 scroll-mt-16">
-        <div className="container mx-auto px-4">
-          <SectionHeader label="What I've Built" title="Featured Projects" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {projects.map((project) => (
-              <Card key={project.title} className={`bg-card border-white/10 hover:border-primary/50 transition-all group overflow-hidden ${project.featured ? "ring-1 ring-primary/30" : ""}`}>
-                {project.featured && (
-                  <div className="px-6 pt-4 flex items-center gap-2">
-                    <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                    <span className="text-xs text-yellow-400 font-mono uppercase tracking-widest">Featured</span>
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-lg group-hover:text-primary transition-colors flex items-center justify-between">
-                    {project.title}
-                    <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground text-sm mb-4 leading-relaxed">{project.description}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tech.map((t) => (
-                      <Badge key={t} className="bg-primary/10 text-primary border-primary/20 text-xs">{t}</Badge>
-                    ))}
-                  </div>
-                  <div className="flex gap-3">
-                    <a href={project.github} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-                      <Github className="w-3.5 h-3.5" /> Code
-                    </a>
-                    <a href={project.live} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-                      <ExternalLink className="w-3.5 h-3.5" /> Live Demo
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+          <div className="grid md:grid-cols-2 gap-8 text-left">
+            {/* Left — info */}
+            <div className="space-y-3">
+              <ContactInfoRow icon={<Mail className="w-4 h-4 text-white" />} label="EMAIL" value="bishalbishwokarma089@gmail.com" bg="#0d6e5c" />
+              <ContactInfoRow icon={<Phone className="w-4 h-4 text-white" />} label="PHONE" value="9802485583" bg="#166534" />
+              <ContactInfoRow icon={<MapPin className="w-4 h-4 text-white" />} label="LOCATION" value="Kathmandu, Nepal" bg="#4c1d95" />
 
-      {/* Services Section */}
-      <section id="services" className="py-24 scroll-mt-16 bg-card/30">
-        <div className="container mx-auto px-4">
-          <SectionHeader label="What I Offer" title="Services" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {services.map(({ icon: Icon, title, desc }) => (
-              <Card key={title} className="bg-background border-white/10 hover:border-primary/50 transition-all group p-6">
-                <div className="p-3 bg-primary/10 rounded-xl w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                  <Icon className="w-6 h-6 text-primary" />
+              <div className="pt-2">
+                <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "#64748b" }}>CONNECT</p>
+                <div className="space-y-2">
+                  <SocialRow
+                    icon={<div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ background: "#1877f2" }}>f</div>}
+                    name="Facebook"
+                    handle="bishal.bishwokarma"
+                  />
+                  <SocialRow
+                    icon={<div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-sm" style={{ background: "#25d366" }}>✆</div>}
+                    name="WhatsApp"
+                    handle="9802485583"
+                  />
                 </div>
-                <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">{title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{desc}</p>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+              </div>
+            </div>
 
-      {/* Education Section */}
-      <section id="education" className="py-24 scroll-mt-16">
-        <div className="container mx-auto px-4">
-          <SectionHeader label="Academic Background" title="Education" />
-          <div className="max-w-2xl mx-auto">
-            {education.map((edu) => (
-              <Card key={edu.degree} className="bg-card border-white/10 hover:border-primary/50 transition-all p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-primary/10 rounded-xl flex-shrink-0">
-                    <GraduationCap className="w-6 h-6 text-primary" />
-                  </div>
+            {/* Right — form */}
+            <div className="rounded-2xl p-6" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <form onSubmit={handleSend} className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <h3 className="font-bold text-lg">{edu.degree}</h3>
-                    <p className="text-primary font-medium">{edu.school}</p>
-                    <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{edu.location}</span>
-                      <span>{edu.year}</span>
-                      <span className="text-green-400">{edu.gpa}</span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="py-24 scroll-mt-16 bg-card/30">
-        <div className="container mx-auto px-4">
-          <SectionHeader label="Let's Talk" title="Get In Touch" />
-          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-            <div>
-              <p className="text-muted-foreground mb-8 leading-relaxed">
-                Have a project in mind or want to collaborate? I'd love to hear from you.
-                Fill out the form and I'll get back to you as soon as possible.
-              </p>
-              <div className="space-y-4">
-                {[
-                  { icon: Mail, label: "Email", value: "bishalbishwokarma089@gmail.com" },
-                  { icon: Phone, label: "Phone", value: "+977 9802485583" },
-                  { icon: MapPin, label: "Location", value: "Kathmandu, Nepal" },
-                ].map(({ icon: Icon, label, value }) => (
-                  <div key={label} className="flex items-center gap-4">
-                    <div className="p-2.5 bg-primary/10 rounded-lg">
-                      <Icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">{label}</p>
-                      <p className="font-medium text-sm">{value}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <Card className="bg-card border-white/10">
-              <CardContent className="p-6">
-                <form onSubmit={handleContact} className="space-y-4">
-                  <div>
-                    <Label htmlFor="name" className="text-sm">Name</Label>
-                    <Input
-                      id="name"
-                      value={contactForm.name}
-                      onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>NAME</label>
+                    <input
+                      type="text"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="Your name"
-                      className="mt-1 bg-background border-white/10 focus:border-primary"
+                      className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-colors"
+                      style={{ background: "#131329", border: "1px solid rgba(255,255,255,0.08)", color: "#fff" }}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="email" className="text-sm">Email</Label>
-                    <Input
-                      id="email"
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>YOUR EMAIL</label>
+                    <input
                       type="email"
-                      value={contactForm.email}
-                      onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                      placeholder="your@email.com"
-                      className="mt-1 bg-background border-white/10 focus:border-primary"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="you@example.com"
+                      className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-colors"
+                      style={{ background: "#131329", border: "1px solid rgba(255,255,255,0.08)", color: "#fff" }}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="message" className="text-sm">Message</Label>
-                    <Textarea
-                      id="message"
-                      value={contactForm.message}
-                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                      placeholder="Tell me about your project..."
-                      rows={4}
-                      className="mt-1 bg-background border-white/10 focus:border-primary resize-none"
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary/90 text-black font-bold shadow-[0_0_15px_rgba(0,191,255,0.3)]"
-                    disabled={sendMsgMutation.isPending}
-                  >
-                    {sendMsgMutation.isPending ? "Sending..." : "Send Message"}
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>MESSAGE</label>
+                  <textarea
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    placeholder="Tell me about your project or idea..."
+                    rows={5}
+                    className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-colors resize-none"
+                    style={{ background: "#131329", border: "1px solid rgba(255,255,255,0.08)", color: "#fff" }}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={sendMsgMutation.isPending}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-white transition-opacity disabled:opacity-60"
+                  style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}
+                >
+                  <Send className="w-4 h-4" />
+                  {sendMsgMutation.isPending ? "Sending..." : "Send Message"}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </section>
@@ -421,15 +374,101 @@ export default function Home() {
   );
 }
 
-function SectionHeader({ label, title }: { label: string; title: string }) {
+/* ── Sub-components ── */
+
+function PillBadge({ children, color }: { children: React.ReactNode; color: "cyan" | "green" | "orange" | "pink" }) {
+  const styles = {
+    cyan:   { border: "rgba(6,182,212,0.5)",  bg: "rgba(6,182,212,0.08)",  text: "#67e8f9" },
+    green:  { border: "rgba(34,197,94,0.5)",  bg: "rgba(34,197,94,0.08)",  text: "#86efac" },
+    orange: { border: "rgba(249,115,22,0.5)", bg: "rgba(249,115,22,0.08)", text: "#fdba74" },
+    pink:   { border: "rgba(236,72,153,0.5)", bg: "rgba(236,72,153,0.08)", text: "#f9a8d4" },
+  }[color];
+
   return (
-    <div className="text-center mb-16">
-      <div className="flex items-center justify-center gap-2 mb-3">
-        <div className="h-px w-8 bg-primary/50" />
-        <span className="text-primary font-mono text-xs tracking-widest uppercase">{label}</span>
-        <div className="h-px w-8 bg-primary/50" />
+    <div className="inline-flex">
+      <span className="px-3 py-1 rounded-full text-[10px] font-semibold tracking-[0.15em] uppercase" style={{ border: `1px solid ${styles.border}`, background: styles.bg, color: styles.text }}>
+        {children}
+      </span>
+    </div>
+  );
+}
+
+function SkillCard({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl p-5 text-left" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="flex items-center gap-2.5 mb-4">
+        {icon}
+        <span className="font-bold text-sm">{title}</span>
       </div>
-      <h2 className="text-3xl md:text-4xl font-black">{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+function SkillItem({ icon, label }: { icon: string; label: string }) {
+  return (
+    <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: "#131329", border: "1px solid rgba(255,255,255,0.05)" }}>
+      <span className="text-xs" style={{ color: "#38bdf8" }}>{icon}</span>
+      <span className="text-xs font-medium" style={{ color: "#cbd5e1" }}>{label}</span>
+    </div>
+  );
+}
+
+function ServiceCard({ icon, title, desc, items }: { icon: React.ReactNode; title: string; desc: string; items: string[] }) {
+  return (
+    <div className="rounded-2xl p-6 text-left" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ background: "#131e3a", border: "1px solid rgba(56,189,248,0.2)" }}>
+        {icon}
+      </div>
+      <h3 className="font-bold text-base mb-2">{title}</h3>
+      <p className="text-sm mb-4 leading-relaxed" style={{ color: "#64748b" }}>{desc}</p>
+      <ul className="space-y-1.5">
+        {items.map((item) => (
+          <li key={item} className="flex items-center gap-2 text-xs" style={{ color: "#94a3b8" }}>
+            <ChevronRight className="w-3 h-3" style={{ color: "#38bdf8" }} />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function EduCard({ period, title, school, side }: { period: string; title: string; school: string; side: "left" | "right" }) {
+  return (
+    <div className={`rounded-xl p-4 text-left ${side === "right" ? "ml-0" : ""}`} style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-xs" style={{ color: "#64748b" }}>⊞</span>
+        <span className="text-xs font-semibold" style={{ color: "#38bdf8" }}>{period}</span>
+      </div>
+      <p className="font-bold text-sm mb-1">{title}</p>
+      <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>{school}</p>
+    </div>
+  );
+}
+
+function ContactInfoRow({ icon, label, value, bg }: { icon: React.ReactNode; label: string; value: string; bg: string }) {
+  return (
+    <div className="flex items-center gap-3 p-3.5 rounded-xl" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
+        {icon}
+      </div>
+      <div>
+        <p className="text-[10px] tracking-widest uppercase font-medium" style={{ color: "#64748b" }}>{label}</p>
+        <p className="text-sm font-medium text-white">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function SocialRow({ icon, name, handle }: { icon: React.ReactNode; name: string; handle: string }) {
+  return (
+    <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+      {icon}
+      <div>
+        <p className="text-sm font-semibold text-white">{name}</p>
+        <p className="text-xs" style={{ color: "#64748b" }}>{handle}</p>
+      </div>
     </div>
   );
 }
