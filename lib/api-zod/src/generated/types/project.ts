@@ -6,14 +6,17 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface App {
+export interface Project {
   id: string;
-  name: string;
-  /** @nullable */
-  url?: string | null;
-  /** @nullable */
-  icon_url?: string | null;
+  title: string;
   /** @nullable */
   description?: string | null;
+  images?: string[];
+  /** @nullable */
+  tech_stack?: string | null;
+  /** @nullable */
+  link_url?: string | null;
+  status?: string;
+  sort_order?: number;
   created_at: string;
 }

@@ -65,7 +65,7 @@ export const ListAppsResponseItem = zod.object({
   "id": zod.string(),
   "name": zod.string(),
   "url": zod.string().nullish(),
-  "icon_url": zod.string(),
+  "icon_url": zod.string().nullish(),
   "description": zod.string().nullish(),
   "created_at": zod.string()
 })
@@ -78,7 +78,7 @@ export const ListAppsResponse = zod.array(ListAppsResponseItem)
 export const CreateAppBody = zod.object({
   "name": zod.string(),
   "url": zod.string().nullish(),
-  "icon_url": zod.string(),
+  "icon_url": zod.string().nullish(),
   "description": zod.string().nullish()
 })
 
@@ -93,7 +93,7 @@ export const UpdateAppParams = zod.object({
 export const UpdateAppBody = zod.object({
   "name": zod.string(),
   "url": zod.string().nullish(),
-  "icon_url": zod.string(),
+  "icon_url": zod.string().nullish(),
   "description": zod.string().nullish()
 })
 
@@ -101,7 +101,7 @@ export const UpdateAppResponse = zod.object({
   "id": zod.string(),
   "name": zod.string(),
   "url": zod.string().nullish(),
-  "icon_url": zod.string(),
+  "icon_url": zod.string().nullish(),
   "description": zod.string().nullish(),
   "created_at": zod.string()
 })
@@ -219,5 +219,78 @@ export const ListUsersResponseItem = zod.object({
   "created_at": zod.string()
 })
 export const ListUsersResponse = zod.array(ListUsersResponseItem)
+
+
+/**
+ * @summary List all latest working projects
+ */
+export const ListProjectsResponseItem = zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "description": zod.string().nullish(),
+  "images": zod.array(zod.string()).optional(),
+  "tech_stack": zod.string().nullish(),
+  "link_url": zod.string().nullish(),
+  "status": zod.string().optional(),
+  "sort_order": zod.number().optional(),
+  "created_at": zod.string()
+})
+export const ListProjectsResponse = zod.array(ListProjectsResponseItem)
+
+
+/**
+ * @summary Create a project (admin only)
+ */
+export const CreateProjectBody = zod.object({
+  "title": zod.string(),
+  "description": zod.string().nullish(),
+  "images": zod.array(zod.string()).optional(),
+  "tech_stack": zod.string().nullish(),
+  "link_url": zod.string().nullish(),
+  "status": zod.string().optional(),
+  "sort_order": zod.number().optional()
+})
+
+
+/**
+ * @summary Update a project (admin only)
+ */
+export const UpdateProjectParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const UpdateProjectBody = zod.object({
+  "title": zod.string(),
+  "description": zod.string().nullish(),
+  "images": zod.array(zod.string()).optional(),
+  "tech_stack": zod.string().nullish(),
+  "link_url": zod.string().nullish(),
+  "status": zod.string().optional(),
+  "sort_order": zod.number().optional()
+})
+
+export const UpdateProjectResponse = zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "description": zod.string().nullish(),
+  "images": zod.array(zod.string()).optional(),
+  "tech_stack": zod.string().nullish(),
+  "link_url": zod.string().nullish(),
+  "status": zod.string().optional(),
+  "sort_order": zod.number().optional(),
+  "created_at": zod.string()
+})
+
+
+/**
+ * @summary Delete a project (admin only)
+ */
+export const DeleteProjectParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const DeleteProjectResponse = zod.object({
+  "success": zod.boolean()
+})
 
 

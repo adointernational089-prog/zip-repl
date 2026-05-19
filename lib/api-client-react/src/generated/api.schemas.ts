@@ -46,7 +46,8 @@ export interface App {
   name: string;
   /** @nullable */
   url?: string | null;
-  icon_url: string;
+  /** @nullable */
+  icon_url?: string | null;
   /** @nullable */
   description?: string | null;
   created_at: string;
@@ -56,7 +57,8 @@ export interface AppInput {
   name: string;
   /** @nullable */
   url?: string | null;
-  icon_url: string;
+  /** @nullable */
+  icon_url?: string | null;
   /** @nullable */
   description?: string | null;
 }
@@ -123,5 +125,33 @@ export interface AdminStats {
 
 export interface DeleteResponse {
   success: boolean;
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  /** @nullable */
+  description?: string | null;
+  images?: string[];
+  /** @nullable */
+  tech_stack?: string | null;
+  /** @nullable */
+  link_url?: string | null;
+  status?: string;
+  sort_order?: number;
+  created_at: string;
+}
+
+export interface ProjectInput {
+  title: string;
+  /** @nullable */
+  description?: string | null;
+  images?: string[];
+  /** @nullable */
+  tech_stack?: string | null;
+  /** @nullable */
+  link_url?: string | null;
+  status?: string;
+  sort_order?: number;
 }
 

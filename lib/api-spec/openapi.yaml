@@ -15,6 +15,8 @@ tags:
     description: Featured apps management
   - name: messages
     description: Contact messages and replies
+  - name: projects
+    description: Latest working projects
 
 paths:
   /healthz:
@@ -300,6 +302,86 @@ paths:
                 items:
                   $ref: "#/components/schemas/User"
 
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List all latest working projects
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a project (admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectInput"
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /projects/{id}:
+    put:
+      operationId: updateProject
+      tags: [projects]
+      summary: Update a project (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectInput"
+      responses:
+        "200":
+          description: Project updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Delete a project (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -363,7 +445,7 @@ components:
 
     App:
       type: object
-      required: [id, name, icon_url, created_at]
+      required: [id, name, created_at]
       properties:
         id:
           type: string
@@ -372,7 +454,7 @@ components:
         url:
           type: ["string", "null"]
         icon_url:
-          type: string
+          type: ["string", "null"]
         description:
           type: ["string", "null"]
         created_at:
@@ -380,14 +462,14 @@ components:
 
     AppInput:
       type: object
-      required: [name, icon_url]
+      required: [name]
       properties:
         name:
           type: string
         url:
           type: ["string", "null"]
         icon_url:
-          type: string
+          type: ["string", "null"]
         description:
           type: ["string", "null"]
 
@@ -488,3 +570,49 @@ components:
       properties:
         success:
           type: boolean
+
+    Project:
+      type: object
+      required: [id, title, created_at]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        images:
+          type: array
+          items:
+            type: string
+        tech_stack:
+          type: ["string", "null"]
+        link_url:
+          type: ["string", "null"]
+        status:
+          type: string
+        sort_order:
+          type: integer
+        created_at:
+          type: string
+
+    ProjectInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        images:
+          type: array
+          items:
+            type: string
+        tech_stack:
+          type: ["string", "null"]
+        link_url:
+          type: ["string", "null"]
+        status:
+          type: string
+        sort_order:
+          type: integer

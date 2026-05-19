@@ -10,7 +10,8 @@ export interface AppInput {
   name: string;
   /** @nullable */
   url?: string | null;
-  icon_url: string;
+  /** @nullable */
+  icon_url?: string | null;
   /** @nullable */
   description?: string | null;
 }

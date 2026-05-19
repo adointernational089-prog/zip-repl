@@ -53,12 +53,17 @@ export function Navbar() {
               </button>
             </>
           ) : (
-            <Link href="/login">
-              <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-white transition-all" style={{background: "linear-gradient(90deg, #0ea5e9, #2563eb)"}}>
-                <User className="w-3 h-3" />
-                Sign In / Sign Up →
-              </button>
-            </Link>
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:block text-[10px] text-slate-500 leading-tight max-w-[120px] text-right">
+                connect with admin<br />for queries
+              </span>
+              <Link href="/login">
+                <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-white transition-all" style={{background: "linear-gradient(90deg, #0ea5e9, #2563eb)"}}>
+                  <User className="w-3 h-3" />
+                  Sign In / Sign Up →
+                </button>
+              </Link>
+            </div>
           )}
         </div>
       </div>

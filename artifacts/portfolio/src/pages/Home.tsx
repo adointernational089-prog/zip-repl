@@ -1,19 +1,26 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { useSendMessage } from "@workspace/api-client-react";
+import { useSendMessage, useListApps, useListProjects } from "@workspace/api-client-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import {
   Code2, Wrench, Lightbulb, Monitor, Smartphone, Palette,
   Mail, Phone, MapPin, ArrowRight, Facebook, Send,
   Globe, GitBranch, Figma, Server, CheckSquare, MessageSquare,
-  Briefcase, Star, Rocket, Flame, ChevronRight
+  Briefcase, Star, Rocket, Flame, ChevronRight, ExternalLink,
+  Linkedin, Lock
 } from "lucide-react";
 
 export default function Home() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+
+  const { data: apps = [] } = useListApps();
+  const { data: projects = [] } = useListProjects();
 
   const sendMsgMutation = useSendMessage({
     mutation: {
@@ -31,49 +38,51 @@ export default function Home() {
     sendMsgMutation.mutate({ data: form });
   };
 
+  const handleAppClick = (e: React.MouseEvent, app: any) => {
+    if (!user) {
+      e.preventDefault();
+      setLocation("/login");
+    }
+  };
+
   return (
     <div className="min-h-screen" style={{ background: "#06060f", color: "#ffffff" }}>
       <Navbar />
 
       {/* ───── HERO ───── */}
       <section id="hero" className="pt-16 pb-20 relative overflow-hidden">
-        {/* subtle radial glows */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] rounded-full opacity-20 blur-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse, #0ea5e9 0%, transparent 70%)" }} />
 
         {/* Large centered name */}
-        <div className="text-center pt-8 pb-6">
-          <h1 className="font-black leading-none tracking-tight select-none" style={{ fontSize: "clamp(3rem, 10vw, 6.5rem)" }}>
+        <div className="text-center pt-8 pb-6 animate-fade-in">
+          <h1 className="font-black leading-none tracking-tight select-none animate-glow-pulse" style={{ fontSize: "clamp(3rem, 10vw, 6.5rem)" }}>
             <span className="text-white">Bishal </span>
-            <span style={{
-              color: "#00d4ff",
-              textShadow: "0 0 40px rgba(0,212,255,0.8), 0 0 80px rgba(0,212,255,0.4), 0 0 120px rgba(0,212,255,0.2)"
-            }}>Bishwokarma</span>
+            <span style={{ color: "#00d4ff" }}>Bishwokarma</span>
           </h1>
         </div>
 
         {/* Two-column below */}
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center mt-4">
           {/* Left */}
-          <div>
-            {/* Role badge */}
+          <div className="animate-slide-left">
             <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border text-xs font-medium" style={{ borderColor: "#1e40af", background: "rgba(30,64,175,0.15)", color: "#93c5fd" }}>
               <span style={{ color: "#facc15" }}>✦</span>
               <span>IT Student · Web App Developer · Designer</span>
             </div>
 
-            <h2 className="font-black leading-tight mb-4" style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)" }}>
+            <h2 className="font-black leading-tight mb-4 animate-fade-in-up delay-100" style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)" }}>
               I build{" "}
               <span style={{ color: "#00d4ff" }}>powerful</span>
               {" "}web apps &amp; digital solutions
             </h2>
 
-            <p className="mb-8 leading-relaxed" style={{ color: "#94a3b8", fontSize: "0.95rem" }}>
+            <p className="mb-8 leading-relaxed animate-fade-in-up delay-200" style={{ color: "#94a3b8", fontSize: "0.95rem" }}>
               IT student creating practical, real-world applications that solve real problems. Based in{" "}
               <span style={{ color: "#38bdf8" }}>Kathmandu</span>,{" "}
               <span style={{ color: "#38bdf8" }}>Nepal</span>.
             </p>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 animate-fade-in-up delay-300">
               <a href="#projects">
                 <button className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
                   View Projects <ArrowRight className="w-4 h-4" />
@@ -87,18 +96,23 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right — photo placeholder card */}
-          <div className="flex justify-center">
-            <div className="rounded-3xl overflow-hidden" style={{
-              width: 280,
-              height: 360,
-              border: "1px solid rgba(99,102,241,0.3)",
-              boxShadow: "0 0 60px rgba(99,102,241,0.15)"
-            }}>
+          {/* Right — profile photo with glow */}
+          <div className="flex justify-center animate-slide-right">
+            <div className="relative" style={{ width: 320, height: 420 }}>
+              {/* Glow backdrop */}
+              <div className="absolute inset-0 rounded-3xl blur-2xl opacity-40 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(0,212,255,0.5) 0%, transparent 70%)", transform: "scale(0.9) translateY(10px)" }} />
               <img
-                src="/bishal-photo.jpg"
+                src="/bishal-photo-nobg.png"
                 alt="Bishal Bishwokarma"
-                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  objectPosition: "center bottom",
+                  filter: "drop-shadow(0 0 18px rgba(0,212,255,0.55)) drop-shadow(0 0 40px rgba(0,212,255,0.25))",
+                  position: "relative",
+                  zIndex: 1,
+                }}
               />
             </div>
           </div>
@@ -109,9 +123,9 @@ export default function Home() {
       <section id="about" className="py-20 scroll-mt-16" style={{ background: "#06060f" }}>
         <div className="max-w-3xl mx-auto px-6 text-center">
           <PillBadge color="cyan">ABOUT ME</PillBadge>
-          <h2 className="text-3xl font-black mt-4 mb-10">Who I Am</h2>
+          <h2 className="text-3xl font-black mt-4 mb-10 animate-fade-in-up">Who I Am</h2>
 
-          <div className="rounded-2xl p-7 text-left" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div className="rounded-2xl p-7 text-left animate-fade-in-up delay-200" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
             <p style={{ color: "#cbd5e1", lineHeight: 1.8, fontSize: "0.92rem" }}>
               I'm <strong className="text-white">Bishal Bishwokarma</strong>, an{" "}
               <span style={{ color: "#38bdf8" }}>IT student</span>{" "}
@@ -125,121 +139,217 @@ export default function Home() {
       <section id="skills" className="py-20 scroll-mt-16" style={{ background: "#08081a" }}>
         <div className="max-w-5xl mx-auto px-6 text-center">
           <PillBadge color="cyan">MY ARSENAL</PillBadge>
-          <h2 className="text-3xl font-black mt-4 mb-2">Skills &amp; Tools</h2>
-          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Technologies and abilities I use to bring ideas to life.</p>
+          <h2 className="text-3xl font-black mt-4 mb-2 animate-fade-in-up">Skills &amp; Tools</h2>
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10 animate-fade-in-up delay-100">Technologies and abilities I use to bring ideas to life.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {/* Programming */}
-            <SkillCard title="Programming" icon={<Code2 className="w-5 h-5" style={{ color: "#38bdf8" }} />}>
-              <div className="grid grid-cols-2 gap-2">
-                <SkillItem icon="⊞" label="HTML / CSS" />
-                <SkillItem icon=">_" label="Python" />
-                <SkillItem icon="</>" label="C" />
-                <SkillItem icon="▦" label="SQL" />
-              </div>
-            </SkillCard>
-
-            {/* Tools & Platforms */}
-            <SkillCard title="Tools & Platforms" icon={<Wrench className="w-5 h-5" style={{ color: "#38bdf8" }} />}>
-              <div className="grid grid-cols-2 gap-2">
-                <SkillItem icon="⬡" label="Supabase" />
-                <SkillItem icon="⊕" label="Git / GitHub" />
-                <SkillItem icon="◈" label="Figma" />
-                <SkillItem icon="▣" label="Canva" />
-                <SkillItem icon="△" label="Vercel" />
-              </div>
-            </SkillCard>
-
-            {/* Other Skills */}
-            <SkillCard title="Other Skills" icon={<Lightbulb className="w-5 h-5" style={{ color: "#38bdf8" }} />}>
-              <div className="grid grid-cols-2 gap-2">
-                <SkillItem icon="💡" label="Problem Solving" />
-                <SkillItem icon="□" label="Communication" />
-                <SkillItem icon="⊞" label="Project Management" />
-                <SkillItem icon="★" label="Fast Learner" />
-              </div>
-            </SkillCard>
+            <div className="animate-fade-in-up delay-100">
+              <SkillCard title="Programming" icon={<Code2 className="w-5 h-5" style={{ color: "#38bdf8" }} />}>
+                <div className="grid grid-cols-2 gap-2">
+                  <SkillItem icon="⊞" label="HTML / CSS" />
+                  <SkillItem icon=">_" label="Python" />
+                  <SkillItem icon="</>" label="C" />
+                  <SkillItem icon="▦" label="SQL" />
+                </div>
+              </SkillCard>
+            </div>
+            <div className="animate-fade-in-up delay-200">
+              <SkillCard title="Tools & Platforms" icon={<Wrench className="w-5 h-5" style={{ color: "#38bdf8" }} />}>
+                <div className="grid grid-cols-2 gap-2">
+                  <SkillItem icon="⬡" label="Supabase" />
+                  <SkillItem icon="⊕" label="Git / GitHub" />
+                  <SkillItem icon="◈" label="Figma" />
+                  <SkillItem icon="▣" label="Canva" />
+                  <SkillItem icon="△" label="Vercel" />
+                </div>
+              </SkillCard>
+            </div>
+            <div className="animate-fade-in-up delay-300">
+              <SkillCard title="Other Skills" icon={<Lightbulb className="w-5 h-5" style={{ color: "#38bdf8" }} />}>
+                <div className="grid grid-cols-2 gap-2">
+                  <SkillItem icon="💡" label="Problem Solving" />
+                  <SkillItem icon="□" label="Communication" />
+                  <SkillItem icon="⊞" label="Project Management" />
+                  <SkillItem icon="★" label="Fast Learner" />
+                </div>
+              </SkillCard>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ───── PROJECTS ───── */}
+      {/* ───── MY PROJECTS (apps from admin) ───── */}
       <section id="projects" className="py-20 scroll-mt-16" style={{ background: "#06060f" }}>
         <div className="max-w-5xl mx-auto px-6 text-center">
           <PillBadge color="green">PORTFOLIO</PillBadge>
-          <h2 className="text-3xl font-black mt-4 mb-2">Featured Projects</h2>
-          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Apps and tools from Bishal's Hub.</p>
+          <h2 className="text-3xl font-black mt-4 mb-2 animate-fade-in-up">My Projects</h2>
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10 animate-fade-in-up delay-100">Apps and tools I've built. Sign in to open them.</p>
 
-          <div className="max-w-sm mx-auto rounded-2xl p-10 flex flex-col items-center" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 text-3xl" style={{ background: "linear-gradient(135deg, #1d4ed8, #7c3aed)" }}>
-              🚀
-            </div>
-            <h3 className="text-lg font-bold mb-2">Apps Coming Soon</h3>
-            <p style={{ color: "#64748b", fontSize: "0.85rem", lineHeight: 1.6 }} className="mb-6">
-              New projects are being prepared. Sign in to explore Bishal's Hub when apps go live.
-            </p>
-            <Link href="/login">
-              <button className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-white" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
-                Get Early Access <ArrowRight className="w-4 h-4" />
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ───── ECOSYSTEM BANNER ───── */}
-      <section className="py-8" style={{ background: "#08081a" }}>
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="rounded-2xl p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-3">
-                <Flame className="w-4 h-4" style={{ color: "#fb923c" }} />
-                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: "#94a3b8" }}>MY ECOSYSTEM</span>
+          {apps.length === 0 ? (
+            <div className="max-w-sm mx-auto rounded-2xl p-10 flex flex-col items-center animate-fade-in" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 text-3xl" style={{ background: "linear-gradient(135deg, #1d4ed8, #7c3aed)" }}>
+                🚀
               </div>
-              <h3 className="text-2xl font-black mb-2">Bishal's Hub</h3>
-              <p style={{ color: "#64748b", fontSize: "0.875rem", maxWidth: 360 }}>
-                A curated collection of my apps, tools, and digital creations. Sign in to explore the full ecosystem.
+              <h3 className="text-lg font-bold mb-2">Apps Coming Soon</h3>
+              <p style={{ color: "#64748b", fontSize: "0.85rem", lineHeight: 1.6 }} className="mb-6">
+                New projects are being prepared. Sign in to explore Bishal's Hub when apps go live.
               </p>
+              <Link href="/login">
+                <button className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-white" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
+                  Get Early Access <ArrowRight className="w-4 h-4" />
+                </button>
+              </Link>
             </div>
-            <Link href="/login">
-              <button className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white whitespace-nowrap" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
-                Enter the Hub <ArrowRight className="w-4 h-4" />
-              </button>
-            </Link>
-          </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {apps.map((app: any, i: number) => (
+                <a
+                  key={app.id}
+                  href={user ? (app.url || "#") : "#"}
+                  target={user ? "_blank" : "_self"}
+                  rel="noreferrer"
+                  onClick={(e) => handleAppClick(e, app)}
+                  className="group"
+                  style={{ animationDelay: `${i * 0.08}s` }}
+                >
+                  <div className="rounded-2xl p-5 flex flex-col items-center text-center gap-3 transition-all cursor-pointer h-full animate-fade-in-up"
+                    style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}
+                    onMouseEnter={e => (e.currentTarget.style.border = "1px solid rgba(0,212,255,0.4)")}
+                    onMouseLeave={e => (e.currentTarget.style.border = "1px solid rgba(255,255,255,0.08)")}
+                  >
+                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center">
+                      {app.icon_url ? (
+                        <img src={app.icon_url} alt={app.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <Flame className="w-6 h-6 text-primary" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm group-hover:text-primary transition-colors">{app.name}</p>
+                      {app.description && <p className="text-xs mt-1 line-clamp-2" style={{ color: "#64748b" }}>{app.description}</p>}
+                    </div>
+                    {!user && (
+                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground/60">
+                        <Lock className="w-3 h-3" /> Sign in to open
+                      </div>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </section>
+
+      {/* ───── LATEST WORKING PROJECT ───── */}
+      {projects.length > 0 && (
+        <section id="latest-projects" className="py-20 scroll-mt-16" style={{ background: "#08081a" }}>
+          <div className="max-w-5xl mx-auto px-6 text-center">
+            <PillBadge color="orange">WORK IN PROGRESS</PillBadge>
+            <h2 className="text-3xl font-black mt-4 mb-2 animate-fade-in-up">Latest Working Project</h2>
+            <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-12 animate-fade-in-up delay-100">A glimpse into what I'm currently building.</p>
+
+            <div className="space-y-14">
+              {projects.map((proj: any, pi: number) => (
+                <div key={proj.id} className="animate-fade-in-up" style={{ animationDelay: `${pi * 0.15}s` }}>
+                  {/* Screenshots row — like reference image */}
+                  {proj.images && proj.images.length > 0 && (
+                    <div className="relative rounded-2xl overflow-hidden p-6 mb-6" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div className={`grid gap-3 ${proj.images.length === 1 ? "grid-cols-1 max-w-lg mx-auto" : proj.images.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                        {proj.images.slice(0, 3).map((img: string, idx: number) => (
+                          <div key={idx} className="rounded-xl overflow-hidden relative group" style={{
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+                            aspectRatio: "4/3"
+                          }}>
+                            <img
+                              src={img}
+                              alt={`${proj.title} screenshot ${idx + 1}`}
+                              className="w-full h-full object-cover object-top"
+                            />
+                            {/* Screen glare overlay */}
+                            <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%)" }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Project info */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 px-2">
+                    <div className="text-left">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="font-bold text-xl text-white">{proj.title}</h3>
+                        <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${
+                          proj.status === "completed" ? "bg-green-500/15 text-green-400 border border-green-500/20" :
+                          proj.status === "archived"  ? "bg-gray-500/15 text-gray-400 border border-gray-500/20" :
+                          "bg-yellow-500/15 text-yellow-400 border border-yellow-500/20"
+                        }`}>{proj.status === "in-progress" ? "In Progress" : proj.status}</span>
+                      </div>
+                      {proj.description && (
+                        <p style={{ color: "#94a3b8", fontSize: "0.9rem", maxWidth: 480 }}>{proj.description}</p>
+                      )}
+                      {proj.tech_stack && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {proj.tech_stack.split(",").map((t: string) => (
+                            <span key={t} className="px-2.5 py-1 rounded-lg text-xs font-medium" style={{ background: "rgba(56,189,248,0.08)", border: "1px solid rgba(56,189,248,0.2)", color: "#38bdf8" }}>
+                              {t.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    {proj.link_url && (
+                      <a href={proj.link_url} target="_blank" rel="noreferrer">
+                        <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white text-sm whitespace-nowrap" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
+                          View Project <ExternalLink className="w-4 h-4" />
+                        </button>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ───── SERVICES ───── */}
-      <section id="services" className="py-20 scroll-mt-16" style={{ background: "#08081a" }}>
+      <section id="services" className="py-20 scroll-mt-16" style={{ background: projects.length > 0 ? "#06060f" : "#08081a" }}>
         <div className="max-w-5xl mx-auto px-6 text-center">
           <PillBadge color="orange">FREELANCE</PillBadge>
-          <h2 className="text-3xl font-black mt-4 mb-2">What I Can Do For You</h2>
-          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Services tailored to your needs, delivered with quality.</p>
+          <h2 className="text-3xl font-black mt-4 mb-2 animate-fade-in-up">What I Can Do For You</h2>
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10 animate-fade-in-up delay-100">Services tailored to your needs, delivered with quality.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-            <ServiceCard
-              icon={<Monitor className="w-6 h-6" style={{ color: "#38bdf8" }} />}
-              title="Web App Development"
-              desc="Full-stack web applications built with modern frameworks. From idea to deployment."
-              items={["Responsive Design", "Database Integration", "Authentication", "API Development"]}
-            />
-            <ServiceCard
-              icon={<Smartphone className="w-6 h-6" style={{ color: "#38bdf8" }} />}
-              title="Simple Software Solutions"
-              desc="Custom software tools and utilities tailored to solve specific real-world problems."
-              items={["Desktop Tools", "Automation Scripts", "Data Processing", "Utility Apps"]}
-            />
-            <ServiceCard
-              icon={<Palette className="w-6 h-6" style={{ color: "#38bdf8" }} />}
-              title="Designing"
-              desc="Creative UI/UX design, graphics, and visual content that brings ideas to life beautifully."
-              items={["UI/UX Design", "Graphic Design", "Logo & Branding", "Social Media Content"]}
-            />
+            <div className="animate-fade-in-up delay-100">
+              <ServiceCard
+                icon={<Monitor className="w-6 h-6" style={{ color: "#38bdf8" }} />}
+                title="Web App Development"
+                desc="Full-stack web applications built with modern frameworks. From idea to deployment."
+                items={["Responsive Design", "Database Integration", "Authentication", "API Development"]}
+              />
+            </div>
+            <div className="animate-fade-in-up delay-200">
+              <ServiceCard
+                icon={<Smartphone className="w-6 h-6" style={{ color: "#38bdf8" }} />}
+                title="Simple Software Solutions"
+                desc="Custom software tools and utilities tailored to solve specific real-world problems."
+                items={["Desktop Tools", "Automation Scripts", "Data Processing", "Utility Apps"]}
+              />
+            </div>
+            <div className="animate-fade-in-up delay-300">
+              <ServiceCard
+                icon={<Palette className="w-6 h-6" style={{ color: "#38bdf8" }} />}
+                title="Designing"
+                desc="Creative UI/UX design, graphics, and visual content that brings ideas to life beautifully."
+                items={["UI/UX Design", "Graphic Design", "Logo & Branding", "Social Media Content"]}
+              />
+            </div>
           </div>
 
           <a href="#contact">
-            <button className="flex items-center gap-2 mx-auto px-8 py-3 rounded-lg font-semibold text-white" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
+            <button className="flex items-center gap-2 mx-auto px-8 py-3 rounded-lg font-semibold text-white animate-fade-in-up delay-400" style={{ background: "linear-gradient(90deg, #0ea5e9, #2563eb)" }}>
               Let's Work Together <ArrowRight className="w-4 h-4" />
             </button>
           </a>
@@ -250,34 +360,30 @@ export default function Home() {
       <section id="education" className="py-20 scroll-mt-16" style={{ background: "#06060f" }}>
         <div className="max-w-3xl mx-auto px-6 text-center">
           <PillBadge color="pink">BACKGROUND</PillBadge>
-          <h2 className="text-3xl font-black mt-4 mb-14">My Education</h2>
+          <h2 className="text-3xl font-black mt-4 mb-14 animate-fade-in-up">My Education</h2>
 
           <div className="relative">
-            {/* Center line */}
             <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2" style={{ background: "rgba(255,255,255,0.08)" }} />
 
             <div className="space-y-10">
-              {/* Item 1 — Left */}
               <div className="flex items-center gap-6">
-                <div className="flex-1">
+                <div className="flex-1 animate-slide-left">
                   <EduCard side="left" period="Upto SEE" title="School Education" school="Manakamana English Boarding School, Bhakunde, Lamjung" />
                 </div>
                 <div className="w-3 h-3 rounded-full flex-shrink-0 z-10" style={{ background: "#38bdf8", boxShadow: "0 0 8px #38bdf8" }} />
                 <div className="flex-1" />
               </div>
 
-              {/* Item 2 — Right */}
               <div className="flex items-center gap-6">
                 <div className="flex-1" />
                 <div className="w-3 h-3 rounded-full flex-shrink-0 z-10" style={{ background: "#38bdf8", boxShadow: "0 0 8px #38bdf8" }} />
-                <div className="flex-1">
+                <div className="flex-1 animate-slide-right">
                   <EduCard side="right" period="2021-2023" title="+2 in Bio-Science" school="Prerana College, Bharatpur, Chitwan" />
                 </div>
               </div>
 
-              {/* Item 3 — Left */}
               <div className="flex items-center gap-6">
-                <div className="flex-1">
+                <div className="flex-1 animate-slide-left">
                   <EduCard side="left" period="2023-Present" title="Bachelor in IT" school="Phoenix College of Management [Lincoln University], Maitidev, Kathmandu" />
                 </div>
                 <div className="w-3 h-3 rounded-full flex-shrink-0 z-10" style={{ background: "#38bdf8", boxShadow: "0 0 8px #38bdf8" }} />
@@ -292,12 +398,12 @@ export default function Home() {
       <section id="contact" className="py-20 scroll-mt-16" style={{ background: "#08081a" }}>
         <div className="max-w-4xl mx-auto px-6 text-center">
           <PillBadge color="cyan">GET IN TOUCH</PillBadge>
-          <h2 className="text-3xl font-black mt-4 mb-2">Contact</h2>
-          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Have an idea? Let's build it together.</p>
+          <h2 className="text-3xl font-black mt-4 mb-2 animate-fade-in-up">Contact</h2>
+          <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10 animate-fade-in-up delay-100">Have an idea? Let's build it together.</p>
 
           <div className="grid md:grid-cols-2 gap-8 text-left">
             {/* Left — info */}
-            <div className="space-y-3">
+            <div className="space-y-3 animate-slide-left">
               <ContactInfoRow icon={<Mail className="w-4 h-4 text-white" />} label="EMAIL" value="bishalbishwokarma089@gmail.com" bg="#0d6e5c" />
               <ContactInfoRow icon={<Phone className="w-4 h-4 text-white" />} label="PHONE" value="9802485583" bg="#166534" />
               <ContactInfoRow icon={<MapPin className="w-4 h-4 text-white" />} label="LOCATION" value="Kathmandu, Nepal" bg="#4c1d95" />
@@ -317,12 +423,23 @@ export default function Home() {
                     name="WhatsApp"
                     handle="9802485583"
                   />
+                  <a href="https://www.linkedin.com/in/bishal-bishwokarma-453608277" target="_blank" rel="noreferrer" className="block">
+                    <SocialRow
+                      icon={
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white" style={{ background: "#0a66c2" }}>
+                          <Linkedin className="w-4 h-4" />
+                        </div>
+                      }
+                      name="LinkedIn"
+                      handle="bishal-bishwokarma"
+                    />
+                  </a>
                 </div>
               </div>
             </div>
 
             {/* Right — form */}
-            <div className="rounded-2xl p-6" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div className="rounded-2xl p-6 animate-slide-right" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
               <form onSubmit={handleSend} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -421,7 +538,7 @@ function SkillItem({ icon, label }: { icon: string; label: string }) {
 
 function ServiceCard({ icon, title, desc, items }: { icon: React.ReactNode; title: string; desc: string; items: string[] }) {
   return (
-    <div className="rounded-2xl p-6 text-left" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+    <div className="rounded-2xl p-6 text-left h-full" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
       <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ background: "#131e3a", border: "1px solid rgba(56,189,248,0.2)" }}>
         {icon}
       </div>
@@ -468,12 +585,13 @@ function ContactInfoRow({ icon, label, value, bg }: { icon: React.ReactNode; lab
 
 function SocialRow({ icon, name, handle }: { icon: React.ReactNode; name: string; handle: string }) {
   return (
-    <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+    <div className="flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-white/5" style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
       {icon}
       <div>
-        <p className="text-sm font-semibold text-white">{name}</p>
-        <p className="text-xs" style={{ color: "#64748b" }}>{handle}</p>
+        <p className="text-xs font-semibold text-white">{name}</p>
+        <p className="text-[10px]" style={{ color: "#64748b" }}>{handle}</p>
       </div>
+      <ChevronRight className="w-3.5 h-3.5 ml-auto" style={{ color: "#38bdf8" }} />
     </div>
   );
 }

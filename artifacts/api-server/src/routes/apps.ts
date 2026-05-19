@@ -16,8 +16,8 @@ router.get("/", async (req, res) => {
 
 router.post("/", requireAdmin, async (req: AuthRequest, res) => {
   const { name, url, icon_url, description } = req.body;
-  if (!name || !icon_url) {
-    res.status(400).json({ error: "Name and icon_url are required" });
+  if (!name) {
+    res.status(400).json({ error: "App name is required" });
     return;
   }
   try {

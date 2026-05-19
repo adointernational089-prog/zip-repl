@@ -16,6 +16,8 @@ export * from './loginInput';
 export * from './message';
 export * from './messageInput';
 export * from './messageWithReplies';
+export * from './project';
+export * from './projectInput';
 export * from './registerInput';
 export * from './reply';
 export * from './replyInput';
