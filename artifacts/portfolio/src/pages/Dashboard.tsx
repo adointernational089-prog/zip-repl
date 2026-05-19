@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
-import { useListApps, useGetMyMessages, useSendMessage, useGetMessage, useReplyToMessage } from "@workspace/api-client-react";
+import { useListApps, useGetMyMessages, useSendMessage, useGetMessage, useReplyToMessage, getListAppsQueryKey, getGetMyMessagesQueryKey, getGetMessageQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,11 +26,11 @@ export default function Dashboard() {
 
   const { data: apps = [], isLoading: appsLoading } = useListApps();
   const { data: myMessages = [], isLoading: msgsLoading, refetch: refetchMsgs } = useGetMyMessages({
-    query: { enabled: !!user }
+    query: { queryKey: getGetMyMessagesQueryKey(), enabled: !!user }
   });
   const { data: thread, refetch: refetchThread } = useGetMessage(
     selectedMsgId || "",
-    { query: { enabled: !!selectedMsgId } }
+    { query: { queryKey: getGetMessageQueryKey(selectedMsgId || ""), enabled: !!selectedMsgId } }
   );
 
   const sendMsgMutation = useSendMessage({
@@ -45,7 +45,7 @@ export default function Dashboard() {
     },
   });
 
-  const replyMutation = useReplyToMessage(selectedMsgId || "", {
+  const replyMutation = useReplyToMessage({
     mutation: {
       onSuccess: () => {
         setReplyContent("");
@@ -311,7 +311,7 @@ export default function Dashboard() {
                   className="bg-background border-white/10 focus:border-primary resize-none flex-1"
                 />
                 <Button
-                  onClick={() => replyMutation.mutate({ data: { content: replyContent } })}
+                  onClick={() => replyMutation.mutate({ id: selectedMsgId || "", data: { content: replyContent } })}
                   disabled={replyMutation.isPending || !replyContent.trim()}
                   className="bg-primary hover:bg-primary/90 text-black font-bold self-end"
                 >

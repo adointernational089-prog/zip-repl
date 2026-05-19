@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAuth } from "@/contexts/AuthContext";
-import { useListApps, useCreateApp, useUpdateApp, useDeleteApp } from "@workspace/api-client-react";
+import { useListApps, useCreateApp, useUpdateApp, useDeleteApp, getListAppsQueryKey } from "@workspace/api-client-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +32,7 @@ export default function AdminApps() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: apps = [], isLoading: appsLoading, refetch } = useListApps({
-    query: { enabled: !!isAdmin }
+    query: { queryKey: getListAppsQueryKey(), enabled: !!isAdmin }
   });
 
   const createMutation = useCreateApp({
@@ -42,14 +42,14 @@ export default function AdminApps() {
     },
   });
 
-  const updateMutation = useUpdateApp(editId || "", {
+  const updateMutation = useUpdateApp({
     mutation: {
       onSuccess: () => { toast({ title: "App updated!" }); closeForm(); refetch(); },
       onError: () => toast({ title: "Error", description: "Failed to update app.", variant: "destructive" }),
     },
   });
 
-  const deleteMutation = useDeleteApp(deleteConfirm || "", {
+  const deleteMutation = useDeleteApp({
     mutation: {
       onSuccess: () => { toast({ title: "App deleted." }); setDeleteConfirm(null); refetch(); },
       onError: () => toast({ title: "Error", description: "Failed to delete app.", variant: "destructive" }),
@@ -107,7 +107,7 @@ export default function AdminApps() {
       return;
     }
     if (editId) {
-      updateMutation.mutate({ data: form });
+      updateMutation.mutate({ id: editId, data: form });
     } else {
       createMutation.mutate({ data: form });
     }
@@ -287,7 +287,7 @@ export default function AdminApps() {
                   {deleteConfirm === app.id ? (
                     <div className="flex items-center gap-1 ml-auto">
                       <span className="text-xs text-muted-foreground">Sure?</span>
-                      <Button size="sm" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} className="bg-destructive/20 text-destructive hover:bg-destructive/30 h-7 px-2 text-xs">
+                      <Button size="sm" onClick={() => deleteMutation.mutate({ id: deleteConfirm! })} disabled={deleteMutation.isPending} className="bg-destructive/20 text-destructive hover:bg-destructive/30 h-7 px-2 text-xs">
                         {deleteMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Delete"}
                       </Button>
                       <Button size="sm" variant="ghost" onClick={() => setDeleteConfirm(null)} className="h-7 px-2 text-xs">Cancel</Button>

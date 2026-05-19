@@ -1,6 +1,6 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAuth } from "@/contexts/AuthContext";
-import { useListUsers } from "@workspace/api-client-react";
+import { useListUsers, getListUsersQueryKey } from "@workspace/api-client-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
@@ -11,7 +11,7 @@ export default function AdminUsers() {
   const [, setLocation] = useLocation();
 
   const { data: users = [], isLoading: usersLoading } = useListUsers({
-    query: { enabled: !!isAdmin }
+    query: { queryKey: getListUsersQueryKey(), enabled: !!isAdmin }
   });
 
   if (isLoading) return (

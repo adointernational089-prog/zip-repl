@@ -1,6 +1,6 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAuth } from "@/contexts/AuthContext";
-import { useGetAdminStats, useListMessages } from "@workspace/api-client-react";
+import { useGetAdminStats, useListMessages, getGetAdminStatsQueryKey, getListMessagesQueryKey } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
@@ -11,11 +11,11 @@ export default function AdminOverview() {
   const [, setLocation] = useLocation();
 
   const { data: stats, isLoading: statsLoading } = useGetAdminStats({
-    query: { enabled: !!isAdmin }
+    query: { queryKey: getGetAdminStatsQueryKey(), enabled: !!isAdmin }
   });
 
   const { data: messages = [], isLoading: msgsLoading } = useListMessages({
-    query: { enabled: !!isAdmin }
+    query: { queryKey: getListMessagesQueryKey(), enabled: !!isAdmin }
   });
 
   if (isLoading) {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAuth } from "@/contexts/AuthContext";
-import { useListMessages, useGetMessage, useReplyToMessage } from "@workspace/api-client-react";
+import { useListMessages, useGetMessage, useReplyToMessage, getListMessagesQueryKey, getGetMessageQueryKey } from "@workspace/api-client-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,15 +18,15 @@ export default function AdminMessages() {
   const [replyContent, setReplyContent] = useState("");
 
   const { data: messages = [], isLoading: msgsLoading, refetch: refetchList } = useListMessages({
-    query: { enabled: !!isAdmin }
+    query: { queryKey: getListMessagesQueryKey(), enabled: !!isAdmin }
   });
 
   const { data: thread, isLoading: threadLoading, refetch: refetchThread } = useGetMessage(
     selectedId || "",
-    { query: { enabled: !!selectedId } }
+    { query: { queryKey: getGetMessageQueryKey(selectedId || ""), enabled: !!selectedId } }
   );
 
-  const replyMutation = useReplyToMessage(selectedId || "", {
+  const replyMutation = useReplyToMessage({
     mutation: {
       onSuccess: () => {
         setReplyContent("");
@@ -110,7 +110,7 @@ export default function AdminMessages() {
               className="bg-background border-white/10 focus:border-primary resize-none flex-1"
             />
             <Button
-              onClick={() => replyMutation.mutate({ data: { content: replyContent } })}
+              onClick={() => replyMutation.mutate({ id: selectedId!, data: { content: replyContent } })}
               disabled={replyMutation.isPending || !replyContent.trim()}
               className="bg-primary hover:bg-primary/90 text-black font-bold self-end"
             >

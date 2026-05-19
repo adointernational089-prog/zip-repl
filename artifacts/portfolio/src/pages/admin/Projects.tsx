@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAuth } from "@/contexts/AuthContext";
-import { useListProjects, useCreateProject, useUpdateProject, useDeleteProject } from "@workspace/api-client-react";
+import { useListProjects, useCreateProject, useUpdateProject, useDeleteProject, getListProjectsQueryKey } from "@workspace/api-client-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,7 +41,7 @@ export default function AdminProjects() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: projects = [], isLoading: projLoading, refetch } = useListProjects({
-    query: { enabled: !!isAdmin }
+    query: { queryKey: getListProjectsQueryKey(), enabled: !!isAdmin }
   });
 
   const createMutation = useCreateProject({
@@ -55,7 +55,7 @@ export default function AdminProjects() {
     },
   });
 
-  const updateMutation = useUpdateProject(editId || "", {
+  const updateMutation = useUpdateProject({
     mutation: {
       onSuccess: () => { toast({ title: "Project updated!" }); closeForm(); refetch(); },
       onError: (err: any) => toast({
@@ -66,7 +66,7 @@ export default function AdminProjects() {
     },
   });
 
-  const deleteMutation = useDeleteProject(deleteConfirm || "", {
+  const deleteMutation = useDeleteProject({
     mutation: {
       onSuccess: () => { toast({ title: "Project deleted." }); setDeleteConfirm(null); refetch(); },
       onError: () => toast({ title: "Error", description: "Failed to delete.", variant: "destructive" }),
@@ -152,7 +152,7 @@ export default function AdminProjects() {
     }
     const data = { ...form, sort_order: Number(form.sort_order) || 0 };
     if (editId) {
-      updateMutation.mutate({ data });
+      updateMutation.mutate({ id: editId, data });
     } else {
       createMutation.mutate({ data });
     }
@@ -372,7 +372,7 @@ export default function AdminProjects() {
                   {deleteConfirm === proj.id ? (
                     <div className="flex items-center gap-1 ml-auto">
                       <span className="text-xs text-muted-foreground">Delete?</span>
-                      <Button size="sm" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} className="bg-destructive/20 text-destructive hover:bg-destructive/30 h-7 px-2 text-xs">
+                      <Button size="sm" onClick={() => deleteMutation.mutate({ id: deleteConfirm! })} disabled={deleteMutation.isPending} className="bg-destructive/20 text-destructive hover:bg-destructive/30 h-7 px-2 text-xs">
                         {deleteMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Confirm"}
                       </Button>
                       <Button size="sm" variant="ghost" onClick={() => setDeleteConfirm(null)} className="h-7 px-2 text-xs">Cancel</Button>
