@@ -26,3 +26,16 @@ externalPort = 8080
 [[ports]]
 localPort = 8081
 externalPort = 80
+
+[[ports]]
+localPort = 21113
+externalPort = 3000
+
+[userenv]
+
+[userenv.shared]
+VITE_SUPABASE_URL = "https://rgakfxsrwpxuqkfqprjl.supabase.co"
+VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnYWtmeHNyd3B4dXFrZnFwcmpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNTcxNTgsImV4cCI6MjA5MjczMzE1OH0.cVw-vrhWt3PkB1G-_as0njtMq2UH_6vOiA4c6AwL4hA"
+SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnYWtmeHNyd3B4dXFrZnFwcmpsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzE1NzE1OCwiZXhwIjoyMDkyNzMzMTU4fQ.DSfHmmYLUSW1aH8WpXUKjBVX8qbTF8zBJkcMpa46r3Q"
+SUPABASE_URL = "https://rgakfxsrwpxuqkfqprjl.supabase.co"
+SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnYWtmeHNyd3B4dXFrZnFwcmpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNTcxNTgsImV4cCI6MjA5MjczMzE1OH0.cVw-vrhWt3PkB1G-_as0njtMq2UH_6vOiA4c6AwL4hA"

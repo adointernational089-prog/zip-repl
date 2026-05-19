@@ -1,22 +1,27 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Bishal's Hub API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: apps
+    description: Featured apps management
+  - name: messages
+    description: Contact messages and replies
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,7 +29,284 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "409":
+          description: Email already exists
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+
+  /apps:
+    get:
+      operationId: listApps
+      tags: [apps]
+      summary: List all featured apps
+      responses:
+        "200":
+          description: List of apps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/App"
+    post:
+      operationId: createApp
+      tags: [apps]
+      summary: Create a new app (admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppInput"
+      responses:
+        "201":
+          description: App created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/App"
+
+  /apps/{id}:
+    put:
+      operationId: updateApp
+      tags: [apps]
+      summary: Update an app (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppInput"
+      responses:
+        "200":
+          description: App updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/App"
+    delete:
+      operationId: deleteApp
+      tags: [apps]
+      summary: Delete an app (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: App deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
+  /messages:
+    get:
+      operationId: listMessages
+      tags: [messages]
+      summary: List all messages (admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+    post:
+      operationId: sendMessage
+      tags: [messages]
+      summary: Send a contact message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageInput"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /messages/my:
+    get:
+      operationId: getMyMessages
+      tags: [messages]
+      summary: Get messages for the logged in user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User messages with replies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+
+  /messages/{id}:
+    get:
+      operationId: getMessage
+      tags: [messages]
+      summary: Get a single message with its replies
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Message with replies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageWithReplies"
+
+  /messages/{id}/replies:
+    post:
+      operationId: replyToMessage
+      tags: [messages]
+      summary: Reply to a message
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReplyInput"
+      responses:
+        "201":
+          description: Reply sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reply"
+
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [messages]
+      summary: Get admin dashboard stats
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/users:
+    get:
+      operationId: listUsers
+      tags: [auth]
+      summary: List all users (admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     HealthStatus:
       type: object
@@ -34,3 +316,175 @@ components:
       required:
         - status
 
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    RegisterInput:
+      type: object
+      required: [email, password, name]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+
+    User:
+      type: object
+      required: [id, email, name, role, created_at]
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+        created_at:
+          type: string
+
+    App:
+      type: object
+      required: [id, name, icon_url, created_at]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: ["string", "null"]
+        icon_url:
+          type: string
+        description:
+          type: ["string", "null"]
+        created_at:
+          type: string
+
+    AppInput:
+      type: object
+      required: [name, icon_url]
+      properties:
+        name:
+          type: string
+        url:
+          type: ["string", "null"]
+        icon_url:
+          type: string
+        description:
+          type: ["string", "null"]
+
+    Message:
+      type: object
+      required: [id, name, email, message, created_at]
+      properties:
+        id:
+          type: string
+        user_id:
+          type: ["string", "null"]
+        name:
+          type: string
+        email:
+          type: string
+        message:
+          type: string
+        created_at:
+          type: string
+        reply_count:
+          type: ["integer", "null"]
+
+    MessageInput:
+      type: object
+      required: [name, email, message]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        message:
+          type: string
+        user_id:
+          type: ["string", "null"]
+
+    Reply:
+      type: object
+      required: [id, message_id, content, sender_role, created_at]
+      properties:
+        id:
+          type: string
+        message_id:
+          type: string
+        content:
+          type: string
+        sender_role:
+          type: string
+          enum: [admin, user]
+        sender_name:
+          type: ["string", "null"]
+        created_at:
+          type: string
+
+    ReplyInput:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+
+    MessageWithReplies:
+      type: object
+      required: [id, name, email, message, created_at, replies]
+      properties:
+        id:
+          type: string
+        user_id:
+          type: ["string", "null"]
+        name:
+          type: string
+        email:
+          type: string
+        message:
+          type: string
+        created_at:
+          type: string
+        replies:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reply"
+
+    AdminStats:
+      type: object
+      required: [total_messages, total_users, total_apps, unread_messages]
+      properties:
+        total_messages:
+          type: integer
+        total_users:
+          type: integer
+        total_apps:
+          type: integer
+        unread_messages:
+          type: integer
+
+    DeleteResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean

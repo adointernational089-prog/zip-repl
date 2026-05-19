@@ -358,6 +358,13 @@ export async function customFetch<T = unknown>(
     }
   }
 
+  if (typeof window !== "undefined" && !headers.has("authorization")) {
+    const localToken = localStorage.getItem("bishals_hub_token");
+    if (localToken) {
+      headers.set("authorization", `Bearer ${localToken}`);
+    }
+  }
+
   const requestInfo = { method, url: resolveUrl(input) };
 
   const response = await fetch(input, { ...init, method, headers });
