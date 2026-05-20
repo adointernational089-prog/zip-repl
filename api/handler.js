@@ -73444,7 +73444,14 @@ var routes_default = router10;
 
 // src/app-vercel.ts
 var app = (0, import_express11.default)();
-app.use((0, import_cors.default)());
+app.use(
+  (0, import_cors.default)({
+    origin: true,
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+  })
+);
 app.use(import_express11.default.json({ limit: "20mb" }));
 app.use(import_express11.default.urlencoded({ extended: true, limit: "20mb" }));
 app.use("/api", routes_default);
@@ -73748,3 +73755,4 @@ object-assign/index.js:
 safe-buffer/index.js:
   (*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> *)
 */
+module.exports = module.exports.default ?? module.exports;

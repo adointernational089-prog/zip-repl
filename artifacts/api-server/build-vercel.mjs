@@ -27,6 +27,12 @@ await esbuild({
     "*.node",
   ],
   sourcemap: false,
+  // Vercel CJS functions require module.exports = function(req,res).
+  // esbuild compiles `export default` to exports.default, so we
+  // normalise the export here so Vercel finds the handler correctly.
+  footer: {
+    js: "module.exports = module.exports.default ?? module.exports;",
+  },
 });
 
 console.log("✓ Vercel CJS handler bundle written to api/handler.js");
