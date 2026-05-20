@@ -533,7 +533,7 @@ function PricingCard({ icon, title, price, description, tag, tagColor, featured,
       </div>
       <div className="mt-auto pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
         <p className="font-black text-lg mb-3" style={{ color: featured ? "#a5b4fc" : "#38bdf8" }}>{price}</p>
-        <a href={`https://wa.me/9802485583`} target="_blank" rel="noreferrer" className="block">
+        <a href="https://wa.me/9779802485583" target="_blank" rel="noreferrer" className="block">
           <button className="w-full py-2.5 rounded-xl text-sm font-bold transition-all" style={{ background: featured ? "linear-gradient(90deg, #6366f1, #8b5cf6)" : "rgba(56,189,248,0.1)", color: featured ? "#fff" : "#38bdf8", border: featured ? "none" : "1px solid rgba(56,189,248,0.25)" }}>
             Hire Me →
           </button>

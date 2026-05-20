@@ -72741,6 +72741,37 @@ router2.post("/register", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+router2.post("/change-password", requireAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    res.status(400).json({ error: "Current password and new password are required" });
+    return;
+  }
+  if (newPassword.length < 6) {
+    res.status(400).json({ error: "New password must be at least 6 characters" });
+    return;
+  }
+  try {
+    const sb = getSupabase();
+    const { data, error } = await sb.from("users").select("*").eq("id", req.user.userId).single();
+    if (error || !data) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    const isValid2 = await bcryptjs_default.compare(currentPassword, data.password_hash);
+    if (!isValid2) {
+      res.status(401).json({ error: "Current password is incorrect" });
+      return;
+    }
+    const newHash = await bcryptjs_default.hash(newPassword, 10);
+    const { error: updateError } = await sb.from("users").update({ password_hash: newHash }).eq("id", req.user.userId);
+    if (updateError) throw updateError;
+    res.json({ success: true, message: "Password changed successfully" });
+  } catch (err) {
+    req.log?.error({ err }, "Change password error");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 router2.get("/me", requireAuth, async (req, res) => {
   try {
     const sb = getSupabase();

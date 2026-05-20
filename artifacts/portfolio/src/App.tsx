@@ -19,6 +19,7 @@ import AdminUsers from "@/pages/admin/Users";
 import AdminProjects from "@/pages/admin/Projects";
 import AdminContent from "@/pages/admin/Content";
 import AdminThemes from "@/pages/admin/Themes";
+import AdminSettings from "@/pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/admin/content" component={AdminContent} />
       <Route path="/admin/themes" component={AdminThemes} />
       <Route path="/admin/users" component={AdminUsers} />
+      <Route path="/admin/settings" component={AdminSettings} />
       <Route component={NotFound} />
     </Switch>
   );

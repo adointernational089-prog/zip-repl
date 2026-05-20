@@ -66,6 +66,41 @@ router.post("/register", async (req, res) => {
   }
 });
 
+router.post("/change-password", requireAuth, async (req: AuthRequest, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    res.status(400).json({ error: "Current password and new password are required" });
+    return;
+  }
+  if (newPassword.length < 6) {
+    res.status(400).json({ error: "New password must be at least 6 characters" });
+    return;
+  }
+  try {
+    const sb = getSupabase();
+    const { data, error } = await sb.from("users").select("*").eq("id", req.user!.userId).single();
+    if (error || !data) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    const isValid = await bcrypt.compare(currentPassword, data.password_hash);
+    if (!isValid) {
+      res.status(401).json({ error: "Current password is incorrect" });
+      return;
+    }
+    const newHash = await bcrypt.hash(newPassword, 10);
+    const { error: updateError } = await sb
+      .from("users")
+      .update({ password_hash: newHash })
+      .eq("id", req.user!.userId);
+    if (updateError) throw updateError;
+    res.json({ success: true, message: "Password changed successfully" });
+  } catch (err) {
+    req.log?.error({ err }, "Change password error");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.get("/me", requireAuth, async (req: AuthRequest, res) => {
   try {
     const sb = getSupabase();
