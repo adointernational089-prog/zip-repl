@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm install --no-frozen-lockfile && BASE_PATH=/ pnpm --filter @workspace/portfolio run build",
+  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm --filter @workspace/api-server run build:vercel && BASE_PATH=/ pnpm --filter @workspace/portfolio run build",
   "outputDirectory": "artifacts/portfolio/dist/public",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "framework": null,
