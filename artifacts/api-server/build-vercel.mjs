@@ -20,7 +20,10 @@ await esbuild({
   platform: "node",
   bundle: true,
   format: "cjs",
-  outfile: path.resolve(repoRoot, "api/handler.js"),
+  // Use catch-all filename so Vercel routes ALL /api/* requests here
+  // and preserves the original req.url (e.g. /api/auth/login) instead
+  // of rewriting it to /api/handler which breaks Express routing.
+  outfile: path.resolve(repoRoot, "api/[...path].js"),
   logLevel: "info",
   external: [
     // Only exclude native addons — everything else gets inlined
@@ -35,4 +38,4 @@ await esbuild({
   },
 });
 
-console.log("✓ Vercel CJS handler bundle written to api/handler.js");
+console.log("✓ Vercel CJS handler bundle written to api/[...path].js");
