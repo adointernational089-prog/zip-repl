@@ -72,7 +72,7 @@ export default function AdminSettings() {
     setIsPending(true);
     try {
       const token = localStorage.getItem("bishals_hub_token");
-      const res = await fetch("/api/auth/change-password", {
+      const res = await fetch("/api/account/change-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

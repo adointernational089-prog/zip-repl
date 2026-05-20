@@ -72612,7 +72612,7 @@ var content_default = router9;
 // src/routes/index.ts
 var router10 = (0, import_express10.Router)();
 router10.use(health_default);
-router10.use("/auth", auth_default);
+router10.use("/account", auth_default);
 router10.use("/apps", apps_default);
 router10.use("/messages", messages_default);
 router10.use("/admin", admin_default);

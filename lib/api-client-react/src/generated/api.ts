@@ -132,7 +132,7 @@ export const getLoginUrl = () => {
 
 
 
-  return `/api/auth/login`
+  return `/api/account/login`
 }
 
 /**
@@ -203,7 +203,7 @@ export const getRegisterUrl = () => {
 
 
 
-  return `/api/auth/register`
+  return `/api/account/register`
 }
 
 /**
@@ -274,7 +274,7 @@ export const getGetMeUrl = () => {
 
 
 
-  return `/api/auth/me`
+  return `/api/account/me`
 }
 
 /**
@@ -297,7 +297,7 @@ export const getMe = async ( options?: RequestInit): Promise<User> => {
 
 export const getGetMeQueryKey = () => {
     return [
-    `/api/auth/me`
+    `/api/account/me`
     ] as const;
     }
 

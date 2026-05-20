@@ -12,7 +12,7 @@ import contentRouter from "./content.js";
 const router: IRouter = Router();
 
 router.use(healthRouter);
-router.use("/auth", authRouter);
+router.use("/account", authRouter);
 router.use("/apps", appsRouter);
 router.use("/messages", messagesRouter);
 router.use("/admin", adminRouter);
