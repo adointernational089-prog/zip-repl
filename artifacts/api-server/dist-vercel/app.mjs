@@ -45823,10 +45823,9 @@ var init_esm = __esm({
   }
 });
 
-// src/app.ts
+// src/app-vercel.ts
 var import_express11 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
-import pinoHttp from "pino-http";
 
 // src/routes/index.ts
 var import_express10 = __toESM(require_express2(), 1);
@@ -61101,52 +61100,15 @@ router10.use("/content", content_default);
 router10.use(setup_default);
 var routes_default = router10;
 
-// src/lib/logger.ts
-import pino from "pino";
-var isProduction = process.env.NODE_ENV === "production";
-var logger = pino({
-  level: process.env.LOG_LEVEL ?? "info",
-  redact: [
-    "req.headers.authorization",
-    "req.headers.cookie",
-    "res.headers['set-cookie']"
-  ],
-  ...isProduction ? {} : {
-    transport: {
-      target: "pino-pretty",
-      options: { colorize: true }
-    }
-  }
-});
-
-// src/app.ts
+// src/app-vercel.ts
 var app = (0, import_express11.default)();
-app.use(
-  pinoHttp({
-    logger,
-    serializers: {
-      req(req) {
-        return {
-          id: req.id,
-          method: req.method,
-          url: req.url?.split("?")[0]
-        };
-      },
-      res(res) {
-        return {
-          statusCode: res.statusCode
-        };
-      }
-    }
-  })
-);
 app.use((0, import_cors.default)());
 app.use(import_express11.default.json({ limit: "20mb" }));
 app.use(import_express11.default.urlencoded({ extended: true, limit: "20mb" }));
 app.use("/api", routes_default);
-var app_default = app;
+var app_vercel_default = app;
 export {
-  app_default as default
+  app_vercel_default as default
 };
 /*! Bundled license information:
 

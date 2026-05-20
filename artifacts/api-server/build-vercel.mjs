@@ -12,7 +12,7 @@ const distDir = path.resolve(artifactDir, "dist-vercel");
 await rm(distDir, { recursive: true, force: true });
 
 await esbuild({
-  entryPoints: [path.resolve(artifactDir, "src/app.ts")],
+  entryPoints: [path.resolve(artifactDir, "src/app-vercel.ts")],
   platform: "node",
   bundle: true,
   format: "esm",
