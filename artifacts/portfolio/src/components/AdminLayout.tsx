@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, MessageSquare, LayoutGrid, Users, LogOut, ArrowLeft, FolderOpen, Menu, X, FileText } from "lucide-react";
+import { LayoutDashboard, MessageSquare, LayoutGrid, Users, LogOut, ArrowLeft, FolderOpen, Menu, X, FileText, Palette } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +10,7 @@ const navItems = [
   { href: "/admin/apps", label: "Apps", icon: LayoutGrid },
   { href: "/admin/projects", label: "Projects", icon: FolderOpen },
   { href: "/admin/content", label: "Content", icon: FileText },
+  { href: "/admin/themes", label: "Themes", icon: Palette },
   { href: "/admin/users", label: "Users", icon: Users },
 ];
 
