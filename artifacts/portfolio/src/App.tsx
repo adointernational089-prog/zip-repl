@@ -16,6 +16,7 @@ import AdminMessages from "@/pages/admin/Messages";
 import AdminApps from "@/pages/admin/Apps";
 import AdminUsers from "@/pages/admin/Users";
 import AdminProjects from "@/pages/admin/Projects";
+import AdminContent from "@/pages/admin/Content";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/admin/messages" component={AdminMessages} />
       <Route path="/admin/apps" component={AdminApps} />
       <Route path="/admin/projects" component={AdminProjects} />
+      <Route path="/admin/content" component={AdminContent} />
       <Route path="/admin/users" component={AdminUsers} />
       <Route component={NotFound} />
     </Switch>

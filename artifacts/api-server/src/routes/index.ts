@@ -7,6 +7,7 @@ import adminRouter from "./admin.js";
 import setupRouter from "./setup.js";
 import projectsRouter from "./projects.js";
 import uploadRouter from "./upload.js";
+import contentRouter from "./content.js";
 
 const router: IRouter = Router();
 
@@ -17,6 +18,7 @@ router.use("/messages", messagesRouter);
 router.use("/admin", adminRouter);
 router.use("/projects", projectsRouter);
 router.use("/upload", uploadRouter);
+router.use("/content", contentRouter);
 router.use(setupRouter);
 
 export default router;

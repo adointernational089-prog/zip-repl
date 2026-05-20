@@ -1,0 +1,13 @@
+{
+  "buildCommand": "pnpm install --no-frozen-lockfile && BASE_PATH=/ pnpm --filter @workspace/portfolio run build",
+  "outputDirectory": "artifacts/portfolio/dist/public",
+  "installCommand": "pnpm install --no-frozen-lockfile",
+  "framework": null,
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/handler" },
+    { "source": "/((?!_vercel|api/).*)", "destination": "/index.html" }
+  ],
+  "env": {
+    "SUPABASE_URL": "https://rgakfxsrwpxuqkfqprjl.supabase.co"
+  }
+}
