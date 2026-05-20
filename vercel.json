@@ -6,8 +6,5 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/handler" },
     { "source": "/((?!_vercel|api/).*)", "destination": "/index.html" }
-  ],
-  "env": {
-    "SUPABASE_URL": "https://rgakfxsrwpxuqkfqprjl.supabase.co"
-  }
+  ]
 }
