@@ -1,8 +1,9 @@
 /**
  * Vercel build script.
  * Bundles the entire Express app + serverless-http wrapper into
- * ../../api/handler.js so Vercel deploys it as a single self-contained
- * serverless function — no dynamic imports, no path resolution issues.
+ * ../../api/handler.js as a self-contained CJS bundle.
+ * No dynamic imports, no ESM syntax issues — plain CJS that Vercel
+ * can load without a "type":"module" in the root package.json.
  */
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -18,8 +19,7 @@ await esbuild({
   entryPoints: [path.resolve(artifactDir, "src/vercel-entry.ts")],
   platform: "node",
   bundle: true,
-  format: "esm",
-  // Overwrite api/handler.js with the complete self-contained bundle
+  format: "cjs",
   outfile: path.resolve(repoRoot, "api/handler.js"),
   logLevel: "info",
   external: [
@@ -27,15 +27,6 @@ await esbuild({
     "*.node",
   ],
   sourcemap: false,
-  banner: {
-    js: `import { createRequire as __bannerCrReq } from 'node:module';
-import __bannerPath from 'node:path';
-import __bannerUrl from 'node:url';
-globalThis.require = __bannerCrReq(import.meta.url);
-globalThis.__filename = __bannerUrl.fileURLToPath(import.meta.url);
-globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
-`,
-  },
 });
 
-console.log("✓ Vercel handler bundle written to api/handler.js");
+console.log("✓ Vercel CJS handler bundle written to api/handler.js");
