@@ -1,8 +1,6 @@
-import serverless from "serverless-http";
 import app from "./app-vercel.js";
 
-const handle = serverless(app);
-
-export default async function handler(req: any, res: any) {
-  return handle(req, res);
-}
+// Export the Express app directly as the Vercel serverless handler.
+// Vercel's req/res are Node.js IncomingMessage/ServerResponse compatible,
+// so Express handles them natively without the serverless-http wrapper.
+export default app;
