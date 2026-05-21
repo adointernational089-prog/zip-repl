@@ -76912,14 +76912,14 @@ router6.post("/setup-admin", async (req, res) => {
     return;
   }
   try {
-    const ADMIN_EMAIL2 = "bishalbishwokarma089@gmail.com";
-    const ADMIN_PASSWORD = "bishal@ado@9802485583";
+    const ADMIN_EMAIL3 = "bishalbishwokarma089@gmail.com";
+    const ADMIN_PASSWORD2 = "bishal@ado@9802485583";
     const sb = getSupabase();
-    const { data: existing } = await sb.from("users").select("id, role").eq("email", ADMIN_EMAIL2).limit(1).single();
+    const { data: existing } = await sb.from("users").select("id, role").eq("email", ADMIN_EMAIL3).limit(1).single();
     if (!existing) {
-      const passwordHash = await bcryptjs_default.hash(ADMIN_PASSWORD, 10);
+      const passwordHash = await bcryptjs_default.hash(ADMIN_PASSWORD2, 10);
       const { error } = await sb.from("users").insert({
-        email: ADMIN_EMAIL2,
+        email: ADMIN_EMAIL3,
         name: "Bishal Bishwokarma",
         password_hash: passwordHash,
         role: "admin"
@@ -76928,7 +76928,7 @@ router6.post("/setup-admin", async (req, res) => {
       res.json({ success: true, message: "Admin user created" });
     } else {
       if (existing.role !== "admin") {
-        await sb.from("users").update({ role: "admin" }).eq("email", ADMIN_EMAIL2);
+        await sb.from("users").update({ role: "admin" }).eq("email", ADMIN_EMAIL3);
       }
       res.json({ success: true, message: "Admin already exists" });
     }
@@ -77235,10 +77235,42 @@ if (process.env.NODE_ENV === "production") {
 }
 var app_default = app;
 
+// src/lib/auto-setup.ts
+var ADMIN_EMAIL2 = "bishalbishwokarma089@gmail.com";
+var ADMIN_NAME = "Bishal Bishwokarma";
+var ADMIN_PASSWORD = "bishal@ado@9802485583";
+async function autoSetupAdmin() {
+  try {
+    const sb = getSupabase();
+    const { data: existing } = await sb.from("users").select("id, role").eq("email", ADMIN_EMAIL2).limit(1).single();
+    if (!existing) {
+      const passwordHash = await bcryptjs_default.hash(ADMIN_PASSWORD, 10);
+      const { error } = await sb.from("users").insert({
+        email: ADMIN_EMAIL2,
+        name: ADMIN_NAME,
+        password_hash: passwordHash,
+        role: "admin"
+      });
+      if (error) throw error;
+      logger.info("\u2713 Admin user created automatically");
+    } else {
+      if (existing.role !== "admin") {
+        await sb.from("users").update({ role: "admin" }).eq("email", ADMIN_EMAIL2);
+        logger.info("\u2713 Admin role restored");
+      } else {
+        logger.info("\u2713 Admin user already exists");
+      }
+    }
+  } catch (err) {
+    logger.warn({ err }, "Auto-setup: could not verify admin user (DB may not be ready yet)");
+  }
+}
+
 // src/index-deploy.ts
 var port = Number(process.env.PORT ?? "3000");
-app_default.listen(port, () => {
+app_default.listen(port, async () => {
   logger.info({ port }, "Server listening \u2014 http://localhost:" + port);
+  await autoSetupAdmin();
 });
 /*! Bundled license information:
 
