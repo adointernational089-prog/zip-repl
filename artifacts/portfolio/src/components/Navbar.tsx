@@ -23,14 +23,12 @@ export function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
-          <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0" style={{ background: "linear-gradient(135deg, #ff6b6b, #ffa347, #ff6bcb, #6b6bff)" }}>
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-white text-sm font-black">B</span>
-            </div>
+          <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 relative" style={{ background: "linear-gradient(135deg, #060d1a, #0a1628)", border: "1px solid rgba(0,212,255,0.3)", boxShadow: "0 0 8px rgba(0,212,255,0.4)" }}>
+            <img src="/scorpion-favicon.svg" alt="Scorpion" className="w-full h-full object-contain p-0.5" />
           </div>
           <div className="flex flex-col leading-none">
             <span className="font-bold text-sm text-white tracking-tight">Bishal's Hub</span>
-            <span className="text-[9px] text-slate-400 tracking-[0.18em] uppercase font-medium hidden sm:block">SAAS PORTAL</span>
+            <span className="text-[9px] text-slate-400 tracking-[0.18em] uppercase font-medium hidden sm:block">PORTAL</span>
           </div>
         </Link>
 

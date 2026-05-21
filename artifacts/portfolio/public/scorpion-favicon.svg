@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="100%" stop-color="#060d1a"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#0088cc"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="url(#bg)"/>
+  <g filter="url(#glow)" fill="url(#body)">
+    <!-- Body segments -->
+    <ellipse cx="32" cy="34" rx="7" ry="9" opacity="0.95"/>
+    <ellipse cx="32" cy="24" rx="5.5" ry="5" opacity="0.95"/>
+    <!-- Head -->
+    <ellipse cx="32" cy="18" rx="4" ry="3.5" opacity="0.9"/>
+    <!-- Pincers -->
+    <path d="M28 17 Q22 12 20 16 Q22 18 26 17" stroke="url(#body)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M36 17 Q42 12 44 16 Q42 18 38 17" stroke="url(#body)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Pincer claws left -->
+    <ellipse cx="19.5" cy="15.5" rx="2" ry="1.5" opacity="0.9"/>
+    <ellipse cx="20.5" cy="17.5" rx="1.5" ry="1.2" opacity="0.9"/>
+    <!-- Pincer claws right -->
+    <ellipse cx="44.5" cy="15.5" rx="2" ry="1.5" opacity="0.9"/>
+    <ellipse cx="43.5" cy="17.5" rx="1.5" ry="1.2" opacity="0.9"/>
+    <!-- Legs left -->
+    <line x1="26" y1="26" x2="18" y2="22" stroke="url(#body)" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="26" y1="29" x2="17" y2="28" stroke="url(#body)" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="26" y1="33" x2="17" y2="33" stroke="url(#body)" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="26" y1="36" x2="18" y2="38" stroke="url(#body)" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- Legs right -->
+    <line x1="38" y1="26" x2="46" y2="22" stroke="url(#body)" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="38" y1="29" x2="47" y2="28" stroke="url(#body)" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="38" y1="33" x2="47" y2="33" stroke="url(#body)" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="38" y1="36" x2="46" y2="38" stroke="url(#body)" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- Tail segments -->
+    <ellipse cx="32" cy="44" rx="4" ry="3.5" opacity="0.9"/>
+    <ellipse cx="32" cy="51" rx="3" ry="3" opacity="0.9"/>
+    <!-- Tail curve -->
+    <path d="M32 54 Q38 56 42 52 Q46 48 44 44" stroke="url(#body)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Stinger -->
+    <path d="M44 44 Q47 42 46 39" stroke="url(#body)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="46" cy="38" rx="1.5" ry="2" transform="rotate(-20 46 38)" opacity="0.95"/>
+  </g>
+  <!-- Glow effect -->
+  <ellipse cx="32" cy="32" rx="28" ry="28" fill="none" stroke="#00d4ff" stroke-width="0.5" opacity="0.3"/>
+</svg>
