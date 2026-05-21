@@ -36,7 +36,16 @@ export function Navbar() {
         {isHome && (
           <div className="hidden md:flex items-center gap-1 text-sm">
             {homeLinks.map((link) => (
-              <a key={link.href} href={link.href} className="px-3 py-1.5 text-slate-400 hover:text-white transition-colors text-xs rounded-full hover:bg-white/5">
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const el = document.querySelector(link.href);
+                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                className="px-3 py-1.5 text-slate-400 hover:text-white transition-colors text-xs rounded-full hover:bg-white/5 cursor-pointer"
+              >
                 {link.label}
               </a>
             ))}

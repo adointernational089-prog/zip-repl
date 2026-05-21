@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
@@ -66,6 +66,201 @@ const DEFAULT = {
     { period: "2023-Present", title: "Bachelor in IT", school: "Phoenix College of Management [Lincoln University], Maitidev, Kathmandu", icon: "💻" },
   ],
 };
+
+/* ── Typewriter name component ── */
+const TypewriterName = memo(function TypewriterName() {
+  const FIRST = "Bishal";
+  const LAST = "Bishwokarma";
+  const TYPE_SPEED = 90;
+  const ERASE_SPEED = 55;
+  const PAUSE_MS = 2400;
+
+  const [first, setFirst] = useState("");
+  const [last, setLast] = useState("");
+  const [cursor, setCursor] = useState(true);
+  const [phase, setPhase] = useState<"typeFirst" | "typeLast" | "pause" | "eraseLast" | "eraseFirst">("typeFirst");
+
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    if (phase === "typeFirst") {
+      if (first.length < FIRST.length) {
+        t = setTimeout(() => setFirst(FIRST.slice(0, first.length + 1)), TYPE_SPEED);
+      } else {
+        t = setTimeout(() => setPhase("typeLast"), 280);
+      }
+    } else if (phase === "typeLast") {
+      if (last.length < LAST.length) {
+        t = setTimeout(() => setLast(LAST.slice(0, last.length + 1)), TYPE_SPEED);
+      } else {
+        t = setTimeout(() => setPhase("pause"), 280);
+      }
+    } else if (phase === "pause") {
+      t = setTimeout(() => setPhase("eraseLast"), PAUSE_MS);
+    } else if (phase === "eraseLast") {
+      if (last.length > 0) {
+        t = setTimeout(() => setLast(last.slice(0, -1)), ERASE_SPEED);
+      } else {
+        t = setTimeout(() => setPhase("eraseFirst"), 120);
+      }
+    } else if (phase === "eraseFirst") {
+      if (first.length > 0) {
+        t = setTimeout(() => setFirst(first.slice(0, -1)), ERASE_SPEED);
+      } else {
+        t = setTimeout(() => setPhase("typeFirst"), 350);
+      }
+    }
+    return () => clearTimeout(t);
+  }, [phase, first, last]);
+
+  useEffect(() => {
+    const interval = setInterval(() => setCursor((c) => !c), 530);
+    return () => clearInterval(interval);
+  }, []);
+
+  const isTypingFirst = phase === "typeFirst";
+  const isTypingLast = phase === "typeLast";
+  const isErasing = phase === "eraseLast" || phase === "eraseFirst";
+
+  return (
+    <div className="text-center pt-10 pb-6 overflow-hidden">
+      <h1
+        className="font-black leading-none tracking-tight select-none"
+        style={{ fontSize: "clamp(3rem, 10vw, 7rem)" }}
+      >
+        <span
+          className="text-white inline-block transition-all duration-100"
+          style={{
+            minWidth: "1ch",
+            textShadow: isTypingFirst ? "0 0 30px rgba(255,255,255,0.4)" : undefined,
+          }}
+        >
+          {first}
+        </span>
+        {first.length > 0 && <span className="text-white"> </span>}
+        <span
+          className="inline-block transition-all duration-100"
+          style={{
+            color: "hsl(var(--primary))",
+            minWidth: "1ch",
+            filter: isTypingLast ? `drop-shadow(0 0 20px hsl(var(--primary) / 0.7))` : `drop-shadow(0 0 10px hsl(var(--primary) / 0.4))`,
+          }}
+        >
+          {last}
+        </span>
+        <span
+          style={{
+            color: "hsl(var(--primary))",
+            opacity: cursor ? 1 : 0,
+            transition: "opacity 0.1s",
+            fontWeight: 100,
+          }}
+        >
+          |
+        </span>
+        {isErasing && (
+          <span
+            className="ml-2 text-xs font-normal align-middle"
+            style={{ color: "hsl(var(--primary) / 0.4)", fontSize: "clamp(0.6rem, 1.5vw, 0.9rem)" }}
+          >
+            &#x2588;
+          </span>
+        )}
+      </h1>
+    </div>
+  );
+});
+
+/* ── Scroll Scorpions ── */
+const ScrollScorpions = memo(function ScrollScorpions() {
+  const [offsetY, setOffsetY] = useState(0);
+  const [dir, setDir] = useState(1);
+  const lastYRef = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastYRef.current;
+      if (Math.abs(delta) > 2) setDir(delta > 0 ? 1 : -1);
+      lastYRef.current = y;
+      setOffsetY(y);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const yLeft = offsetY * 0.22;
+  const yRight = offsetY * -0.16 + 80;
+  const rotL = dir > 0 ? 0 : 180;
+  const rotR = dir > 0 ? 180 : 0;
+
+  return (
+    <>
+      {/* Left scorpion */}
+      <div
+        className="fixed left-1 top-0 pointer-events-none z-[1]"
+        style={{
+          transform: `translateY(${yLeft}px) rotate(${rotL}deg)`,
+          transition: "transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), rotate 0.5s ease",
+          opacity: 0.07,
+          willChange: "transform",
+        }}
+      >
+        <img
+          src="/scorpion-favicon.svg"
+          alt=""
+          aria-hidden
+          style={{
+            width: 72,
+            filter: `drop-shadow(0 0 10px hsl(var(--primary) / 0.5))`,
+          }}
+        />
+      </div>
+      {/* Right scorpion — mirrored, offset differently */}
+      <div
+        className="fixed right-1 top-0 pointer-events-none z-[1]"
+        style={{
+          transform: `translateY(${yRight}px) rotate(${rotR}deg) scaleX(-1)`,
+          transition: "transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), rotate 0.5s ease",
+          opacity: 0.065,
+          willChange: "transform",
+        }}
+      >
+        <img
+          src="/scorpion-favicon.svg"
+          alt=""
+          aria-hidden
+          style={{
+            width: 72,
+            filter: `drop-shadow(0 0 10px hsl(var(--primary) / 0.5))`,
+          }}
+        />
+      </div>
+      {/* Secondary smaller pair deeper down the page */}
+      <div
+        className="fixed left-2 top-0 pointer-events-none z-[1]"
+        style={{
+          transform: `translateY(${yLeft * 0.5 + 320}px) rotate(${rotL + 25}deg)`,
+          transition: "transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94)",
+          opacity: 0.04,
+          willChange: "transform",
+        }}
+      >
+        <img src="/scorpion-favicon.svg" alt="" aria-hidden style={{ width: 48 }} />
+      </div>
+      <div
+        className="fixed right-2 top-0 pointer-events-none z-[1]"
+        style={{
+          transform: `translateY(${yRight * 0.6 + 500}px) rotate(${rotR - 20}deg) scaleX(-1)`,
+          transition: "transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94)",
+          opacity: 0.04,
+          willChange: "transform",
+        }}
+      >
+        <img src="/scorpion-favicon.svg" alt="" aria-hidden style={{ width: 48 }} />
+      </div>
+    </>
+  );
+});
 
 /* ── Scroll reveal hook ── */
 function useScrollReveal() {
@@ -183,6 +378,9 @@ export default function Home() {
 
       <Navbar />
 
+      {/* ── Scroll scorpions ── */}
+      <ScrollScorpions />
+
       {/* ── Floating background orbs ── */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="animate-orb absolute w-[500px] h-[500px] rounded-full opacity-[0.04] blur-3xl" style={{ background: "hsl(var(--primary))", top: "10%", left: "5%" }} />
@@ -197,14 +395,8 @@ export default function Home() {
         {/* Scan line */}
         <div className="scan-line" />
 
-        {/* Animated name */}
-        <div className="text-center pt-10 pb-6 overflow-hidden animate-fade-in">
-          <h1 className="font-black leading-none tracking-tight select-none" style={{ fontSize: "clamp(3rem, 10vw, 7rem)" }}>
-            <span className="text-white hero-name-first">Bishal</span>
-            {" "}
-            <span className="hero-name-last animate-glow-pulse" style={{ color: "hsl(var(--primary))" }}>Bishwokarma</span>
-          </h1>
-        </div>
+        {/* Animated name — typewriter */}
+        <TypewriterName />
 
         {/* Two-column content */}
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center mt-4 relative z-10">

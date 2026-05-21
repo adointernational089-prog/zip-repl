@@ -222,6 +222,29 @@ export const ListUsersResponse = zod.array(ListUsersResponseItem)
 
 
 /**
+ * @summary Create a user (admin only)
+ */
+export const AdminCreateUserBody = zod.object({
+  "email": zod.string(),
+  "password": zod.string(),
+  "name": zod.string(),
+  "role": zod.enum(['admin', 'user']).optional()
+})
+
+
+/**
+ * @summary Delete a user (admin only)
+ */
+export const AdminDeleteUserParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const AdminDeleteUserResponse = zod.object({
+  "success": zod.boolean()
+})
+
+
+/**
  * @summary List all latest working projects
  */
 export const ListProjectsResponseItem = zod.object({

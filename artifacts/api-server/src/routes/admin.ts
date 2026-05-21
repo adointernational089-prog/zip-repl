@@ -1,8 +1,10 @@
 import { Router } from "express";
+import bcrypt from "bcryptjs";
 import { getSupabase } from "../lib/db.js";
 import { requireAdmin, type AuthRequest } from "../middlewares/requireAuth.js";
 
 const router = Router();
+const ADMIN_EMAIL = "bishalbishwokarma089@gmail.com";
 
 router.get("/stats", requireAdmin, async (req: AuthRequest, res) => {
   try {
@@ -39,6 +41,64 @@ router.get("/users", requireAdmin, async (req: AuthRequest, res) => {
     res.json(data);
   } catch (err) {
     req.log?.error({ err }, "List users error");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/users", requireAdmin, async (req: AuthRequest, res) => {
+  const { email, password, name, role } = req.body;
+  if (!email || !password || !name) {
+    res.status(400).json({ error: "Email, password and name are required" });
+    return;
+  }
+  if (password.length < 6) {
+    res.status(400).json({ error: "Password must be at least 6 characters" });
+    return;
+  }
+  try {
+    const sb = getSupabase();
+    const { data: existing } = await sb.from("users").select("id").eq("email", email).limit(1).single();
+    if (existing) {
+      res.status(409).json({ error: "Email already exists" });
+      return;
+    }
+    const passwordHash = await bcrypt.hash(password, 10);
+    const assignedRole = email === ADMIN_EMAIL ? "admin" : (role === "admin" ? "admin" : "user");
+    const { data, error } = await sb
+      .from("users")
+      .insert({ email, name, password_hash: passwordHash, role: assignedRole })
+      .select("id, email, name, role, created_at")
+      .single();
+    if (error || !data) {
+      req.log?.error({ err: error }, "Admin create user insert error");
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    res.status(201).json(data);
+  } catch (err) {
+    req.log?.error({ err }, "Admin create user error");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.delete("/users/:id", requireAdmin, async (req: AuthRequest, res) => {
+  const { id } = req.params;
+  if (id === req.user!.userId) {
+    res.status(400).json({ error: "You cannot delete your own account" });
+    return;
+  }
+  try {
+    const sb = getSupabase();
+    const { data: target } = await sb.from("users").select("email").eq("id", id).single();
+    if (target?.email === ADMIN_EMAIL) {
+      res.status(400).json({ error: "Cannot delete the primary admin account" });
+      return;
+    }
+    const { error } = await sb.from("users").delete().eq("id", id);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    req.log?.error({ err }, "Delete user error");
     res.status(500).json({ error: "Internal server error" });
   }
 });

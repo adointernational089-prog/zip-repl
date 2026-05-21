@@ -127,6 +127,21 @@ export interface DeleteResponse {
   success: boolean;
 }
 
+export type AdminCreateUserInputRole = typeof AdminCreateUserInputRole[keyof typeof AdminCreateUserInputRole];
+
+
+export const AdminCreateUserInputRole = {
+  admin: 'admin',
+  user: 'user',
+} as const;
+
+export interface AdminCreateUserInput {
+  email: string;
+  password: string;
+  name: string;
+  role?: AdminCreateUserInputRole;
+}
+
 export interface Project {
   id: string;
   title: string;

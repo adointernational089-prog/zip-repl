@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './adminCreateUserInput';
+export * from './adminCreateUserInputRole';
 export * from './adminStats';
 export * from './app';
 export * from './appInput';

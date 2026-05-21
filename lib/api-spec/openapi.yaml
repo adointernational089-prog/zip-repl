@@ -301,6 +301,48 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
+    post:
+      operationId: adminCreateUser
+      tags: [auth]
+      summary: Create a user (admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCreateUserInput"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "409":
+          description: Email already exists
+
+  /admin/users/{id}:
+    delete:
+      operationId: adminDeleteUser
+      tags: [auth]
+      summary: Delete a user (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
 
   /projects:
     get:
@@ -570,6 +612,20 @@ components:
       properties:
         success:
           type: boolean
+
+    AdminCreateUserInput:
+      type: object
+      required: [email, password, name]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
 
     Project:
       type: object
