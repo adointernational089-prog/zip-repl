@@ -1,0 +1,11 @@
+{
+  "name": "bishals-hub",
+  "version": "1.0.0",
+  "description": "Bishal's Hub — Portfolio + SaaS Portal",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

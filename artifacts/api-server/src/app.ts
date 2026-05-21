@@ -43,8 +43,11 @@ app.use("/api", router);
 // In production, serve the compiled React frontend from the same server.
 // This makes the app a single deployable unit (no separate static host needed).
 if (process.env.NODE_ENV === "production") {
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const frontendDist = path.resolve(__dirname, "../../portfolio/dist/public");
+  // STATIC_DIR is set by the standalone deploy bundle (build-deploy.mjs banner).
+  // Falls back to the monorepo relative path for Render / Railway deployments.
+  const frontendDist =
+    process.env.STATIC_DIR ||
+    path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../portfolio/dist/public");
   app.use(express.static(frontendDist));
   app.get("*splat", (_req, res) => {
     res.sendFile(path.join(frontendDist, "index.html"));
