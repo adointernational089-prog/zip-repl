@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Code2, Wrench, Lightbulb, Mail, Phone, MapPin, ArrowRight,
   Send, Flame, ChevronRight, ExternalLink, Linkedin, Lock, Star,
-  GraduationCap, BookOpen, Award, X, ZoomIn
+  GraduationCap, BookOpen, Award
 } from "lucide-react";
 
 /* ── Default content ── */
@@ -224,14 +224,14 @@ const ScrollScorpions = memo(function ScrollScorpions() {
     <>
       <div
         ref={leftRef}
-        className="fixed left-2 pointer-events-none z-[1]"
+        className="fixed left-2 pointer-events-none z-[48]"
         style={{ top: 160, opacity: 0.22, willChange: "top", transition: "top 0.08s linear" }}
       >
         <img src="/scorpion-favicon.svg" alt="" aria-hidden style={glowStyle} />
       </div>
       <div
         ref={rightRef}
-        className="fixed right-2 pointer-events-none z-[1]"
+        className="fixed right-2 pointer-events-none z-[48]"
         style={{ top: 320, opacity: 0.18, willChange: "top", transition: "top 0.08s linear", transform: "scaleX(-1)" }}
       >
         <img src="/scorpion-favicon.svg" alt="" aria-hidden style={glowStyle} />
@@ -243,19 +243,28 @@ const ScrollScorpions = memo(function ScrollScorpions() {
 /* ── Scroll reveal hook ── */
 function useScrollReveal() {
   useEffect(() => {
+    const SELECTOR = ".reveal, .reveal-left, .reveal-right, .reveal-scale, .edu-card-reveal";
+
+    const revealAll = () => {
+      document.querySelectorAll(SELECTOR).forEach((el) => el.classList.add("revealed"));
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("revealed");
-          }
+          if (entry.isIntersecting) entry.target.classList.add("revealed");
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0, rootMargin: "0px 0px 60px 0px" }
     );
-    const els = document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale, .edu-card-reveal");
+
+    const els = document.querySelectorAll(SELECTOR);
     els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+
+    // Safety net: force-reveal everything after 1.5 s in case observer misses anything
+    const safety = setTimeout(revealAll, 1500);
+
+    return () => { observer.disconnect(); clearTimeout(safety); };
   }, []);
 }
 
@@ -282,7 +291,6 @@ export default function Home() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   useScrollReveal();
   const portal = usePortal();
@@ -342,30 +350,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ background: "#06060f", color: "#ffffff" }}>
-      {/* Lightbox overlay */}
-      {lightboxImg && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-          style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(10px)" }}
-          onClick={() => setLightboxImg(null)}
-        >
-          <button
-            onClick={() => setLightboxImg(null)}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all hover:scale-110"
-            style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}
-          >
-            <X className="w-5 h-5" />
-          </button>
-          <img
-            src={lightboxImg}
-            alt="Full size preview"
-            className="rounded-xl max-w-full max-h-[90vh] object-contain"
-            style={{ boxShadow: "0 25px 80px rgba(0,0,0,0.9)", border: "1px solid rgba(255,255,255,0.1)" }}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
-
       {/* Portal overlay */}
       {portal.active && (
         <div className="portal-overlay" style={{ pointerEvents: "none" }}>
@@ -589,22 +573,15 @@ export default function Home() {
                         {proj.images.slice(0, 3).map((img: string, idx: number) => (
                           <div
                             key={idx}
-                            className="rounded-xl overflow-hidden relative group cursor-zoom-in neon-card"
+                            className="rounded-xl overflow-hidden neon-card"
                             style={{ border: "1px solid rgba(255,255,255,0.1)" }}
-                            onClick={() => setLightboxImg(img)}
                           >
                             <img
                               src={img}
                               alt={`${proj.title} screenshot ${idx + 1}`}
                               className="w-full h-auto block"
-                              style={{ display: "block" }}
+                              style={{ display: "block", userSelect: "none", pointerEvents: "none" }}
                             />
-                            {/* Hover overlay with zoom icon */}
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "rgba(0,0,0,0.5)" }}>
-                              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)" }}>
-                                <ZoomIn className="w-5 h-5 text-white" />
-                              </div>
-                            </div>
                           </div>
                         ))}
                       </div>
