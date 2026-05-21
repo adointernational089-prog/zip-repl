@@ -65,6 +65,28 @@ const DEFAULT = {
     { period: "2021-2023", title: "+2 in Bio-Science", school: "Prerana College, Bharatpur, Chitwan", icon: "🔬" },
     { period: "2023-Present", title: "Bachelor in IT", school: "Phoenix College of Management [Lincoln University], Maitidev, Kathmandu", icon: "💻" },
   ],
+  projects: [
+    {
+      id: "default-1",
+      title: "Bishal's Hub — Portfolio & SaaS Portal",
+      description: "A full personal portfolio and SaaS hub featuring dark neon design, user authentication, an admin panel, app management, and real-time messaging.",
+      images: [] as string[],
+      tech_stack: "React, TypeScript, Express.js, PostgreSQL, Tailwind CSS",
+      link_url: "",
+      status: "in-progress",
+      sort_order: 0,
+    },
+    {
+      id: "default-2",
+      title: "More Projects Being Documented",
+      description: "Additional projects are being prepared and will be showcased here with screenshots, tech details, and live links. Stay tuned!",
+      images: [] as string[],
+      tech_stack: "",
+      link_url: "",
+      status: "upcoming",
+      sort_order: 1,
+    },
+  ],
 };
 
 /* ── Typewriter name component ── */
@@ -266,7 +288,8 @@ export default function Home() {
   const portal = usePortal();
 
   const { data: apps = [] } = useListApps();
-  const { data: projects = [] } = useListProjects();
+  const { data: rawProjects = [] } = useListProjects();
+  const projects = rawProjects.length > 0 ? rawProjects : DEFAULT.projects;
 
   const { data: siteData = {} as any } = useQuery({
     queryKey: ["site-content"],
@@ -550,13 +573,12 @@ export default function Home() {
       </section>
 
       {/* ───── LATEST WORKING PROJECT ───── */}
-      {projects.length > 0 && (
-        <section id="latest-projects" className="py-20 scroll-mt-16 relative z-10" style={{ background: "#08081a" }}>
+      <section id="latest-projects" className="py-20 scroll-mt-16 relative z-10" style={{ background: "#08081a" }}>
           <div className="max-w-5xl mx-auto px-6 text-center">
             <div className="reveal">
-              <PillBadge color="orange">WORK IN PROGRESS</PillBadge>
-              <h2 className="text-3xl font-black mt-4 mb-2">Latest Working Project</h2>
-              <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-12">A glimpse into what I'm currently building.</p>
+              <PillBadge color="orange">MY WORK</PillBadge>
+              <h2 className="text-3xl font-black mt-4 mb-2">Latest Projects</h2>
+              <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-12">A look at what I've built and what's coming next.</p>
             </div>
             <div className="space-y-14">
               {projects.map((proj: any, pi: number) => (
@@ -595,8 +617,13 @@ export default function Home() {
                     <div className="text-left">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="font-bold text-xl text-white">{proj.title}</h3>
-                        <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${proj.status === "completed" ? "bg-green-500/15 text-green-400 border border-green-500/20" : proj.status === "archived" ? "bg-gray-500/15 text-gray-400 border border-gray-500/20" : "bg-yellow-500/15 text-yellow-400 border border-yellow-500/20"}`}>
-                          {proj.status === "in-progress" ? "In Progress" : proj.status}
+                        <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${
+                          proj.status === "completed" ? "bg-green-500/15 text-green-400 border border-green-500/20" :
+                          proj.status === "archived" ? "bg-gray-500/15 text-gray-400 border border-gray-500/20" :
+                          proj.status === "upcoming" ? "bg-purple-500/15 text-purple-400 border border-purple-500/20" :
+                          "bg-yellow-500/15 text-yellow-400 border border-yellow-500/20"
+                        }`}>
+                          {proj.status === "in-progress" ? "In Progress" : proj.status === "upcoming" ? "Upcoming" : proj.status}
                         </span>
                       </div>
                       {proj.description && <p style={{ color: "#94a3b8", fontSize: "0.9rem", maxWidth: 480 }}>{proj.description}</p>}
@@ -621,7 +648,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-      )}
 
       {/* ───── SERVICES & PRICING ───── */}
       <section id="services" className="py-24 scroll-mt-16 relative overflow-hidden z-10" style={{ background: projects.length > 0 ? "#06060f" : "#08081a" }}>

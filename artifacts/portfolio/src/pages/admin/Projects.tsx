@@ -236,6 +236,7 @@ export default function AdminProjects() {
                 >
                   <option value="in-progress">In Progress</option>
                   <option value="completed">Completed</option>
+                  <option value="upcoming">Upcoming Projects</option>
                   <option value="archived">Archived</option>
                 </select>
               </div>
@@ -350,8 +351,9 @@ export default function AdminProjects() {
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                         proj.status === "completed" ? "bg-green-500/10 text-green-400" :
                         proj.status === "archived" ? "bg-gray-500/10 text-gray-400" :
+                        proj.status === "upcoming" ? "bg-purple-500/10 text-purple-400" :
                         "bg-yellow-500/10 text-yellow-400"
-                      }`}>{proj.status}</span>
+                      }`}>{proj.status === "in-progress" ? "In Progress" : proj.status === "upcoming" ? "Upcoming" : proj.status}</span>
                     </div>
                     {proj.description && <p className="text-xs text-muted-foreground line-clamp-1 mb-1">{proj.description}</p>}
                     {proj.tech_stack && <p className="text-xs text-primary/70">{proj.tech_stack}</p>}
