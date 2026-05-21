@@ -498,7 +498,7 @@ export default function Dashboard() {
                     </div>
                     <div className={`flex-1 min-w-0 flex flex-col ${isFromAdmin ? "items-end" : ""}`}>
                       <div className={`rounded-2xl p-4 max-w-[85%] ${isFromAdmin ? "rounded-tr-none" : "rounded-tl-none"}`} style={{ background: isFromAdmin ? "hsl(var(--primary) / 0.1)" : "#0d0d1f", border: isFromAdmin ? "1px solid hsl(var(--primary) / 0.25)" : "1px solid rgba(255,255,255,0.08)" }}>
-                        <p className={`text-[10px] font-semibold mb-1 ${isFromAdmin ? "" : ""}`} style={{ color: isFromAdmin ? "hsl(var(--primary))" : "#94a3b8" }}>{reply.sender_name}</p>
+                        <p className="text-[10px] font-semibold mb-1" style={{ color: isFromAdmin ? "hsl(var(--primary))" : "#94a3b8" }}>{isFromAdmin ? "Admin" : (reply.sender_name || "You")}</p>
                         <p className="text-sm break-words">{reply.content}</p>
                       </div>
                       <p className={`text-[10px] mt-1 ${isFromAdmin ? "mr-1" : "ml-1"}`} style={{ color: "#475569" }}>{new Date(reply.created_at).toLocaleString()}</p>

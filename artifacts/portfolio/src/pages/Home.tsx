@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Code2, Wrench, Lightbulb, Mail, Phone, MapPin, ArrowRight,
   Send, Flame, ChevronRight, ExternalLink, Linkedin, Lock, Star,
-  GraduationCap, BookOpen, Award
+  GraduationCap, BookOpen, Award, X, ZoomIn
 } from "lucide-react";
 
 /* ── Default content ── */
@@ -170,93 +170,49 @@ const TypewriterName = memo(function TypewriterName() {
   );
 });
 
-/* ── Scroll Scorpions ── */
+/* ── Scroll Scorpions — follow scroll, direct DOM for perf ── */
 const ScrollScorpions = memo(function ScrollScorpions() {
-  const [offsetY, setOffsetY] = useState(0);
-  const [dir, setDir] = useState(1);
-  const lastYRef = useRef(0);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+  const leftPosRef = useRef(160);
+  const rightPosRef = useRef(320);
+  const lastScrollRef = useRef(0);
 
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
-      const delta = y - lastYRef.current;
-      if (Math.abs(delta) > 2) setDir(delta > 0 ? 1 : -1);
-      lastYRef.current = y;
-      setOffsetY(y);
+      const delta = y - lastScrollRef.current;
+      lastScrollRef.current = y;
+      const vh = window.innerHeight;
+      const SPEED = 0.78;
+
+      leftPosRef.current = Math.max(50, Math.min(vh - 140, leftPosRef.current + delta * SPEED));
+      rightPosRef.current = Math.max(50, Math.min(vh - 140, rightPosRef.current + delta * SPEED * 0.88));
+
+      if (leftRef.current) leftRef.current.style.top = leftPosRef.current + "px";
+      if (rightRef.current) rightRef.current.style.top = rightPosRef.current + "px";
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const yLeft = offsetY * 0.22;
-  const yRight = offsetY * -0.16 + 80;
-  const rotL = dir > 0 ? 0 : 180;
-  const rotR = dir > 0 ? 180 : 0;
+  const glowStyle = { width: 86, filter: "drop-shadow(0 0 18px hsl(var(--primary) / 0.75))" };
 
   return (
     <>
-      {/* Left scorpion */}
       <div
-        className="fixed left-1 top-0 pointer-events-none z-[1]"
-        style={{
-          transform: `translateY(${yLeft}px) rotate(${rotL}deg)`,
-          transition: "transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), rotate 0.5s ease",
-          opacity: 0.07,
-          willChange: "transform",
-        }}
+        ref={leftRef}
+        className="fixed left-2 pointer-events-none z-[1]"
+        style={{ top: 160, opacity: 0.22, willChange: "top", transition: "top 0.08s linear" }}
       >
-        <img
-          src="/scorpion-favicon.svg"
-          alt=""
-          aria-hidden
-          style={{
-            width: 72,
-            filter: `drop-shadow(0 0 10px hsl(var(--primary) / 0.5))`,
-          }}
-        />
-      </div>
-      {/* Right scorpion — mirrored, offset differently */}
-      <div
-        className="fixed right-1 top-0 pointer-events-none z-[1]"
-        style={{
-          transform: `translateY(${yRight}px) rotate(${rotR}deg) scaleX(-1)`,
-          transition: "transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), rotate 0.5s ease",
-          opacity: 0.065,
-          willChange: "transform",
-        }}
-      >
-        <img
-          src="/scorpion-favicon.svg"
-          alt=""
-          aria-hidden
-          style={{
-            width: 72,
-            filter: `drop-shadow(0 0 10px hsl(var(--primary) / 0.5))`,
-          }}
-        />
-      </div>
-      {/* Secondary smaller pair deeper down the page */}
-      <div
-        className="fixed left-2 top-0 pointer-events-none z-[1]"
-        style={{
-          transform: `translateY(${yLeft * 0.5 + 320}px) rotate(${rotL + 25}deg)`,
-          transition: "transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94)",
-          opacity: 0.04,
-          willChange: "transform",
-        }}
-      >
-        <img src="/scorpion-favicon.svg" alt="" aria-hidden style={{ width: 48 }} />
+        <img src="/scorpion-favicon.svg" alt="" aria-hidden style={glowStyle} />
       </div>
       <div
-        className="fixed right-2 top-0 pointer-events-none z-[1]"
-        style={{
-          transform: `translateY(${yRight * 0.6 + 500}px) rotate(${rotR - 20}deg) scaleX(-1)`,
-          transition: "transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94)",
-          opacity: 0.04,
-          willChange: "transform",
-        }}
+        ref={rightRef}
+        className="fixed right-2 pointer-events-none z-[1]"
+        style={{ top: 320, opacity: 0.18, willChange: "top", transition: "top 0.08s linear", transform: "scaleX(-1)" }}
       >
-        <img src="/scorpion-favicon.svg" alt="" aria-hidden style={{ width: 48 }} />
+        <img src="/scorpion-favicon.svg" alt="" aria-hidden style={glowStyle} />
       </div>
     </>
   );
@@ -304,6 +260,7 @@ export default function Home() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   useScrollReveal();
   const portal = usePortal();
@@ -362,6 +319,30 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ background: "#06060f", color: "#ffffff" }}>
+      {/* Lightbox overlay */}
+      {lightboxImg && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(10px)" }}
+          onClick={() => setLightboxImg(null)}
+        >
+          <button
+            onClick={() => setLightboxImg(null)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all hover:scale-110"
+            style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <img
+            src={lightboxImg}
+            alt="Full size preview"
+            className="rounded-xl max-w-full max-h-[90vh] object-contain"
+            style={{ boxShadow: "0 25px 80px rgba(0,0,0,0.9)", border: "1px solid rgba(255,255,255,0.1)" }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
       {/* Portal overlay */}
       {portal.active && (
         <div className="portal-overlay" style={{ pointerEvents: "none" }}>
@@ -581,14 +562,33 @@ export default function Home() {
               {projects.map((proj: any, pi: number) => (
                 <div key={proj.id} className="reveal" style={{ transitionDelay: `${pi * 0.15}s` }}>
                   {proj.images && proj.images.length > 0 && (
-                    <div className="relative rounded-2xl overflow-hidden p-6 mb-6" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.06)" }}>
-                      <div className={`grid gap-3 ${proj.images.length === 1 ? "grid-cols-1 max-w-lg mx-auto" : proj.images.length === 2 ? "grid-cols-2" : "grid-cols-1 sm:grid-cols-3"}`}>
+                    <div className="relative rounded-2xl overflow-hidden p-4 sm:p-6 mb-6" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div className={`grid gap-3 ${proj.images.length === 1 ? "grid-cols-1" : proj.images.length === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}`}>
                         {proj.images.slice(0, 3).map((img: string, idx: number) => (
-                          <div key={idx} className="rounded-xl overflow-hidden relative group neon-card" style={{ border: "1px solid rgba(255,255,255,0.1)", aspectRatio: "4/3" }}>
-                            <img src={img} alt={`${proj.title} screenshot ${idx + 1}`} className="w-full h-full object-cover object-top" />
+                          <div
+                            key={idx}
+                            className="rounded-xl overflow-hidden relative group cursor-zoom-in neon-card"
+                            style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+                            onClick={() => setLightboxImg(img)}
+                          >
+                            <img
+                              src={img}
+                              alt={`${proj.title} screenshot ${idx + 1}`}
+                              className="w-full h-auto block"
+                              style={{ display: "block" }}
+                            />
+                            {/* Hover overlay with zoom icon */}
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "rgba(0,0,0,0.5)" }}>
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)" }}>
+                                <ZoomIn className="w-5 h-5 text-white" />
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
+                      {proj.images.length > 3 && (
+                        <p className="text-center text-xs mt-3" style={{ color: "#475569" }}>+{proj.images.length - 3} more images</p>
+                      )}
                     </div>
                   )}
                   <div className="flex flex-wrap items-center justify-between gap-4 px-2">
