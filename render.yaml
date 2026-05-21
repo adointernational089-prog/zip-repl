@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: bishals-hub
+    runtime: node
+    buildCommand: >
+      pnpm install --frozen-lockfile &&
+      BASE_PATH=/ pnpm --filter @workspace/portfolio run build &&
+      pnpm --filter @workspace/api-server run build
+    startCommand: NODE_ENV=production node artifacts/api-server/dist/index.mjs
+    healthCheckPath: /api/healthz
+    envVars:
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SESSION_SECRET
+        value: bishal-hub-secret-key-2026
