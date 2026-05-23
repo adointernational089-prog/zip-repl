@@ -1,0 +1,31 @@
+{
+  "name": "Bishal Bishwokarma — Portfolio",
+  "short_name": "Bishal's Hub",
+  "description": "IT Student, Web App Developer & Designer from Kathmandu, Nepal.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06060f",
+  "theme_color": "#00BFFF",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/scorpion-favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["portfolio", "technology", "business"],
+  "screenshots": [
+    {
+      "src": "/opengraph.jpg",
+      "type": "image/jpeg",
+      "sizes": "1200x630"
+    }
+  ]
+}
