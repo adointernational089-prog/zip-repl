@@ -1,5 +1,5 @@
 {
-  "name": "Bishal Bishwokarma — Portfolio",
+  "name": "Bishal Bishwokarma - PORTAL",
   "short_name": "Bishal's Hub",
   "description": "IT Student, Web App Developer & Designer from Kathmandu, Nepal.",
   "start_url": "/",
@@ -9,13 +9,19 @@
   "lang": "en",
   "icons": [
     {
-      "src": "/scorpion-favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/favicon.svg",
+      "src": "/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/scorpion-favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }
