@@ -103,4 +103,53 @@ router.delete("/users/:id", requireAdmin, async (req: AuthRequest, res) => {
   }
 });
 
+router.get("/broadcasts", requireAdmin, async (req: AuthRequest, res) => {
+  try {
+    const sb = getSupabase();
+    const { data, error } = await sb
+      .from("broadcasts")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error && (error as any).code === "42P01") { res.json([]); return; }
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    req.log?.error({ err }, "List broadcasts error");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/broadcasts", requireAdmin, async (req: AuthRequest, res) => {
+  const { title, content, type = "info" } = req.body;
+  if (!title || !content) {
+    res.status(400).json({ error: "Title and content are required" });
+    return;
+  }
+  try {
+    const sb = getSupabase();
+    const { data, error } = await sb
+      .from("broadcasts")
+      .insert({ title, content, type, created_by: req.user!.userId })
+      .select()
+      .single();
+    if (error) throw error;
+    res.status(201).json(data);
+  } catch (err) {
+    req.log?.error({ err }, "Create broadcast error");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.delete("/broadcasts/:id", requireAdmin, async (req: AuthRequest, res) => {
+  try {
+    const sb = getSupabase();
+    const { error } = await sb.from("broadcasts").delete().eq("id", req.params.id);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    req.log?.error({ err }, "Delete broadcast error");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router;

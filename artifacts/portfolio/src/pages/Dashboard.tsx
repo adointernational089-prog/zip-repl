@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 import { useListApps, useGetMyMessages, useSendMessage, useGetMessage, useReplyToMessage, getGetMyMessagesQueryKey, getGetMessageQueryKey } from "@workspace/api-client-react";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,8 +15,11 @@ import {
   LayoutGrid, MessageSquare, ChevronRight, ExternalLink,
   ArrowLeft, Send, Loader2, User, Shield, Flame, Zap,
   TrendingUp, Clock, Star, Bell, Settings, LogOut, Home,
-  Mail, Globe, Activity, Award, Sparkles
+  Mail, Globe, Activity, Award, Sparkles,
+  Info, CheckCircle2, AlertTriangle, AlertCircle, X
 } from "lucide-react";
+
+const API_BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
@@ -37,6 +42,29 @@ export default function Dashboard() {
   const { data: myMessages = [], isLoading: msgsLoading, refetch: refetchMsgs } = useGetMyMessages({
     query: { queryKey: getGetMyMessagesQueryKey(), enabled: !!user }
   });
+  const { data: broadcasts = [] } = useQuery<any[]>({
+    queryKey: ["broadcasts"],
+    queryFn: async () => {
+      const r = await fetch(`${API_BASE}/api/broadcasts`);
+      if (!r.ok) return [];
+      return r.json();
+    },
+    staleTime: 60_000,
+    retry: false,
+  });
+  const [dismissedBcasts, setDismissedBcasts] = useState<Set<string>>(() => {
+    try {
+      const raw = localStorage.getItem("bb_dismissed_broadcasts");
+      return raw ? new Set(JSON.parse(raw)) : new Set();
+    } catch { return new Set(); }
+  });
+  const dismissBroadcast = (id: string) => {
+    const next = new Set(dismissedBcasts);
+    next.add(id);
+    setDismissedBcasts(next);
+    try { localStorage.setItem("bb_dismissed_broadcasts", JSON.stringify([...next])); } catch {}
+  };
+  const visibleBroadcasts = broadcasts.filter((b: any) => !dismissedBcasts.has(b.id));
   const { data: thread, refetch: refetchThread } = useGetMessage(
     selectedMsgId || "",
     { query: { queryKey: getGetMessageQueryKey(selectedMsgId || ""), enabled: !!selectedMsgId } }
@@ -178,6 +206,41 @@ export default function Dashboard() {
         {/* ══ HOME TAB ══ */}
         {activeTab === "home" && (
           <div className="space-y-6">
+            {/* Broadcasts / announcements */}
+            {visibleBroadcasts.length > 0 && (
+              <div className="space-y-2 animate-dashboard-in">
+                {visibleBroadcasts.map((b: any) => {
+                  const styles: Record<string, { color: string; bg: string; border: string; Icon: any }> = {
+                    info:    { color: "#38bdf8", bg: "rgba(56,189,248,0.08)",  border: "rgba(56,189,248,0.25)",  Icon: Info },
+                    success: { color: "#4ade80", bg: "rgba(74,222,128,0.08)",  border: "rgba(74,222,128,0.25)",  Icon: CheckCircle2 },
+                    warning: { color: "#fbbf24", bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)",  Icon: AlertTriangle },
+                    alert:   { color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.25)", Icon: AlertCircle },
+                  };
+                  const s = styles[b.type] ?? styles.info;
+                  return (
+                    <div
+                      key={b.id}
+                      className="flex items-start gap-3 rounded-xl px-4 py-3"
+                      style={{ background: s.bg, border: `1px solid ${s.border}` }}
+                    >
+                      <s.Icon className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: s.color }} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold" style={{ color: s.color }}>{b.title}</p>
+                        <p className="text-xs mt-0.5 text-muted-foreground">{b.content}</p>
+                      </div>
+                      <button
+                        onClick={() => dismissBroadcast(b.id)}
+                        className="flex-shrink-0 p-1 rounded-lg transition-colors hover:bg-white/10"
+                        style={{ color: "rgba(148,163,184,0.5)" }}
+                        title="Dismiss"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             {/* Stats row */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 animate-dashboard-in delay-150">
               <StatCard icon={<LayoutGrid className="w-5 h-5" />} label="Apps Available" value={apps.length} color="cyan" delay={0} />

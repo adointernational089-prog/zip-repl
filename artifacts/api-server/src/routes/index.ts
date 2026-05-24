@@ -8,6 +8,8 @@ import setupRouter from "./setup.js";
 import projectsRouter from "./projects.js";
 import uploadRouter from "./upload.js";
 import contentRouter from "./content.js";
+import reactionsRouter from "./reactions.js";
+import broadcastsRouter from "./broadcasts.js";
 
 const router: IRouter = Router();
 
@@ -19,6 +21,8 @@ router.use("/admin", adminRouter);
 router.use("/projects", projectsRouter);
 router.use("/upload", uploadRouter);
 router.use("/content", contentRouter);
+router.use("/reactions", reactionsRouter);
+router.use("/broadcasts", broadcastsRouter);
 router.use(setupRouter);
 
 export default router;

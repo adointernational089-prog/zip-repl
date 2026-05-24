@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { ReactionBar } from "@/components/ReactionBar";
 import { useSendMessage, useListApps, useListProjects } from "@workspace/api-client-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -579,6 +580,9 @@ export default function Home() {
               ))}
             </div>
           )}
+          <div className="mt-6">
+            <ReactionBar targetType="section" targetId="my-projects" />
+          </div>
         </div>
       </section>
 
@@ -645,6 +649,9 @@ export default function Home() {
                         </button>
                       </a>
                     )}
+                  </div>
+                  <div className="px-2 pt-2">
+                    <ReactionBar targetType="project" targetId={proj.id} compact />
                   </div>
                 </div>
               ))}
