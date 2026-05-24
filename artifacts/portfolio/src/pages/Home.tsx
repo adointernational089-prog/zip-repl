@@ -151,15 +151,15 @@ const TypewriterName = memo(function TypewriterName() {
         aria-label="Bishal Bishwokarma"
       >
         <span
-          className="text-white inline-block transition-all duration-100"
+          className="text-foreground inline-block transition-all duration-100"
           style={{
             minWidth: "1ch",
-            textShadow: isTypingFirst ? "0 0 30px rgba(255,255,255,0.4)" : undefined,
+            textShadow: isTypingFirst ? "0 0 30px hsl(var(--foreground) / 0.3)" : undefined,
           }}
         >
           {first}
         </span>
-        {first.length > 0 && <span className="text-white"> </span>}
+        {first.length > 0 && <span className="text-foreground"> </span>}
         <span
           className="inline-block transition-all duration-100"
           style={{
@@ -429,7 +429,7 @@ export default function Home() {
               )}
             </h2>
 
-            <p className="mb-8 leading-relaxed animate-fade-in-up delay-200" style={{ color: "#94a3b8", fontSize: "0.95rem" }}>
+            <p className="mb-8 leading-relaxed animate-fade-in-up delay-200" style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.95rem" }}>
               {hero.bio}
             </p>
 
@@ -444,7 +444,7 @@ export default function Home() {
               <button
                 onClick={(e) => handlePortalNav(e, "#contact")}
                 className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold transition-all hover:border-white/40 hover:scale-105"
-                style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "#cbd5e1" }}
+                style={{ background: "transparent", border: "1px solid hsl(var(--border))", color: "hsl(var(--foreground))" }}
               >
                 Contact Me <Send className="w-4 h-4" />
               </button>
@@ -493,10 +493,10 @@ export default function Home() {
           </div>
           <div className="reveal delay-200 rounded-2xl p-7 text-left relative overflow-hidden neon-card" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
             <div className="animate-shimmer absolute inset-0 pointer-events-none" />
-            <p style={{ color: "#cbd5e1", lineHeight: 1.8, fontSize: "0.92rem" }}>
+            <p style={{ color: "hsl(var(--foreground) / 0.85)", lineHeight: 1.8, fontSize: "0.92rem" }}>
               {about.text.split("Bishal Bishwokarma").map((part: string, i: number) =>
                 i === 0
-                  ? <span key={i}>{part}<strong className="text-white">Bishal Bishwokarma</strong></span>
+                  ? <span key={i}>{part}<strong className="text-foreground">Bishal Bishwokarma</strong></span>
                   : <span key={i}>{part.split("IT student").map((p2: string, j: number) =>
                       j === 0 ? <span key={j}>{p2}<span style={{ color: "hsl(var(--primary))" }}>IT student</span></span> : <span key={j}>{p2}</span>
                     )}</span>
@@ -512,7 +512,7 @@ export default function Home() {
           <div className="reveal">
             <PillBadge color="cyan">MY ARSENAL</PillBadge>
             <h2 className="text-3xl font-black mt-4 mb-2">Skills &amp; Tools</h2>
-            <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Technologies and abilities I use to bring ideas to life.</p>
+            <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.875rem" }} className="mb-10">Technologies and abilities I use to bring ideas to life.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div className="reveal-left delay-100">
@@ -546,14 +546,14 @@ export default function Home() {
           <div className="reveal">
             <PillBadge color="green">PORTFOLIO</PillBadge>
             <h2 className="text-3xl font-black mt-4 mb-2">My Projects</h2>
-            <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Apps and tools I've built. Sign in to open them.</p>
+            <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.875rem" }} className="mb-10">Apps and tools I've built. Sign in to open them.</p>
           </div>
 
           {apps.length === 0 ? (
             <div className="reveal max-w-sm mx-auto rounded-2xl p-10 flex flex-col items-center" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 text-3xl animate-float" style={{ background: "linear-gradient(135deg, #1d4ed8, #7c3aed)" }}>🚀</div>
               <h3 className="text-lg font-bold mb-2">Apps Coming Soon</h3>
-              <p style={{ color: "#64748b", fontSize: "0.85rem", lineHeight: 1.6 }} className="mb-6">New projects are being prepared. Sign in to explore Bishal's Hub when apps go live.</p>
+              <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.85rem", lineHeight: 1.6 }} className="mb-6">New projects are being prepared. Sign in to explore Bishal's Hub when apps go live.</p>
               <Link href="/login">
                 <button className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-white" style={{ background: "linear-gradient(90deg, hsl(var(--primary)), #2563eb)" }}>
                   Get Early Access <ArrowRight className="w-4 h-4" />
@@ -571,7 +571,7 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="font-semibold text-sm group-hover:text-primary transition-colors">{app.name}</p>
-                      {app.description && <p className="text-xs mt-1 line-clamp-2" style={{ color: "#64748b" }}>{app.description}</p>}
+                      {app.description && <p className="text-xs mt-1 line-clamp-2" style={{ color: "hsl(var(--muted-foreground))" }}>{app.description}</p>}
                     </div>
                     {!user && <div className="flex items-center gap-1 text-[10px] text-muted-foreground/60"><Lock className="w-3 h-3" /> Sign in to open</div>}
                   </div>
@@ -588,7 +588,7 @@ export default function Home() {
             <div className="reveal">
               <PillBadge color="orange">MY WORK</PillBadge>
               <h2 className="text-3xl font-black mt-4 mb-2">Latest Projects</h2>
-              <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-12">A look at what I've built and what's coming next.</p>
+              <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.875rem" }} className="mb-12">A look at what I've built and what's coming next.</p>
             </div>
             <div className="space-y-14">
               {projects.map((proj: any, pi: number) => (
@@ -619,7 +619,7 @@ export default function Home() {
                   <div className="flex flex-wrap items-center justify-between gap-4 px-2">
                     <div className="text-left">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-bold text-xl text-white">{proj.title}</h3>
+                        <h3 className="font-bold text-xl text-foreground">{proj.title}</h3>
                         <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${
                           proj.status === "completed" ? "bg-green-500/15 text-green-400 border border-green-500/20" :
                           proj.status === "archived" ? "bg-gray-500/15 text-gray-400 border border-gray-500/20" :
@@ -629,7 +629,7 @@ export default function Home() {
                           {proj.status === "in-progress" ? "In Progress" : proj.status === "upcoming" ? "Upcoming" : proj.status}
                         </span>
                       </div>
-                      {proj.description && <p style={{ color: "#94a3b8", fontSize: "0.9rem", maxWidth: 480 }}>{proj.description}</p>}
+                      {proj.description && <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.9rem", maxWidth: 480 }}>{proj.description}</p>}
                       {proj.tech_stack && (
                         <div className="flex flex-wrap gap-2 mt-3">
                           {proj.tech_stack.split(",").map((t: string) => (
@@ -660,7 +660,7 @@ export default function Home() {
             <div className="reveal">
               <PillBadge color="orange">FREELANCE</PillBadge>
               <h2 className="text-4xl font-black mt-4 mb-3">Services &amp; Pricing</h2>
-              <p style={{ color: "#94a3b8", fontSize: "0.95rem" }}>Professional digital solutions designed to elevate your business</p>
+              <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.95rem" }}>Professional digital solutions designed to elevate your business</p>
               <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ background: "rgba(56,189,248,0.08)", border: "1px solid rgba(56,189,248,0.25)" }}>
                 <Star className="w-3.5 h-3.5" style={{ color: "#facc15" }} />
                 <span className="text-xs font-medium" style={{ color: "#93c5fd" }}>Flexible pricing based on project complexity and requirements</span>
@@ -696,7 +696,7 @@ export default function Home() {
           <div className="reveal">
             <PillBadge color="pink">BACKGROUND</PillBadge>
             <h2 className="text-3xl font-black mt-4 mb-4">My Education</h2>
-            <p className="mb-14" style={{ color: "#64748b", fontSize: "0.875rem" }}>The academic journey that shaped who I am</p>
+            <p className="mb-14" style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.875rem" }}>The academic journey that shaped who I am</p>
           </div>
 
           <div className="space-y-10 relative">
@@ -740,7 +740,7 @@ export default function Home() {
           <div className="reveal">
             <PillBadge color="cyan">GET IN TOUCH</PillBadge>
             <h2 className="text-3xl font-black mt-4 mb-2">Contact</h2>
-            <p style={{ color: "#64748b", fontSize: "0.875rem" }} className="mb-10">Have an idea? Let's build it together.</p>
+            <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.875rem" }} className="mb-10">Have an idea? Let's build it together.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 text-left">
@@ -750,7 +750,7 @@ export default function Home() {
               <ContactInfoRow icon={<Phone className="w-4 h-4 text-white" />} label="PHONE" value={contact.phone} bg="#166534" />
               <ContactInfoRow icon={<MapPin className="w-4 h-4 text-white" />} label="LOCATION" value={contact.location} bg="#4c1d95" />
               <div className="pt-2">
-                <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "#64748b" }}>CONNECT</p>
+                <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "hsl(var(--muted-foreground))" }}>CONNECT</p>
                 <div className="space-y-2">
                   {contact.facebook && (
                     <a href={contact.facebook} target="_blank" rel="noreferrer" className="block">
@@ -777,14 +777,14 @@ export default function Home() {
               <form onSubmit={handleSend} className="space-y-4 relative z-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>NAME</label>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "hsl(var(--muted-foreground))" }}>NAME</label>
                     <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-all" style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.15)", color: "hsl(var(--foreground))" }}
                       onFocus={e => (e.target.style.borderColor = "hsl(var(--primary) / 0.5)")}
                       onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>YOUR EMAIL</label>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: "hsl(var(--muted-foreground))" }}>YOUR EMAIL</label>
                     <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@example.com" className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-all" style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.15)", color: "hsl(var(--foreground))" }}
                       onFocus={e => (e.target.style.borderColor = "hsl(var(--primary) / 0.5)")}
                       onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
@@ -792,7 +792,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>MESSAGE</label>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: "hsl(var(--muted-foreground))" }}>MESSAGE</label>
                   <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Tell me about your project or idea..." rows={5} className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-all resize-none" style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.15)", color: "hsl(var(--foreground))" }}
                     onFocus={e => (e.target.style.borderColor = "hsl(var(--primary) / 0.5)")}
                     onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
@@ -855,7 +855,7 @@ function SkillItem({ icon, label, delay }: { icon: string; label: string; delay?
       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(128,128,128,0.12)"; (e.currentTarget as HTMLElement).style.background = "hsl(var(--muted))"; }}
     >
       <span className="text-xs" style={{ color: "hsl(var(--primary))" }}>{icon}</span>
-      <span className="text-xs font-medium" style={{ color: "#cbd5e1" }}>{label}</span>
+      <span className="text-xs font-medium" style={{ color: "hsl(var(--foreground))" }}>{label}</span>
     </div>
   );
 }
@@ -883,7 +883,7 @@ function PricingCard({ icon, title, price, description, tag, tagColor, featured,
       </div>
       <div>
         <h3 className="font-bold text-base mb-1">{title}</h3>
-        <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>{description}</p>
+        <p className="text-xs leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>{description}</p>
       </div>
       <div className="mt-auto pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
         <p className="font-black text-lg mb-3" style={{ color: featured ? "#a5b4fc" : "hsl(var(--primary))" }}>{price}</p>
@@ -923,7 +923,7 @@ function EduCard({ period, title, school, icon, side, index }: { period: string;
         <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: c.bg, color: c.primary, border: `1px solid ${c.border}` }}>{period}</span>
       </div>
       <p className="font-bold text-sm mb-1.5 relative z-10">{title}</p>
-      <p className="text-xs leading-relaxed relative z-10" style={{ color: "#64748b" }}>{school}</p>
+      <p className="text-xs leading-relaxed relative z-10" style={{ color: "hsl(var(--muted-foreground))" }}>{school}</p>
     </div>
   );
 }
@@ -932,7 +932,7 @@ function ContactInfoRow({ icon, label, value, bg }: { icon: React.ReactNode; lab
   return (
     <div className="flex items-center gap-3 p-3.5 rounded-xl neon-card" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
       <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: bg }}>{icon}</div>
-      <div><p className="text-[10px] tracking-widest uppercase font-medium" style={{ color: "#64748b" }}>{label}</p><p className="text-sm font-medium text-white break-all">{value}</p></div>
+      <div><p className="text-[10px] tracking-widest uppercase font-medium" style={{ color: "hsl(var(--muted-foreground))" }}>{label}</p><p className="text-sm font-medium text-foreground break-all">{value}</p></div>
     </div>
   );
 }
@@ -941,7 +941,7 @@ function SocialRow({ icon, name, handle }: { icon: React.ReactNode; name: string
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl transition-all neon-card" style={{ border: "1px solid rgba(255,255,255,0.06)", background: "transparent" }}>
       {icon}
-      <div><p className="text-xs font-semibold text-white">{name}</p><p className="text-[10px]" style={{ color: "#64748b" }}>{handle}</p></div>
+      <div><p className="text-xs font-semibold text-foreground">{name}</p><p className="text-[10px]" style={{ color: "hsl(var(--muted-foreground))" }}>{handle}</p></div>
       <ChevronRight className="w-3.5 h-3.5 ml-auto" style={{ color: "hsl(var(--primary))" }} />
     </div>
   );

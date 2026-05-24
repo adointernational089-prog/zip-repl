@@ -3,7 +3,7 @@ import { Flame, Github, Mail, Phone } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-card/50 pt-16 pb-8">
+    <footer className="border-t border-border/40 bg-card/50 pt-16 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
@@ -30,13 +30,13 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4 text-foreground">Connect</h4>
             <div className="flex gap-4 mb-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
+              <a href="#" className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
                 <Github className="w-5 h-5" />
               </a>
-              <a href="mailto:bishalbishwokarma089@gmail.com" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
+              <a href="mailto:bishalbishwokarma089@gmail.com" className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
                 <Mail className="w-5 h-5" />
               </a>
-              <a href="tel:9802485583" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
+              <a href="tel:9802485583" className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
                 <Phone className="w-5 h-5" />
               </a>
             </div>
@@ -46,7 +46,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+        <div className="border-t border-border/40 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
           <p>© 2026 BishalBishwokarma. All rights reserved.</p>
         </div>
       </div>

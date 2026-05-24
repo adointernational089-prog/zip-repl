@@ -24,7 +24,7 @@ export function Navbar() {
   const isHome = location === "/";
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-[#06060f]/95 backdrop-blur-md border-b border-white/5">
+    <nav className="sticky top-0 z-50 w-full backdrop-blur-md border-b" style={{ background: "hsl(var(--background) / 0.95)", borderColor: "hsl(var(--border) / 0.4)" }}>
       {/* ── Main bar ── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         {/* Logo */}
@@ -40,8 +40,8 @@ export function Navbar() {
             <img src="/scorpion-favicon.svg" alt="Scorpion" className="w-full h-full object-contain p-0.5" />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="font-bold text-sm text-white tracking-tight">Bishal's Hub</span>
-            <span className="text-[9px] text-slate-400 tracking-[0.18em] uppercase font-medium hidden sm:block">PORTAL</span>
+            <span className="font-bold text-sm text-foreground tracking-tight">Bishal's Hub</span>
+            <span className="text-[9px] text-muted-foreground tracking-[0.18em] uppercase font-medium hidden sm:block">PORTAL</span>
           </div>
         </Link>
 
@@ -53,7 +53,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => { e.preventDefault(); smoothScroll(link.href); }}
-                className="px-3 py-1.5 text-slate-400 hover:text-white transition-colors text-xs rounded-full hover:bg-white/5 cursor-pointer"
+                className="px-3 py-1.5 text-muted-foreground hover:text-foreground transition-colors text-xs rounded-full hover:bg-muted cursor-pointer"
               >
                 {link.label}
               </a>
@@ -67,23 +67,23 @@ export function Navbar() {
             <>
               {isAdmin && (
                 <Link href="/admin">
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-400 hover:text-white transition-colors">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
                     <Settings className="w-3.5 h-3.5" />Admin
                   </button>
                 </Link>
               )}
               <Link href="/dashboard">
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-400 hover:text-white transition-colors">
+                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
                   <LayoutDashboard className="w-3.5 h-3.5" />Dashboard
                 </button>
               </Link>
-              <button onClick={logout} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-400 hover:text-red-400 transition-colors">
+              <button onClick={logout} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground hover:text-red-400 transition-colors">
                 <LogOut className="w-3.5 h-3.5" />
               </button>
             </>
           ) : (
             <div className="flex items-center gap-3">
-              <span className="text-[10px] text-slate-500 leading-tight max-w-[120px] text-right">
+              <span className="text-[10px] text-muted-foreground leading-tight max-w-[120px] text-right">
                 connect with admin<br />for queries
               </span>
               <Link href="/login">
@@ -99,7 +99,7 @@ export function Navbar() {
           )}
         </div>
 
-        {/* Mobile: sign-in + burger (for user actions only) */}
+        {/* Mobile: sign-in + burger */}
         <div className="flex md:hidden items-center gap-2">
           {!user && (
             <Link href="/login">
@@ -114,7 +114,7 @@ export function Navbar() {
           {user && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-400 hover:text-white transition-colors"
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -123,11 +123,11 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* ── Mobile nav link strip (home page, always visible) ── */}
+      {/* ── Mobile nav link strip ── */}
       {isHome && (
         <div
-          className="md:hidden border-b border-white/[0.04] overflow-x-auto"
-          style={{ background: "#06060f" }}
+          className="md:hidden border-b overflow-x-auto"
+          style={{ background: "hsl(var(--background))", borderColor: "hsl(var(--border) / 0.2)" }}
         >
           <div className="flex px-3 py-1.5 gap-0.5 w-max min-w-full justify-between">
             {homeLinks.map((link) => (
@@ -135,7 +135,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => { e.preventDefault(); smoothScroll(link.href); }}
-                className="flex-1 text-center px-2 py-1.5 rounded-lg text-[11px] font-medium text-slate-400 hover:text-white hover:bg-white/6 transition-colors whitespace-nowrap cursor-pointer"
+                className="flex-1 text-center px-2 py-1.5 rounded-lg text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap cursor-pointer"
               >
                 {link.label}
               </a>
@@ -144,18 +144,18 @@ export function Navbar() {
         </div>
       )}
 
-      {/* ── Mobile user menu dropdown (auth actions only) ── */}
+      {/* ── Mobile user menu dropdown ── */}
       {mobileMenuOpen && user && (
-        <div className="md:hidden bg-[#06060f]/98 border-b border-white/10 px-4 pb-4 pt-2 space-y-1">
+        <div className="md:hidden border-b px-4 pb-4 pt-2 space-y-1" style={{ background: "hsl(var(--background) / 0.98)", borderColor: "hsl(var(--border) / 0.5)" }}>
           <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-foreground/80 hover:bg-muted hover:text-foreground transition-colors">
               <LayoutDashboard className="w-4 h-4 text-primary" />
               Dashboard
             </div>
           </Link>
           {isAdmin && (
             <Link href="/admin" onClick={() => setMobileMenuOpen(false)}>
-              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-foreground/80 hover:bg-muted hover:text-foreground transition-colors">
                 <Settings className="w-4 h-4 text-primary" />
                 Admin Panel
               </div>
