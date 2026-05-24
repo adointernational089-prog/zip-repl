@@ -194,83 +194,7 @@ const TypewriterName = memo(function TypewriterName() {
   );
 });
 
-/* ── Inline SVG Scorpion (top-down, faces right, 8 animated legs) ── */
-const _PC  = "hsl(var(--primary) / 0.13)";
-const _PS  = "hsl(var(--primary) / 0.88)";
-const _LS  = "hsl(var(--primary) / 0.78)";
-const _FF  = "hsl(var(--primary))";
-
-const _SCORP_LEGS = [
-  { ax: 87, ay: 27, ph: "a", top: true  },
-  { ax: 79, ay: 26, ph: "b", top: true  },
-  { ax: 71, ay: 26, ph: "a", top: true  },
-  { ax: 63, ay: 27, ph: "b", top: true  },
-  { ax: 87, ay: 49, ph: "b", top: false },
-  { ax: 79, ay: 50, ph: "a", top: false },
-  { ax: 71, ay: 50, ph: "b", top: false },
-  { ax: 63, ay: 49, ph: "a", top: false },
-] as const;
-
-const ScorpionSVG = memo(function ScorpionSVG() {
-  return (
-    <svg
-      viewBox="0 0 135 82"
-      width="104"
-      height="63"
-      aria-hidden
-      className="scorpion-body"
-      style={{ overflow: "visible" }}
-    >
-      {/* ── Tail (metasoma, 5 segments + stinger) ── */}
-      <circle cx="8"  cy="34" r="5.2" fill={_PC} stroke={_PS} strokeWidth="1.2" />
-      <circle cx="5"  cy="27" r="4.7" fill={_PC} stroke={_PS} strokeWidth="1.2" />
-      <circle cx="4"  cy="20" r="4.2" fill={_PC} stroke={_PS} strokeWidth="1.2" />
-      <circle cx="6"  cy="13" r="3.7" fill={_PC} stroke={_PS} strokeWidth="1.2" />
-      <circle cx="11" cy="7"  r="3.2" fill={_PC} stroke={_PS} strokeWidth="1.2" />
-      <path d="M 11 7 Q 17 3 21 0"        stroke={_PS} strokeWidth="2"   fill="none" strokeLinecap="round" />
-      <path d="M 21 0 L 24 -2"            stroke={_PS} strokeWidth="2.5" fill="none" strokeLinecap="round" />
-
-      {/* ── Abdomen segments (5, left → right, growing) ── */}
-      <ellipse cx="14" cy="38" rx="7"  ry="5.5" fill={_PC} stroke={_PS} strokeWidth="1.2" />
-      <ellipse cx="24" cy="38" rx="8"  ry="6.5" fill={_PC} stroke={_PS} strokeWidth="1.2" />
-      <ellipse cx="35" cy="38" rx="9"  ry="7.5" fill={_PC} stroke={_PS} strokeWidth="1.2" />
-      <ellipse cx="48" cy="38" rx="10" ry="8.5" fill={_PC} stroke={_PS} strokeWidth="1.2" />
-      <ellipse cx="63" cy="38" rx="13" ry="10"  fill={_PC} stroke={_PS} strokeWidth="1.2" />
-
-      {/* ── Cephalothorax (carapace) ── */}
-      <ellipse cx="85" cy="38" rx="20" ry="13" fill={_PC} stroke={_PS} strokeWidth="1.4" />
-      <line x1="73" y1="33" x2="97" y2="33" stroke={_PS} strokeWidth="0.5" opacity="0.38" />
-      <line x1="73" y1="43" x2="97" y2="43" stroke={_PS} strokeWidth="0.5" opacity="0.38" />
-      {/* Eyes */}
-      <circle cx="96" cy="33" r="1.8" fill={_FF} opacity="0.92" />
-      <circle cx="96" cy="43" r="1.8" fill={_FF} opacity="0.92" />
-
-      {/* ── Pincers (chelae) ── */}
-      <line x1="103" y1="33" x2="115" y2="24" stroke={_PS} strokeWidth="2"   strokeLinecap="round" />
-      <line x1="115" y1="24" x2="123" y2="19" stroke={_PS} strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M 123 19 L 128 16 M 123 19 L 127 23" stroke={_PS} strokeWidth="1.6" strokeLinecap="round" fill="none" />
-      <line x1="103" y1="43" x2="115" y2="52" stroke={_PS} strokeWidth="2"   strokeLinecap="round" />
-      <line x1="115" y1="52" x2="123" y2="57" stroke={_PS} strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M 123 57 L 128 60 M 123 57 L 126 53" stroke={_PS} strokeWidth="1.6" strokeLinecap="round" fill="none" />
-
-      {/* ── Legs (8 total — 4 pairs, all rotate around attachment point) ── */}
-      {_SCORP_LEGS.map((leg, i) => {
-        const uy = leg.top ? -9  : 9;
-        const ly = leg.top ? -19 : 19;
-        return (
-          <g key={i} style={{ transform: `translate(${leg.ax}px, ${leg.ay}px)` }}>
-            <g className={`scorp-leg scorp-leg-${leg.ph}`} style={{ transformOrigin: `${leg.ax}px ${leg.ay}px` }}>
-              <line x1="0" y1="0"   x2="3"   y2={uy}  stroke={_LS} strokeWidth="1.7" strokeLinecap="round" />
-              <line x1="3" y1={uy}  x2="1"   y2={ly}  stroke={_LS} strokeWidth="1.7" strokeLinecap="round" />
-              <circle cx="1" cy={ly} r="1.9" fill={_FF} opacity="0.75" />
-            </g>
-          </g>
-        );
-      })}
-    </svg>
-  );
-});
-
+/* ── Real photo scorpion with neon glow (background removed) ── */
 const WalkingScorpion = memo(function WalkingScorpion({
   containerRef,
   initialTop,
@@ -289,7 +213,7 @@ const WalkingScorpion = memo(function WalkingScorpion({
       data-state="idle"
       style={{
         top: initialTop,
-        [flipX ? "right" : "left"]: "8px",
+        [flipX ? "right" : "left"]: "4px",
         opacity,
         willChange: "top",
         transition: "top 0.08s linear",
@@ -297,7 +221,13 @@ const WalkingScorpion = memo(function WalkingScorpion({
     >
       <div className="scorpion-lean">
         <div style={{ transform: flipX ? "scaleX(-1)" : undefined }}>
-          <ScorpionSVG />
+          <img
+            src="/scorpion-real.png"
+            alt=""
+            aria-hidden
+            className="scorpion-body"
+            style={{ width: 110, display: "block" }}
+          />
         </div>
       </div>
     </div>
