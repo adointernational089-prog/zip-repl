@@ -226,7 +226,7 @@ const WalkingScorpion = memo(function WalkingScorpion({
             alt=""
             aria-hidden
             className="scorpion-body"
-            style={{ width: 110, display: "block" }}
+            style={{ width: 70, display: "block" }}
           />
         </div>
       </div>
@@ -234,52 +234,90 @@ const WalkingScorpion = memo(function WalkingScorpion({
   );
 });
 
-/* ── Scroll Scorpions — follow scroll, direct DOM for perf ── */
+/* ── Scroll Scorpions — autonomous patrol + scroll override ── */
 const ScrollScorpions = memo(function ScrollScorpions() {
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
-  const leftPosRef = useRef(160);
-  const rightPosRef = useRef(320);
-  const lastScrollRef = useRef(0);
-  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const leftRef        = useRef<HTMLDivElement>(null);
+  const rightRef       = useRef<HTMLDivElement>(null);
+  const leftPosRef     = useRef(160);
+  const rightPosRef    = useRef(320);
+  const lastScrollRef  = useRef(0);
+  const idleTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rafRef         = useRef<number>(0);
+  const patrolDirRef   = useRef<1 | -1>(1);
+  const scrollActiveRef = useRef(false);
+  const pauseUntilRef  = useRef(0);
 
   useEffect(() => {
-    const setState = (el: HTMLDivElement | null, s: string) => { if (el) el.dataset.state = s; };
+    const setS = (el: HTMLDivElement | null, s: string) => { if (el) el.dataset.state = s; };
 
+    /* Scroll — highest priority, temporarily overrides patrol */
     const onScroll = () => {
-      const y = window.scrollY;
+      const y     = window.scrollY;
       const delta = y - lastScrollRef.current;
       lastScrollRef.current = y;
       const vh = window.innerHeight;
 
+      scrollActiveRef.current = true;
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+
       const dir = delta > 0 ? "walking-down" : "walking-up";
-      setState(leftRef.current, dir);
-      setState(rightRef.current, dir);
+      setS(leftRef.current,  dir);
+      setS(rightRef.current, dir);
 
-      leftPosRef.current  = Math.max(50, Math.min(vh - 140, leftPosRef.current  + delta * 0.78));
-      rightPosRef.current = Math.max(50, Math.min(vh - 140, rightPosRef.current + delta * 0.69));
-
+      leftPosRef.current  = Math.max(60, Math.min(vh - 110, leftPosRef.current  + delta * 0.78));
+      rightPosRef.current = Math.max(60, Math.min(vh - 110, rightPosRef.current + delta * 0.69));
       if (leftRef.current)  leftRef.current.style.top  = leftPosRef.current  + "px";
       if (rightRef.current) rightRef.current.style.top = rightPosRef.current + "px";
 
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-      idleTimerRef.current = setTimeout(() => {
-        setState(leftRef.current,  "idle");
-        setState(rightRef.current, "idle");
-      }, 180);
+      idleTimerRef.current = setTimeout(() => { scrollActiveRef.current = false; }, 260);
     };
 
+    /* Autonomous patrol loop — runs every frame when not scrolling */
+    const SPEED_L = 0.30; // px / frame  (~18px/s at 60fps)
+    const SPEED_R = 0.23;
+
+    const patrol = () => {
+      if (!scrollActiveRef.current && performance.now() >= pauseUntilRef.current) {
+        const vh  = window.innerHeight;
+        const dir = patrolDirRef.current;
+
+        leftPosRef.current  += SPEED_L * dir;
+        rightPosRef.current += SPEED_R * dir;
+
+        const hitBottom = dir >  0 && (leftPosRef.current > vh - 110 || rightPosRef.current > vh - 110);
+        const hitTop    = dir < 0  && (leftPosRef.current < 60       || rightPosRef.current < 60);
+
+        if (hitBottom || hitTop) {
+          patrolDirRef.current = (dir > 0 ? -1 : 1) as 1 | -1;
+          pauseUntilRef.current = performance.now() + 700; // brief idle pause at each end
+          setS(leftRef.current,  "idle");
+          setS(rightRef.current, "idle");
+        } else {
+          const s = dir > 0 ? "walking-down" : "walking-up";
+          setS(leftRef.current,  s);
+          setS(rightRef.current, s);
+        }
+
+        if (leftRef.current)  leftRef.current.style.top  = leftPosRef.current  + "px";
+        if (rightRef.current) rightRef.current.style.top = rightPosRef.current + "px";
+      }
+      rafRef.current = requestAnimationFrame(patrol);
+    };
+
+    rafRef.current = requestAnimationFrame(patrol);
     window.addEventListener("scroll", onScroll, { passive: true });
+
     return () => {
       window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(rafRef.current);
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     };
   }, []);
 
   return (
     <>
-      <WalkingScorpion containerRef={leftRef}  initialTop={160} flipX={false} opacity={0.30} />
-      <WalkingScorpion containerRef={rightRef} initialTop={320} flipX={true}  opacity={0.24} />
+      <WalkingScorpion containerRef={leftRef}  initialTop={160} flipX={false} opacity={0.52} />
+      <WalkingScorpion containerRef={rightRef} initialTop={320} flipX={true}  opacity={0.42} />
     </>
   );
 });
