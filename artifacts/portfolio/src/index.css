@@ -277,37 +277,25 @@
              scorpionWalkGlow 0.44s ease-in-out infinite;
 }
 
-/* ── Scorpion legs ── */
-.scorpion-leg {
-  position: absolute;
-  width: 17px;
-  height: 2px;
-  background: hsl(var(--primary) / 0.55);
-  border-radius: 2px;
-  transform-origin: var(--leg-origin, right center);
-  box-shadow: 0 0 5px hsl(var(--primary) / 0.35);
-}
-
-@keyframes legSwingA {
-  0%, 100% { transform: rotate(-28deg); }
+/* ── Scorpion SVG leg animations ── */
+@keyframes scorpLegA {
+  0%, 100% { transform: rotate(-22deg); }
   50%       { transform: rotate(22deg);  }
 }
-@keyframes legSwingB {
+@keyframes scorpLegB {
   0%, 100% { transform: rotate(22deg);  }
-  50%       { transform: rotate(-28deg); }
+  50%       { transform: rotate(-22deg); }
 }
 
-.scorpion-container[data-state="idle"] .scorpion-leg {
+.scorpion-container[data-state^="walking"] .scorp-leg-a {
+  animation: scorpLegA 0.44s ease-in-out infinite;
+}
+.scorpion-container[data-state^="walking"] .scorp-leg-b {
+  animation: scorpLegB 0.44s ease-in-out infinite;
+}
+.scorpion-container[data-state="idle"] .scorp-leg-a,
+.scorpion-container[data-state="idle"] .scorp-leg-b {
   animation: none;
-  transform: rotate(-8deg);
-}
-.scorpion-container[data-state="walking-down"] .scorpion-leg.phase-a,
-.scorpion-container[data-state="walking-up"] .scorpion-leg.phase-a {
-  animation: legSwingA 0.44s ease-in-out infinite;
-}
-.scorpion-container[data-state="walking-down"] .scorpion-leg.phase-b,
-.scorpion-container[data-state="walking-up"] .scorpion-leg.phase-b {
-  animation: legSwingB 0.44s ease-in-out infinite;
 }
 
 /* ── Visitor counter badge ── */

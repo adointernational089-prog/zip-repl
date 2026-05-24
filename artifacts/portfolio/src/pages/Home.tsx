@@ -194,13 +194,82 @@ const TypewriterName = memo(function TypewriterName() {
   );
 });
 
-/* ── Walking Scorpion with realistic gait ── */
-const LEG_PAIRS = [
-  { top: "28%", phase: "a" as const },
-  { top: "39%", phase: "b" as const },
-  { top: "50%", phase: "a" as const },
-  { top: "61%", phase: "b" as const },
-];
+/* ── Inline SVG Scorpion (top-down, faces right, 8 animated legs) ── */
+const _PC  = "hsl(var(--primary) / 0.13)";
+const _PS  = "hsl(var(--primary) / 0.88)";
+const _LS  = "hsl(var(--primary) / 0.78)";
+const _FF  = "hsl(var(--primary))";
+
+const _SCORP_LEGS = [
+  { ax: 87, ay: 27, ph: "a", top: true  },
+  { ax: 79, ay: 26, ph: "b", top: true  },
+  { ax: 71, ay: 26, ph: "a", top: true  },
+  { ax: 63, ay: 27, ph: "b", top: true  },
+  { ax: 87, ay: 49, ph: "b", top: false },
+  { ax: 79, ay: 50, ph: "a", top: false },
+  { ax: 71, ay: 50, ph: "b", top: false },
+  { ax: 63, ay: 49, ph: "a", top: false },
+] as const;
+
+const ScorpionSVG = memo(function ScorpionSVG() {
+  return (
+    <svg
+      viewBox="0 0 135 82"
+      width="104"
+      height="63"
+      aria-hidden
+      className="scorpion-body"
+      style={{ overflow: "visible" }}
+    >
+      {/* ── Tail (metasoma, 5 segments + stinger) ── */}
+      <circle cx="8"  cy="34" r="5.2" fill={_PC} stroke={_PS} strokeWidth="1.2" />
+      <circle cx="5"  cy="27" r="4.7" fill={_PC} stroke={_PS} strokeWidth="1.2" />
+      <circle cx="4"  cy="20" r="4.2" fill={_PC} stroke={_PS} strokeWidth="1.2" />
+      <circle cx="6"  cy="13" r="3.7" fill={_PC} stroke={_PS} strokeWidth="1.2" />
+      <circle cx="11" cy="7"  r="3.2" fill={_PC} stroke={_PS} strokeWidth="1.2" />
+      <path d="M 11 7 Q 17 3 21 0"        stroke={_PS} strokeWidth="2"   fill="none" strokeLinecap="round" />
+      <path d="M 21 0 L 24 -2"            stroke={_PS} strokeWidth="2.5" fill="none" strokeLinecap="round" />
+
+      {/* ── Abdomen segments (5, left → right, growing) ── */}
+      <ellipse cx="14" cy="38" rx="7"  ry="5.5" fill={_PC} stroke={_PS} strokeWidth="1.2" />
+      <ellipse cx="24" cy="38" rx="8"  ry="6.5" fill={_PC} stroke={_PS} strokeWidth="1.2" />
+      <ellipse cx="35" cy="38" rx="9"  ry="7.5" fill={_PC} stroke={_PS} strokeWidth="1.2" />
+      <ellipse cx="48" cy="38" rx="10" ry="8.5" fill={_PC} stroke={_PS} strokeWidth="1.2" />
+      <ellipse cx="63" cy="38" rx="13" ry="10"  fill={_PC} stroke={_PS} strokeWidth="1.2" />
+
+      {/* ── Cephalothorax (carapace) ── */}
+      <ellipse cx="85" cy="38" rx="20" ry="13" fill={_PC} stroke={_PS} strokeWidth="1.4" />
+      <line x1="73" y1="33" x2="97" y2="33" stroke={_PS} strokeWidth="0.5" opacity="0.38" />
+      <line x1="73" y1="43" x2="97" y2="43" stroke={_PS} strokeWidth="0.5" opacity="0.38" />
+      {/* Eyes */}
+      <circle cx="96" cy="33" r="1.8" fill={_FF} opacity="0.92" />
+      <circle cx="96" cy="43" r="1.8" fill={_FF} opacity="0.92" />
+
+      {/* ── Pincers (chelae) ── */}
+      <line x1="103" y1="33" x2="115" y2="24" stroke={_PS} strokeWidth="2"   strokeLinecap="round" />
+      <line x1="115" y1="24" x2="123" y2="19" stroke={_PS} strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M 123 19 L 128 16 M 123 19 L 127 23" stroke={_PS} strokeWidth="1.6" strokeLinecap="round" fill="none" />
+      <line x1="103" y1="43" x2="115" y2="52" stroke={_PS} strokeWidth="2"   strokeLinecap="round" />
+      <line x1="115" y1="52" x2="123" y2="57" stroke={_PS} strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M 123 57 L 128 60 M 123 57 L 126 53" stroke={_PS} strokeWidth="1.6" strokeLinecap="round" fill="none" />
+
+      {/* ── Legs (8 total — 4 pairs, all rotate around attachment point) ── */}
+      {_SCORP_LEGS.map((leg, i) => {
+        const uy = leg.top ? -9  : 9;
+        const ly = leg.top ? -19 : 19;
+        return (
+          <g key={i} style={{ transform: `translate(${leg.ax}px, ${leg.ay}px)` }}>
+            <g className={`scorp-leg scorp-leg-${leg.ph}`} style={{ transformOrigin: `${leg.ax}px ${leg.ay}px` }}>
+              <line x1="0" y1="0"   x2="3"   y2={uy}  stroke={_LS} strokeWidth="1.7" strokeLinecap="round" />
+              <line x1="3" y1={uy}  x2="1"   y2={ly}  stroke={_LS} strokeWidth="1.7" strokeLinecap="round" />
+              <circle cx="1" cy={ly} r="1.9" fill={_FF} opacity="0.75" />
+            </g>
+          </g>
+        );
+      })}
+    </svg>
+  );
+});
 
 const WalkingScorpion = memo(function WalkingScorpion({
   containerRef,
@@ -226,29 +295,9 @@ const WalkingScorpion = memo(function WalkingScorpion({
         transition: "top 0.08s linear",
       }}
     >
-      <div className="scorpion-lean" style={{ position: "relative", display: "inline-block" }}>
-        <div style={{ transform: flipX ? "scaleX(-1)" : "none", position: "relative" }}>
-          {LEG_PAIRS.map((lp, i) => (
-            <div
-              key={`ll${i}`}
-              className={`scorpion-leg phase-${lp.phase}`}
-              style={{ left: "-14px", top: lp.top, ["--leg-origin" as string]: "right center" }}
-            />
-          ))}
-          <img
-            src="/scorpion-favicon.svg"
-            alt=""
-            aria-hidden
-            className="scorpion-body"
-            style={{ width: 86, display: "block", position: "relative", zIndex: 1 }}
-          />
-          {LEG_PAIRS.map((lp, i) => (
-            <div
-              key={`rl${i}`}
-              className={`scorpion-leg phase-${lp.phase === "a" ? "b" : "a"}`}
-              style={{ right: "-14px", top: lp.top, ["--leg-origin" as string]: "left center" }}
-            />
-          ))}
+      <div className="scorpion-lean">
+        <div style={{ transform: flipX ? "scaleX(-1)" : undefined }}>
+          <ScorpionSVG />
         </div>
       </div>
     </div>
@@ -305,12 +354,10 @@ const ScrollScorpions = memo(function ScrollScorpions() {
   );
 });
 
-/* ── Visitor Counter ── */
+/* ── Visitor tracking (silent — no UI; stats visible in admin panel only) ── */
 const _BASE_V = (import.meta.env.BASE_URL ?? "").replace(/\/$/, "");
 
-function VisitorCounter() {
-  const [count, setCount] = useState<number | null>(null);
-
+function useTrackVisit() {
   useEffect(() => {
     const KEY = "bhub_sid";
     let sid = localStorage.getItem(KEY);
@@ -323,23 +370,7 @@ function VisitorCounter() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ session_id: sid, path: "/" }),
     }).catch(() => {});
-
-    fetch(`${_BASE_V}/api/visitors`)
-      .then(r => r.ok ? r.json() : null)
-      .then((d: { today?: number } | null) => { if (d?.today !== undefined) setCount(d.today); })
-      .catch(() => {});
   }, []);
-
-  if (count === null) return null;
-  return (
-    <div className="visitor-counter-badge">
-      <span className="dot" />
-      <span>
-        <strong style={{ fontWeight: 700 }}>{count.toLocaleString()}</strong>
-        {" "}visitor{count !== 1 ? "s" : ""} today
-      </span>
-    </div>
-  );
 }
 
 /* ── Scroll reveal hook ── */
@@ -420,6 +451,7 @@ export default function Home() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
   useScrollReveal();
+  useTrackVisit();
   const portal = usePortal();
 
   const { data: apps = [] } = useListApps();
@@ -551,7 +583,6 @@ export default function Home() {
               </button>
             </div>
 
-            <VisitorCounter />
           </div>
 
           {/* Right — profile photo with scorpion flame */}
@@ -786,7 +817,7 @@ export default function Home() {
                   description={card.description}
                   tag={card.tag || undefined}
                   tagColor={card.tagColor || undefined}
-                  featured={card.featured}
+                  index={i}
                   onHireClick={handlePortalNav}
                 />
               </div>
@@ -969,11 +1000,22 @@ function SkillItem({ icon, label, delay }: { icon: string; label: string; delay?
   );
 }
 
-function PricingCard({ icon, title, price, description, tag, tagColor, featured, onHireClick }: {
+const PRICING_COLORS = [
+  { bg: "linear-gradient(135deg,rgba(251,146,60,.18) 0%,rgba(245,158,11,.10) 100%)", border: "rgba(251,146,60,.45)",  price: "#fcd34d", btn: "linear-gradient(90deg,#f97316,#f59e0b)", top: "rgba(251,146,60,.7),rgba(245,158,11,.6)",  glow: "rgba(251,146,60,.12)" },
+  { bg: "linear-gradient(135deg,rgba(30,64,175,.28) 0%,rgba(124,58,237,.18) 100%)",  border: "rgba(99,102,241,.55)", price: "#a5b4fc", btn: "linear-gradient(90deg,#6366f1,#8b5cf6)", top: "rgba(139,92,246,.8),rgba(59,130,246,.8)",  glow: "rgba(99,102,241,.15)" },
+  { bg: "linear-gradient(135deg,rgba(6,182,212,.18) 0%,rgba(20,184,166,.10) 100%)",  border: "rgba(6,182,212,.45)",  price: "#67e8f9", btn: "linear-gradient(90deg,#06b6d4,#14b8a6)", top: "rgba(6,182,212,.7),rgba(20,184,166,.6)",   glow: "rgba(6,182,212,.12)"  },
+  { bg: "linear-gradient(135deg,rgba(139,92,246,.22) 0%,rgba(167,139,250,.12) 100%)", border: "rgba(139,92,246,.50)", price: "#c4b5fd", btn: "linear-gradient(90deg,#8b5cf6,#a78bfa)", top: "rgba(139,92,246,.8),rgba(167,139,250,.7)", glow: "rgba(139,92,246,.13)" },
+  { bg: "linear-gradient(135deg,rgba(16,185,129,.18) 0%,rgba(34,197,94,.10) 100%)",  border: "rgba(34,197,94,.45)",  price: "#6ee7b7", btn: "linear-gradient(90deg,#10b981,#22c55e)", top: "rgba(16,185,129,.7),rgba(34,197,94,.6)",   glow: "rgba(16,185,129,.12)" },
+  { bg: "linear-gradient(135deg,rgba(244,63,94,.18) 0%,rgba(236,72,153,.10) 100%)",  border: "rgba(244,63,94,.45)",  price: "#fda4af", btn: "linear-gradient(90deg,#f43f5e,#ec4899)", top: "rgba(244,63,94,.7),rgba(236,72,153,.6)",   glow: "rgba(244,63,94,.12)"  },
+  { bg: "linear-gradient(135deg,rgba(56,189,248,.18) 0%,rgba(99,102,241,.10) 100%)", border: "rgba(56,189,248,.45)",  price: "#7dd3fc", btn: "linear-gradient(90deg,#38bdf8,#818cf8)", top: "rgba(56,189,248,.7),rgba(99,102,241,.6)",  glow: "rgba(56,189,248,.12)" },
+];
+
+function PricingCard({ icon, title, price, description, tag, tagColor, index, onHireClick }: {
   icon: string; title: string; price: string; description: string;
-  tag?: string; tagColor?: "green" | "blue" | "purple"; featured?: boolean;
+  tag?: string; tagColor?: "green" | "blue" | "purple"; index: number;
   onHireClick?: (e: React.MouseEvent, href: string) => void;
 }) {
+  const c = PRICING_COLORS[index % PRICING_COLORS.length];
   const tagStyles = {
     green:  { bg: "rgba(34,197,94,0.15)",  border: "rgba(34,197,94,0.4)",  text: "#86efac" },
     blue:   { bg: "rgba(59,130,246,0.2)",  border: "rgba(59,130,246,0.6)",  text: "#93c5fd" },
@@ -983,19 +1025,20 @@ function PricingCard({ icon, title, price, description, tag, tagColor, featured,
   return (
     <div
       className="relative rounded-2xl p-6 flex flex-col gap-4 neon-card h-full"
-      style={{ background: featured ? "linear-gradient(135deg, rgba(30,64,175,0.25) 0%, rgba(124,58,237,0.15) 100%)" : "rgba(13,13,31,0.8)", border: featured ? "1px solid rgba(99,102,241,0.5)" : "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(12px)", boxShadow: featured ? "0 0 30px rgba(99,102,241,0.15), inset 0 0 30px rgba(99,102,241,0.03)" : "none" }}
+      style={{ background: c.bg, border: `1px solid ${c.border}`, backdropFilter: "blur(12px)", boxShadow: `0 0 30px ${c.glow}, inset 0 0 30px ${c.glow.replace(".12", ".03").replace(".15", ".04").replace(".13", ".03")}` }}
     >
-      {featured && <div className="absolute top-0 left-6 right-6 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(139,92,246,0.8), rgba(59,130,246,0.8), transparent)" }} />}
+      {/* Top shimmer line */}
+      <div className="absolute top-0 left-6 right-6 h-px" style={{ background: `linear-gradient(90deg, transparent, ${c.top.split(",")[0]}, ${c.top.split(",")[1]}, transparent)` }} />
       <div className="flex items-start justify-between">
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 animate-float" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", animationDelay: `${Math.random() * 2}s` }}>{icon}</div>
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 animate-float" style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${c.border}`, animationDelay: `${index * 0.35}s` }}>{icon}</div>
         {tag && ts && <span className="text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider uppercase" style={{ background: ts.bg, border: `1px solid ${ts.border}`, color: ts.text }}>{tag}</span>}
       </div>
       <div>
         <h3 className="font-bold text-base mb-1">{title}</h3>
         <p className="text-xs leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>{description}</p>
       </div>
-      <div className="mt-auto pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-        <p className="font-black text-lg mb-3" style={{ color: featured ? "#a5b4fc" : "hsl(var(--primary))" }}>{price}</p>
+      <div className="mt-auto pt-3 border-t" style={{ borderColor: c.border }}>
+        <p className="font-black text-lg mb-3" style={{ color: c.price }}>{price}</p>
         <button
           onClick={(e) => {
             if (onHireClick) {
@@ -1005,7 +1048,7 @@ function PricingCard({ icon, title, price, description, tag, tagColor, featured,
             }
           }}
           className="w-full py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105"
-          style={{ background: featured ? "linear-gradient(90deg, #6366f1, #8b5cf6)" : "rgba(56,189,248,0.1)", color: featured ? "#fff" : "hsl(var(--primary))", border: featured ? "none" : "1px solid rgba(56,189,248,0.25)" }}
+          style={{ background: c.btn, color: "#fff", border: "none" }}
         >
           Hire Me →
         </button>

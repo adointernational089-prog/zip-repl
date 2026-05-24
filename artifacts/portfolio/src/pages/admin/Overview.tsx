@@ -4,7 +4,10 @@ import { useGetAdminStats, useListMessages, getGetAdminStatsQueryKey, getListMes
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
-import { MessageSquare, Users, LayoutGrid, Inbox, Loader2, TrendingUp, Bell } from "lucide-react";
+import { MessageSquare, Users, LayoutGrid, Inbox, Loader2, Bell, Eye, Globe, Activity } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+const _BASE_ADM = (import.meta.env.BASE_URL ?? "").replace(/\/$/, "");
 
 export default function AdminOverview() {
   const { user, isAdmin, isLoading } = useAuth();
@@ -16,6 +19,17 @@ export default function AdminOverview() {
 
   const { data: messages = [], isLoading: msgsLoading } = useListMessages({
     query: { queryKey: getListMessagesQueryKey(), enabled: !!isAdmin }
+  });
+
+  const { data: visitors, isLoading: visitorsLoading } = useQuery({
+    queryKey: ["admin-visitor-stats"],
+    queryFn: async () => {
+      const r = await fetch(`${_BASE_ADM}/api/visitors`);
+      if (!r.ok) return null;
+      return r.json() as Promise<{ today: number; week: number; total: number }>;
+    },
+    refetchInterval: 60_000,
+    enabled: !!isAdmin,
   });
 
   if (isLoading) {
@@ -38,6 +52,12 @@ export default function AdminOverview() {
     { label: "Unread Messages", value: stats?.unread_messages ?? "—", icon: Inbox, color: "text-primary", bg: "bg-primary/10" },
   ];
 
+  const visitorCards = [
+    { label: "Visitors Today", value: visitors?.today ?? "—", icon: Eye, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+    { label: "This Week", value: visitors?.week ?? "—", icon: Activity, color: "text-sky-400", bg: "bg-sky-500/10" },
+    { label: "Total Visitors", value: visitors?.total ?? "—", icon: Globe, color: "text-teal-400", bg: "bg-teal-500/10" },
+  ];
+
   const recentMessages = messages.slice(0, 5);
 
   return (
@@ -47,7 +67,35 @@ export default function AdminOverview() {
         <p className="text-muted-foreground text-sm">Welcome back, Bishal. Here's what's happening.</p>
       </div>
 
+      {/* Visitor Stats */}
+      <div className="mb-5">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
+          <Eye className="w-3.5 h-3.5 text-cyan-400" /> Site Traffic
+        </p>
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          {visitorCards.map(({ label, value, icon: Icon, color, bg }) => (
+            <Card key={label} className="bg-card border-white/10">
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`p-2 rounded-lg ${bg}`}>
+                    <Icon className={`w-5 h-5 ${color}`} />
+                  </div>
+                  {visitorsLoading && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
+                </div>
+                <p className={`text-2xl font-black ${color}`}>{typeof value === "number" ? value.toLocaleString() : value}</p>
+                <p className="text-xs text-muted-foreground mt-1">{label}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
       {/* Stats */}
+      <div className="mb-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
+          <Activity className="w-3.5 h-3.5 text-purple-400" /> Platform Activity
+        </p>
+      </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {statCards.map(({ label, value, icon: Icon, color, bg }) => (
           <Card key={label} className="bg-card border-white/10">
