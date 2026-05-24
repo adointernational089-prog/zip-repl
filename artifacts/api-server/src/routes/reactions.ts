@@ -1,8 +1,27 @@
 import { Router } from "express";
-import { getSupabase } from "../lib/db.js";
+import { getPool } from "../lib/db.js";
 
 const router = Router();
 const VALID_EMOJIS = ["👏", "🔥", "😍", "💯", "⚡"];
+
+let _tableReady: Promise<void> | null = null;
+function ensureTable(): Promise<void> {
+  if (!_tableReady) {
+    _tableReady = getPool().query(`
+      CREATE TABLE IF NOT EXISTS reactions (
+        target_type TEXT NOT NULL,
+        target_id   TEXT NOT NULL,
+        emoji       TEXT NOT NULL,
+        count       INT  NOT NULL DEFAULT 0,
+        PRIMARY KEY (target_type, target_id, emoji)
+      );
+    `).then(() => undefined).catch((err) => {
+      _tableReady = null;
+      throw err;
+    });
+  }
+  return _tableReady;
+}
 
 router.get("/", async (req: any, res) => {
   const { target_type, target_id } = req.query as { target_type?: string; target_id?: string };
@@ -11,18 +30,18 @@ router.get("/", async (req: any, res) => {
     return;
   }
   try {
-    const sb = getSupabase();
-    const { data, error } = await sb
-      .from("reactions")
-      .select("emoji, count")
-      .eq("target_type", target_type)
-      .eq("target_id", target_id);
-    const result: Record<string, number> = {};
-    VALID_EMOJIS.forEach(e => { result[e] = 0; });
-    if (!error && data) {
-      (data as any[]).forEach((row: any) => { result[row.emoji] = row.count; });
+    await ensureTable();
+    const pool = getPool();
+    const result = await pool.query(
+      `SELECT emoji, count FROM reactions WHERE target_type = $1 AND target_id = $2`,
+      [target_type, target_id]
+    );
+    const out: Record<string, number> = {};
+    VALID_EMOJIS.forEach(e => { out[e] = 0; });
+    for (const row of result.rows) {
+      out[row.emoji] = row.count;
     }
-    res.json(result);
+    res.json(out);
   } catch (err) {
     req.log?.error({ err }, "Get reactions error");
     res.status(500).json({ error: "Internal server error" });
@@ -40,21 +59,17 @@ router.post("/", async (req: any, res) => {
     return;
   }
   try {
-    const sb = getSupabase();
-    const { data: existing } = await sb
-      .from("reactions")
-      .select("count")
-      .eq("target_type", target_type)
-      .eq("target_id", target_id)
-      .eq("emoji", emoji)
-      .single();
-    const currentCount = (existing as any)?.count ?? 0;
-    const newCount = Math.max(0, currentCount + delta);
-    await sb.from("reactions").upsert(
-      { target_type, target_id, emoji, count: newCount },
-      { onConflict: "target_type,target_id,emoji" }
+    await ensureTable();
+    const pool = getPool();
+    const result = await pool.query(
+      `INSERT INTO reactions (target_type, target_id, emoji, count)
+       VALUES ($1, $2, $3, GREATEST(0, $4))
+       ON CONFLICT (target_type, target_id, emoji)
+       DO UPDATE SET count = GREATEST(0, reactions.count + $4)
+       RETURNING count`,
+      [target_type, target_id, emoji, delta]
     );
-    res.json({ count: newCount });
+    res.json({ count: result.rows[0]?.count ?? 0 });
   } catch (err) {
     req.log?.error({ err }, "Post reaction error");
     res.status(500).json({ error: "Internal server error" });

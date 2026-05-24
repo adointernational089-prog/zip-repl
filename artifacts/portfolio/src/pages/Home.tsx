@@ -194,6 +194,67 @@ const TypewriterName = memo(function TypewriterName() {
   );
 });
 
+/* ── Walking Scorpion with realistic gait ── */
+const LEG_PAIRS = [
+  { top: "28%", phase: "a" as const },
+  { top: "39%", phase: "b" as const },
+  { top: "50%", phase: "a" as const },
+  { top: "61%", phase: "b" as const },
+];
+
+const WalkingScorpion = memo(function WalkingScorpion({
+  containerRef,
+  initialTop,
+  flipX,
+  opacity,
+}: {
+  containerRef: React.MutableRefObject<HTMLDivElement | null>;
+  initialTop: number;
+  flipX: boolean;
+  opacity: number;
+}) {
+  return (
+    <div
+      ref={containerRef}
+      className="scorpion-container fixed pointer-events-none z-[48]"
+      data-state="idle"
+      style={{
+        top: initialTop,
+        [flipX ? "right" : "left"]: "8px",
+        opacity,
+        willChange: "top",
+        transition: "top 0.08s linear",
+      }}
+    >
+      <div className="scorpion-lean" style={{ position: "relative", display: "inline-block" }}>
+        <div style={{ transform: flipX ? "scaleX(-1)" : "none", position: "relative" }}>
+          {LEG_PAIRS.map((lp, i) => (
+            <div
+              key={`ll${i}`}
+              className={`scorpion-leg phase-${lp.phase}`}
+              style={{ left: "-14px", top: lp.top, ["--leg-origin" as string]: "right center" }}
+            />
+          ))}
+          <img
+            src="/scorpion-favicon.svg"
+            alt=""
+            aria-hidden
+            className="scorpion-body"
+            style={{ width: 86, display: "block", position: "relative", zIndex: 1 }}
+          />
+          {LEG_PAIRS.map((lp, i) => (
+            <div
+              key={`rl${i}`}
+              className={`scorpion-leg phase-${lp.phase === "a" ? "b" : "a"}`}
+              style={{ right: "-14px", top: lp.top, ["--leg-origin" as string]: "left center" }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+});
+
 /* ── Scroll Scorpions — follow scroll, direct DOM for perf ── */
 const ScrollScorpions = memo(function ScrollScorpions() {
   const leftRef = useRef<HTMLDivElement>(null);
@@ -201,46 +262,85 @@ const ScrollScorpions = memo(function ScrollScorpions() {
   const leftPosRef = useRef(160);
   const rightPosRef = useRef(320);
   const lastScrollRef = useRef(0);
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    const setState = (el: HTMLDivElement | null, s: string) => { if (el) el.dataset.state = s; };
+
     const onScroll = () => {
       const y = window.scrollY;
       const delta = y - lastScrollRef.current;
       lastScrollRef.current = y;
       const vh = window.innerHeight;
-      const SPEED = 0.78;
 
-      leftPosRef.current = Math.max(50, Math.min(vh - 140, leftPosRef.current + delta * SPEED));
-      rightPosRef.current = Math.max(50, Math.min(vh - 140, rightPosRef.current + delta * SPEED * 0.88));
+      const dir = delta > 0 ? "walking-down" : "walking-up";
+      setState(leftRef.current, dir);
+      setState(rightRef.current, dir);
 
-      if (leftRef.current) leftRef.current.style.top = leftPosRef.current + "px";
+      leftPosRef.current  = Math.max(50, Math.min(vh - 140, leftPosRef.current  + delta * 0.78));
+      rightPosRef.current = Math.max(50, Math.min(vh - 140, rightPosRef.current + delta * 0.69));
+
+      if (leftRef.current)  leftRef.current.style.top  = leftPosRef.current  + "px";
       if (rightRef.current) rightRef.current.style.top = rightPosRef.current + "px";
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
-  const glowStyle = { width: 86, filter: "drop-shadow(0 0 18px hsl(var(--primary) / 0.75))" };
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = setTimeout(() => {
+        setState(leftRef.current,  "idle");
+        setState(rightRef.current, "idle");
+      }, 180);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    };
+  }, []);
 
   return (
     <>
-      <div
-        ref={leftRef}
-        className="fixed left-2 pointer-events-none z-[48]"
-        style={{ top: 160, opacity: 0.22, willChange: "top", transition: "top 0.08s linear" }}
-      >
-        <img src="/scorpion-favicon.svg" alt="" aria-hidden style={glowStyle} />
-      </div>
-      <div
-        ref={rightRef}
-        className="fixed right-2 pointer-events-none z-[48]"
-        style={{ top: 320, opacity: 0.18, willChange: "top", transition: "top 0.08s linear", transform: "scaleX(-1)" }}
-      >
-        <img src="/scorpion-favicon.svg" alt="" aria-hidden style={glowStyle} />
-      </div>
+      <WalkingScorpion containerRef={leftRef}  initialTop={160} flipX={false} opacity={0.30} />
+      <WalkingScorpion containerRef={rightRef} initialTop={320} flipX={true}  opacity={0.24} />
     </>
   );
 });
+
+/* ── Visitor Counter ── */
+const _BASE_V = (import.meta.env.BASE_URL ?? "").replace(/\/$/, "");
+
+function VisitorCounter() {
+  const [count, setCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const KEY = "bhub_sid";
+    let sid = localStorage.getItem(KEY);
+    if (!sid) {
+      sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(KEY, sid);
+    }
+    fetch(`${_BASE_V}/api/visitors`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sid, path: "/" }),
+    }).catch(() => {});
+
+    fetch(`${_BASE_V}/api/visitors`)
+      .then(r => r.ok ? r.json() : null)
+      .then((d: { today?: number } | null) => { if (d?.today !== undefined) setCount(d.today); })
+      .catch(() => {});
+  }, []);
+
+  if (count === null) return null;
+  return (
+    <div className="visitor-counter-badge">
+      <span className="dot" />
+      <span>
+        <strong style={{ fontWeight: 700 }}>{count.toLocaleString()}</strong>
+        {" "}visitor{count !== 1 ? "s" : ""} today
+      </span>
+    </div>
+  );
+}
 
 /* ── Scroll reveal hook ── */
 function useScrollReveal() {
@@ -450,6 +550,8 @@ export default function Home() {
                 Contact Me <Send className="w-4 h-4" />
               </button>
             </div>
+
+            <VisitorCounter />
           </div>
 
           {/* Right — profile photo with scorpion flame */}

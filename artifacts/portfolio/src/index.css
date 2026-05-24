@@ -223,6 +223,119 @@
   50%       { opacity: 0.12; filter: drop-shadow(0 0 18px hsl(var(--primary) / 0.6)); }
 }
 
+/* ── Realistic scorpion walking gait ── */
+@keyframes scorpionGait {
+  0%    { transform: translateY(0px)   rotate(-0.7deg) scaleX(1.000) scaleY(1.000); }
+  12.5% { transform: translateY(-2px)  rotate(0deg)    scaleX(0.993) scaleY(1.010); }
+  25%   { transform: translateY(-4px)  rotate(0.7deg)  scaleX(0.986) scaleY(1.020); }
+  37.5% { transform: translateY(-2px)  rotate(0deg)    scaleX(0.993) scaleY(1.010); }
+  50%   { transform: translateY(0px)   rotate(-0.7deg) scaleX(1.000) scaleY(1.000); }
+  62.5% { transform: translateY(-2px)  rotate(0deg)    scaleX(0.993) scaleY(1.010); }
+  75%   { transform: translateY(-4px)  rotate(0.7deg)  scaleX(0.986) scaleY(1.020); }
+  87.5% { transform: translateY(-2px)  rotate(0deg)    scaleX(0.993) scaleY(1.010); }
+  100%  { transform: translateY(0px)   rotate(-0.7deg) scaleX(1.000) scaleY(1.000); }
+}
+
+@keyframes scorpionBreath {
+  0%, 100% { transform: translateY(0px)   scale(1.000) rotate(0deg); }
+  40%       { transform: translateY(-1.8px) scale(1.008) rotate(0.3deg); }
+  80%       { transform: translateY(-0.8px) scale(1.003) rotate(-0.2deg); }
+}
+
+@keyframes scorpionWalkGlow {
+  0%, 100% { filter: drop-shadow(0 0 16px hsl(var(--primary) / 0.70)); }
+  50%       { filter: drop-shadow(0 0 30px hsl(var(--primary) / 1.00)) drop-shadow(0 0 8px hsl(var(--primary) / 0.55)); }
+}
+
+@keyframes scorpionIdleGlow {
+  0%, 100% { filter: drop-shadow(0 0 14px hsl(var(--primary) / 0.60)); }
+  50%       { filter: drop-shadow(0 0 20px hsl(var(--primary) / 0.80)); }
+}
+
+/* ── Scorpion container: data-state drives walk vs idle ── */
+.scorpion-container .scorpion-lean {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: center 60%;
+}
+.scorpion-container[data-state="idle"] .scorpion-lean {
+  transform: rotate(0deg);
+}
+.scorpion-container[data-state="walking-down"] .scorpion-lean {
+  transform: rotate(6deg) translateY(-2px);
+}
+.scorpion-container[data-state="walking-up"] .scorpion-lean {
+  transform: rotate(-6deg) translateY(2px);
+}
+
+.scorpion-container[data-state="idle"] .scorpion-body {
+  animation: scorpionBreath 2.8s ease-in-out infinite,
+             scorpionIdleGlow 2.8s ease-in-out infinite;
+}
+.scorpion-container[data-state="walking-down"] .scorpion-body,
+.scorpion-container[data-state="walking-up"] .scorpion-body {
+  animation: scorpionGait 0.44s ease-in-out infinite,
+             scorpionWalkGlow 0.44s ease-in-out infinite;
+}
+
+/* ── Scorpion legs ── */
+.scorpion-leg {
+  position: absolute;
+  width: 17px;
+  height: 2px;
+  background: hsl(var(--primary) / 0.55);
+  border-radius: 2px;
+  transform-origin: var(--leg-origin, right center);
+  box-shadow: 0 0 5px hsl(var(--primary) / 0.35);
+}
+
+@keyframes legSwingA {
+  0%, 100% { transform: rotate(-28deg); }
+  50%       { transform: rotate(22deg);  }
+}
+@keyframes legSwingB {
+  0%, 100% { transform: rotate(22deg);  }
+  50%       { transform: rotate(-28deg); }
+}
+
+.scorpion-container[data-state="idle"] .scorpion-leg {
+  animation: none;
+  transform: rotate(-8deg);
+}
+.scorpion-container[data-state="walking-down"] .scorpion-leg.phase-a,
+.scorpion-container[data-state="walking-up"] .scorpion-leg.phase-a {
+  animation: legSwingA 0.44s ease-in-out infinite;
+}
+.scorpion-container[data-state="walking-down"] .scorpion-leg.phase-b,
+.scorpion-container[data-state="walking-up"] .scorpion-leg.phase-b {
+  animation: legSwingB 0.44s ease-in-out infinite;
+}
+
+/* ── Visitor counter badge ── */
+.visitor-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: 1px solid hsl(var(--primary) / 0.25);
+  background: hsl(var(--primary) / 0.07);
+  font-size: 0.75rem;
+  color: hsl(var(--primary) / 0.85);
+  backdrop-filter: blur(8px);
+  animation: fadeInUp 0.6s ease both;
+  animation-delay: 0.5s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+.visitor-counter-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  animation: pulse-ring 1.5s ease-out infinite;
+  flex-shrink: 0;
+}
+
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }

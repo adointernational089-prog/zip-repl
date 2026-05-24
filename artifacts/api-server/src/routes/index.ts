@@ -10,6 +10,7 @@ import uploadRouter from "./upload.js";
 import contentRouter from "./content.js";
 import reactionsRouter from "./reactions.js";
 import broadcastsRouter from "./broadcasts.js";
+import visitorsRouter from "./visitors.js";
 
 const router: IRouter = Router();
 
@@ -23,6 +24,7 @@ router.use("/upload", uploadRouter);
 router.use("/content", contentRouter);
 router.use("/reactions", reactionsRouter);
 router.use("/broadcasts", broadcastsRouter);
+router.use("/visitors", visitorsRouter);
 router.use(setupRouter);
 
 export default router;
