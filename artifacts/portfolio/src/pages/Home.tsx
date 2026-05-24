@@ -148,6 +148,7 @@ const TypewriterName = memo(function TypewriterName() {
       <h1
         className="font-black leading-none tracking-tight select-none"
         style={{ fontSize: "clamp(3rem, 10vw, 7rem)" }}
+        aria-label="Bishal Bishwokarma"
       >
         <span
           className="text-white inline-block transition-all duration-100"
