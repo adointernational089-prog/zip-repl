@@ -244,10 +244,12 @@ const ScrollScorpions = memo(function ScrollScorpions() {
 /* ── Scroll reveal hook ── */
 function useScrollReveal() {
   useEffect(() => {
-    const SELECTOR = ".reveal, .reveal-left, .reveal-right, .reveal-scale, .edu-card-reveal";
+    const CLASSES = ["reveal", "reveal-left", "reveal-right", "reveal-scale", "edu-card-reveal"];
+    const SELECTOR = CLASSES.map((c) => `.${c}`).join(", ");
 
-    const revealAll = () => {
-      document.querySelectorAll(SELECTOR).forEach((el) => el.classList.add("revealed"));
+    const revealIfVisible = (el: Element) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 60) el.classList.add("revealed");
     };
 
     const observer = new IntersectionObserver(
@@ -259,13 +261,36 @@ function useScrollReveal() {
       { threshold: 0, rootMargin: "0px 0px 60px 0px" }
     );
 
-    const els = document.querySelectorAll(SELECTOR);
-    els.forEach((el) => observer.observe(el));
+    const observe = (el: Element) => {
+      if (!el.classList.contains("revealed")) observer.observe(el);
+    };
 
-    // Safety net: force-reveal everything after 1.5 s in case observer misses anything
-    const safety = setTimeout(revealAll, 1500);
+    document.querySelectorAll(SELECTOR).forEach(observe);
 
-    return () => { observer.disconnect(); clearTimeout(safety); };
+    const mutation = new MutationObserver((records) => {
+      records.forEach((record) => {
+        record.addedNodes.forEach((node) => {
+          if (node.nodeType !== 1) return;
+          const el = node as Element;
+          if (CLASSES.some((c) => el.classList.contains(c))) {
+            revealIfVisible(el);
+            if (!el.classList.contains("revealed")) observe(el);
+          }
+          el.querySelectorAll(SELECTOR).forEach((child) => {
+            revealIfVisible(child);
+            if (!child.classList.contains("revealed")) observe(child);
+          });
+        });
+      });
+    });
+
+    mutation.observe(document.body, { childList: true, subtree: true });
+
+    const safety = setTimeout(() => {
+      document.querySelectorAll(SELECTOR).forEach((el) => el.classList.add("revealed"));
+    }, 2500);
+
+    return () => { observer.disconnect(); mutation.disconnect(); clearTimeout(safety); };
   }, []);
 }
 
