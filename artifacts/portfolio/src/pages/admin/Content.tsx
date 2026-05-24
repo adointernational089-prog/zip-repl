@@ -31,8 +31,9 @@ function apiPut(section: string, data: any) {
 export default function AdminContent() {
   const { toast } = useToast();
   const [active, setActive] = useState<Section>("hero");
-  const [content, setContent] = useState<any>({});
-  const [saving, setSaving] = useState(false);
+  const [content, setContent] = useState<any | null>(null);
+  const [loadError, setLoadError] = useState(false);
+  const [savingSection, setSavingSection] = useState<string | null>(null);
   const [setupLoading, setSetupLoading] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
 
@@ -40,11 +41,11 @@ export default function AdminContent() {
     fetch("/api/content")
       .then((r) => r.json())
       .then((data) => setContent(data))
-      .catch(() => {});
+      .catch(() => setLoadError(true));
   }, []);
 
   const save = async (sectionKey: string, data: any) => {
-    setSaving(true);
+    setSavingSection(sectionKey);
     try {
       const r = await apiPut(sectionKey, data);
       if (!r.ok) throw new Error("Failed to save");
@@ -53,7 +54,7 @@ export default function AdminContent() {
     } catch {
       toast({ title: "Save failed", description: "Make sure the site_content table exists in Supabase.", variant: "destructive" });
     }
-    setSaving(false);
+    setSavingSection(null);
   };
 
   const setupTable = async () => {
@@ -120,24 +121,41 @@ export default function AdminContent() {
         ))}
       </div>
 
-      {/* Section editors */}
-      {active === "hero" && (
-        <HeroEditor data={content.hero || {}} onSave={(d) => save("hero", d)} saving={saving} />
+      {/* Loading state */}
+      {content === null && !loadError && (
+        <div className="flex justify-center py-20">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        </div>
       )}
-      {active === "about" && (
-        <AboutEditor data={content.about || {}} onSave={(d) => save("about", d)} saving={saving} />
+
+      {loadError && (
+        <div className="text-center py-12 text-muted-foreground text-sm">
+          Failed to load content. Check your API connection.
+        </div>
       )}
-      {active === "skills" && (
-        <SkillsEditor data={content.skills || {}} onSave={(d) => save("skills", d)} saving={saving} />
-      )}
-      {active === "services" && (
-        <ServicesEditor data={content.services || []} onSave={(d) => save("services", d)} saving={saving} />
-      )}
-      {active === "contact" && (
-        <ContactEditor data={content.contact || {}} onSave={(d) => save("contact", d)} saving={saving} />
-      )}
-      {active === "education" && (
-        <EducationEditor data={content.education || []} onSave={(d) => save("education", d)} saving={saving} />
+
+      {/* Section editors — only render after content is loaded */}
+      {content !== null && (
+        <>
+          {active === "hero" && (
+            <HeroEditor data={content.hero ?? {}} onSave={(d) => save("hero", d)} saving={savingSection === "hero"} />
+          )}
+          {active === "about" && (
+            <AboutEditor data={content.about ?? {}} onSave={(d) => save("about", d)} saving={savingSection === "about"} />
+          )}
+          {active === "skills" && (
+            <SkillsEditor data={content.skills ?? {}} onSave={(d) => save("skills", d)} saving={savingSection === "skills"} />
+          )}
+          {active === "services" && (
+            <ServicesEditor data={content.services ?? []} onSave={(d) => save("services", d)} saving={savingSection === "services"} />
+          )}
+          {active === "contact" && (
+            <ContactEditor data={content.contact ?? {}} onSave={(d) => save("contact", d)} saving={savingSection === "contact"} />
+          )}
+          {active === "education" && (
+            <EducationEditor data={content.education ?? []} onSave={(d) => save("education", d)} saving={savingSection === "education"} />
+          )}
+        </>
       )}
     </AdminLayout>
   );
@@ -146,7 +164,6 @@ export default function AdminContent() {
 /* ────────────────────────────────── Hero Editor ─────────────────────────────────── */
 function HeroEditor({ data, onSave, saving }: { data: any; onSave: (d: any) => void; saving: boolean }) {
   const [f, setF] = useState({ title: data.title || "", badge: data.badge || "", bio: data.bio || "" });
-  useEffect(() => { setF({ title: data.title || "", badge: data.badge || "", bio: data.bio || "" }); }, [data]);
   return (
     <EditorCard title="Hero Section" desc="The big heading and intro text at the top of your homepage.">
       <Field label="Main Heading">
@@ -166,7 +183,6 @@ function HeroEditor({ data, onSave, saving }: { data: any; onSave: (d: any) => v
 /* ────────────────────────────────── About Editor ─────────────────────────────────── */
 function AboutEditor({ data, onSave, saving }: { data: any; onSave: (d: any) => void; saving: boolean }) {
   const [text, setText] = useState(data.text || "");
-  useEffect(() => { setText(data.text || ""); }, [data]);
   return (
     <EditorCard title="About Section" desc="The paragraph describing who you are.">
       <Field label="About Me Text">
@@ -182,12 +198,11 @@ function SkillsEditor({ data, onSave, saving }: { data: any; onSave: (d: any) =>
   const [prog, setProg] = useState<{ icon: string; label: string }[]>(data.programming || []);
   const [tools, setTools] = useState<{ icon: string; label: string }[]>(data.tools || []);
   const [other, setOther] = useState<{ icon: string; label: string }[]>(data.other || []);
-  useEffect(() => { setProg(data.programming || []); setTools(data.tools || []); setOther(data.other || []); }, [data]);
 
-  const addItem = (list: any[], setList: any) => setList([...list, { icon: "●", label: "" }]);
-  const removeItem = (list: any[], setList: any, i: number) => setList(list.filter((_: any, idx: number) => idx !== i));
-  const updateItem = (list: any[], setList: any, i: number, field: string, val: string) =>
-    setList(list.map((item: any, idx: number) => idx === i ? { ...item, [field]: val } : item));
+  const addItem = (list: any[], setList: any) => setList((prev: any[]) => [...prev, { icon: "●", label: "" }]);
+  const removeItem = (setList: any, i: number) => setList((prev: any[]) => prev.filter((_: any, idx: number) => idx !== i));
+  const updateItem = (setList: any, i: number, field: string, val: string) =>
+    setList((prev: any[]) => prev.map((item: any, idx: number) => idx === i ? { ...item, [field]: val } : item));
 
   const SkillList = ({ title, items, setItems }: { title: string; items: any[]; setItems: any }) => (
     <div className="space-y-2">
@@ -199,9 +214,9 @@ function SkillsEditor({ data, onSave, saving }: { data: any; onSave: (d: any) =>
       </div>
       {items.map((item, i) => (
         <div key={i} className="flex gap-2 items-center">
-          <Input value={item.icon} onChange={(e) => updateItem(items, setItems, i, "icon", e.target.value)} className="w-14 bg-background border-white/10 text-center text-sm" placeholder="⊞" />
-          <Input value={item.label} onChange={(e) => updateItem(items, setItems, i, "label", e.target.value)} className="flex-1 bg-background border-white/10 text-sm" placeholder="Skill name" />
-          <Button size="sm" variant="ghost" onClick={() => removeItem(items, setItems, i)} className="w-8 h-8 p-0 text-destructive hover:bg-destructive/10"><Trash2 className="w-3.5 h-3.5" /></Button>
+          <Input value={item.icon} onChange={(e) => updateItem(setItems, i, "icon", e.target.value)} className="w-14 bg-background border-white/10 text-center text-sm" placeholder="⊞" />
+          <Input value={item.label} onChange={(e) => updateItem(setItems, i, "label", e.target.value)} className="flex-1 bg-background border-white/10 text-sm" placeholder="Skill name" />
+          <Button size="sm" variant="ghost" onClick={() => removeItem(setItems, i)} className="w-8 h-8 p-0 text-destructive hover:bg-destructive/10"><Trash2 className="w-3.5 h-3.5" /></Button>
         </div>
       ))}
     </div>
@@ -220,11 +235,10 @@ function SkillsEditor({ data, onSave, saving }: { data: any; onSave: (d: any) =>
 /* ────────────────────────────────── Services Editor ─────────────────────────────────── */
 function ServicesEditor({ data, onSave, saving }: { data: any[]; onSave: (d: any) => void; saving: boolean }) {
   const [cards, setCards] = useState<any[]>(Array.isArray(data) ? data : []);
-  useEffect(() => { setCards(Array.isArray(data) ? data : []); }, [data]);
 
-  const add = () => setCards([...cards, { icon: "🔧", title: "", price: "", description: "", tag: "", tagColor: "", featured: false }]);
-  const remove = (i: number) => setCards(cards.filter((_, idx) => idx !== i));
-  const update = (i: number, field: string, val: any) => setCards(cards.map((c, idx) => idx === i ? { ...c, [field]: val } : c));
+  const add = () => setCards((prev) => [...prev, { icon: "🔧", title: "", price: "", description: "", tag: "", tagColor: "", featured: false }]);
+  const remove = (i: number) => setCards((prev) => prev.filter((_, idx) => idx !== i));
+  const update = (i: number, field: string, val: any) => setCards((prev) => prev.map((c, idx) => idx === i ? { ...c, [field]: val } : c));
 
   return (
     <EditorCard title="Services & Pricing" desc="Your freelance service offerings displayed as cards.">
@@ -281,8 +295,7 @@ function ServicesEditor({ data, onSave, saving }: { data: any[]; onSave: (d: any
 /* ────────────────────────────────── Contact Editor ─────────────────────────────────── */
 function ContactEditor({ data, onSave, saving }: { data: any; onSave: (d: any) => void; saving: boolean }) {
   const [f, setF] = useState({ email: "", phone: "", location: "", facebook: "", linkedin: "", whatsapp: "", ...data });
-  useEffect(() => { setF({ email: "", phone: "", location: "", facebook: "", linkedin: "", whatsapp: "", ...data }); }, [data]);
-  const upd = (k: string, v: string) => setF({ ...f, [k]: v });
+  const upd = (k: string, v: string) => setF((prev: any) => ({ ...prev, [k]: v }));
   return (
     <EditorCard title="Contact Info" desc="Your email, phone, location and social links shown in the Contact section.">
       <div className="grid sm:grid-cols-2 gap-4">
@@ -301,10 +314,10 @@ function ContactEditor({ data, onSave, saving }: { data: any; onSave: (d: any) =
 /* ────────────────────────────────── Education Editor ─────────────────────────────────── */
 function EducationEditor({ data, onSave, saving }: { data: any[]; onSave: (d: any) => void; saving: boolean }) {
   const [items, setItems] = useState<{ period: string; title: string; school: string }[]>(Array.isArray(data) ? data : []);
-  useEffect(() => { setItems(Array.isArray(data) ? data : []); }, [data]);
-  const add = () => setItems([...items, { period: "", title: "", school: "" }]);
-  const remove = (i: number) => setItems(items.filter((_, idx) => idx !== i));
-  const update = (i: number, field: string, val: string) => setItems(items.map((item, idx) => idx === i ? { ...item, [field]: val } : item));
+  const add = () => setItems((prev) => [...prev, { period: "", title: "", school: "" }]);
+  const remove = (i: number) => setItems((prev) => prev.filter((_, idx) => idx !== i));
+  const update = (i: number, field: string, val: string) =>
+    setItems((prev) => prev.map((item, idx) => idx === i ? { ...item, [field]: val } : item));
   return (
     <EditorCard title="Education" desc="Your academic background displayed in the timeline.">
       <div className="space-y-3">

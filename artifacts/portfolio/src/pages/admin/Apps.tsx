@@ -80,6 +80,25 @@ export default function AdminApps() {
     setShowForm(true);
   };
 
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = Array.from(e.clipboardData.items);
+    const imageItem = items.find((item) => item.type.startsWith("image/"));
+    if (imageItem) {
+      e.preventDefault();
+      const file = imageItem.getAsFile();
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target?.result as string;
+        setIconPreview(dataUrl);
+        setForm((f) => ({ ...f, icon_url: dataUrl }));
+        setUploadMode("upload");
+      };
+      reader.readAsDataURL(file);
+      toast({ title: "Icon pasted!", description: "Image from clipboard applied." });
+    }
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -163,7 +182,7 @@ export default function AdminApps() {
               </div>
 
               {/* Icon — full width with upload/URL toggle */}
-              <div className="md:col-span-2">
+              <div className="md:col-span-2" onPaste={handlePaste}>
                 <div className="flex items-center justify-between mb-2">
                   <Label>App Icon <span className="text-muted-foreground text-xs">(optional)</span></Label>
                   <div className="flex gap-1 p-0.5 bg-white/5 rounded-lg">

@@ -375,7 +375,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden" style={{ background: "#06060f", color: "#ffffff" }}>
+    <div className="min-h-screen overflow-x-hidden" style={{ background: "hsl(var(--background))", color: "hsl(var(--foreground))" }}>
       {/* Portal overlay */}
       {portal.active && (
         <div className="portal-overlay" style={{ pointerEvents: "none" }}>
@@ -485,13 +485,13 @@ export default function Home() {
       </section>
 
       {/* ───── ABOUT ───── */}
-      <section id="about" className="py-20 scroll-mt-16 relative z-10" style={{ background: "#06060f" }}>
+      <section id="about" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
         <div className="max-w-3xl mx-auto px-6 text-center">
           <div className="reveal">
             <PillBadge color="cyan">ABOUT ME</PillBadge>
             <h2 className="text-3xl font-black mt-4 mb-10">Who I Am</h2>
           </div>
-          <div className="reveal delay-200 rounded-2xl p-7 text-left relative overflow-hidden neon-card" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div className="reveal delay-200 rounded-2xl p-7 text-left relative overflow-hidden neon-card" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
             <div className="animate-shimmer absolute inset-0 pointer-events-none" />
             <p style={{ color: "#cbd5e1", lineHeight: 1.8, fontSize: "0.92rem" }}>
               {about.text.split("Bishal Bishwokarma").map((part: string, i: number) =>
@@ -507,7 +507,7 @@ export default function Home() {
       </section>
 
       {/* ───── SKILLS ───── */}
-      <section id="skills" className="py-20 scroll-mt-16 relative z-10" style={{ background: "#08081a" }}>
+      <section id="skills" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--muted))" }}>
         <div className="max-w-5xl mx-auto px-6 text-center">
           <div className="reveal">
             <PillBadge color="cyan">MY ARSENAL</PillBadge>
@@ -541,7 +541,7 @@ export default function Home() {
       </section>
 
       {/* ───── MY PROJECTS ───── */}
-      <section id="projects" className="py-20 scroll-mt-16 relative z-10" style={{ background: "#06060f" }}>
+      <section id="projects" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
         <div className="max-w-5xl mx-auto px-6 text-center">
           <div className="reveal">
             <PillBadge color="green">PORTFOLIO</PillBadge>
@@ -550,7 +550,7 @@ export default function Home() {
           </div>
 
           {apps.length === 0 ? (
-            <div className="reveal max-w-sm mx-auto rounded-2xl p-10 flex flex-col items-center" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div className="reveal max-w-sm mx-auto rounded-2xl p-10 flex flex-col items-center" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 text-3xl animate-float" style={{ background: "linear-gradient(135deg, #1d4ed8, #7c3aed)" }}>🚀</div>
               <h3 className="text-lg font-bold mb-2">Apps Coming Soon</h3>
               <p style={{ color: "#64748b", fontSize: "0.85rem", lineHeight: 1.6 }} className="mb-6">New projects are being prepared. Sign in to explore Bishal's Hub when apps go live.</p>
@@ -564,7 +564,7 @@ export default function Home() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {apps.map((app: any, i: number) => (
                 <a key={app.id} href={user ? (app.url || "#") : "#"} target={user ? "_blank" : "_self"} rel="noreferrer" onClick={(e) => handleAppClick(e, app)} className="group reveal" style={{ transitionDelay: `${i * 0.06}s` }}>
-                  <div className="rounded-2xl p-5 flex flex-col items-center text-center gap-3 transition-all cursor-pointer h-full neon-card relative overflow-hidden" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <div className="rounded-2xl p-5 flex flex-col items-center text-center gap-3 transition-all cursor-pointer h-full neon-card relative overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
                     <div className="animate-shimmer absolute inset-0 pointer-events-none" />
                     <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center group-hover:border-primary/40 transition-colors">
                       {app.icon_url ? <img src={app.icon_url} alt={app.name} className="w-full h-full object-cover" /> : <Flame className="w-6 h-6 text-primary" />}
@@ -583,7 +583,7 @@ export default function Home() {
       </section>
 
       {/* ───── LATEST WORKING PROJECT ───── */}
-      <section id="latest-projects" className="py-20 scroll-mt-16 relative z-10" style={{ background: "#08081a" }}>
+      <section id="latest-projects" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--muted))" }}>
           <div className="max-w-5xl mx-auto px-6 text-center">
             <div className="reveal">
               <PillBadge color="orange">MY WORK</PillBadge>
@@ -594,7 +594,7 @@ export default function Home() {
               {projects.map((proj: any, pi: number) => (
                 <div key={proj.id} className="reveal" style={{ transitionDelay: `${pi * 0.15}s` }}>
                   {proj.images && proj.images.length > 0 && (
-                    <div className="relative rounded-2xl overflow-hidden p-4 sm:p-6 mb-6" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div className="relative rounded-2xl overflow-hidden p-4 sm:p-6 mb-6" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.12)" }}>
                       <div className={`grid gap-3 ${proj.images.length === 1 ? "grid-cols-1" : proj.images.length === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}`}>
                         {proj.images.slice(0, 3).map((img: string, idx: number) => (
                           <div
@@ -653,7 +653,7 @@ export default function Home() {
         </section>
 
       {/* ───── SERVICES & PRICING ───── */}
-      <section id="services" className="py-24 scroll-mt-16 relative overflow-hidden z-10" style={{ background: projects.length > 0 ? "#06060f" : "#08081a" }}>
+      <section id="services" className="py-24 scroll-mt-16 relative overflow-hidden z-10" style={{ background: "hsl(var(--background))" }}>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full opacity-10 blur-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse, #7c3aed 0%, #2563eb 50%, transparent 80%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-14">
@@ -688,7 +688,7 @@ export default function Home() {
       </section>
 
       {/* ───── EDUCATION ───── */}
-      <section id="education" className="py-24 scroll-mt-16 relative z-10 overflow-hidden" style={{ background: "#06060f" }}>
+      <section id="education" className="py-24 scroll-mt-16 relative z-10 overflow-hidden" style={{ background: "hsl(var(--muted))" }}>
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute left-1/2 top-0 bottom-0 w-px" style={{ background: "linear-gradient(180deg, transparent, hsl(var(--primary) / 0.15) 20%, hsl(var(--primary) / 0.15) 80%, transparent)" }} />
         </div>
@@ -735,7 +735,7 @@ export default function Home() {
       </section>
 
       {/* ───── CONTACT ───── */}
-      <section id="contact" className="py-20 scroll-mt-16 relative z-10" style={{ background: "#08081a" }}>
+      <section id="contact" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
         <div className="max-w-4xl mx-auto px-6 text-center">
           <div className="reveal">
             <PillBadge color="cyan">GET IN TOUCH</PillBadge>
@@ -772,20 +772,20 @@ export default function Home() {
             </div>
 
             {/* Right — form */}
-            <div className="rounded-2xl p-6 reveal-right delay-200 relative overflow-hidden" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div className="rounded-2xl p-6 reveal-right delay-200 relative overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
               <div className="animate-shimmer absolute inset-0 pointer-events-none" />
               <form onSubmit={handleSend} className="space-y-4 relative z-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>NAME</label>
-                    <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-all" style={{ background: "#131329", border: "1px solid rgba(255,255,255,0.08)", color: "#fff" }}
+                    <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-all" style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.15)", color: "hsl(var(--foreground))" }}
                       onFocus={e => (e.target.style.borderColor = "hsl(var(--primary) / 0.5)")}
                       onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>YOUR EMAIL</label>
-                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@example.com" className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-all" style={{ background: "#131329", border: "1px solid rgba(255,255,255,0.08)", color: "#fff" }}
+                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@example.com" className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-all" style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.15)", color: "hsl(var(--foreground))" }}
                       onFocus={e => (e.target.style.borderColor = "hsl(var(--primary) / 0.5)")}
                       onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
                     />
@@ -793,7 +793,7 @@ export default function Home() {
                 </div>
                 <div>
                   <label className="block text-xs font-medium mb-1.5" style={{ color: "#94a3b8" }}>MESSAGE</label>
-                  <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Tell me about your project or idea..." rows={5} className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-all resize-none" style={{ background: "#131329", border: "1px solid rgba(255,255,255,0.08)", color: "#fff" }}
+                  <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Tell me about your project or idea..." rows={5} className="w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-all resize-none" style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.15)", color: "hsl(var(--foreground))" }}
                     onFocus={e => (e.target.style.borderColor = "hsl(var(--primary) / 0.5)")}
                     onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
                   />
@@ -838,7 +838,7 @@ function PillBadge({ children, color }: { children: React.ReactNode; color: "cya
 
 function SkillCard({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl p-5 text-left relative overflow-hidden neon-card h-full" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+    <div className="rounded-2xl p-5 text-left relative overflow-hidden neon-card h-full" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
       <div className="animate-shimmer absolute inset-0 pointer-events-none" />
       <div className="flex items-center gap-2.5 mb-4 relative z-10">{icon}<span className="font-bold text-sm">{title}</span></div>
       <div className="relative z-10">{children}</div>
@@ -850,9 +850,9 @@ function SkillItem({ icon, label, delay }: { icon: string; label: string; delay?
   return (
     <div
       className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all hover:scale-105 cursor-default"
-      style={{ background: "#131329", border: "1px solid rgba(255,255,255,0.05)", transitionDelay: `${delay || 0}ms` }}
-      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "hsl(var(--primary) / 0.3)"; (e.currentTarget as HTMLElement).style.background = "hsl(var(--primary) / 0.05)"; }}
-      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.05)"; (e.currentTarget as HTMLElement).style.background = "#131329"; }}
+      style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.12)", transitionDelay: `${delay || 0}ms` }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "hsl(var(--primary) / 0.3)"; (e.currentTarget as HTMLElement).style.background = "hsl(var(--primary) / 0.08)"; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(128,128,128,0.12)"; (e.currentTarget as HTMLElement).style.background = "hsl(var(--muted))"; }}
     >
       <span className="text-xs" style={{ color: "hsl(var(--primary))" }}>{icon}</span>
       <span className="text-xs font-medium" style={{ color: "#cbd5e1" }}>{label}</span>
@@ -915,7 +915,7 @@ function EduCard({ period, title, school, icon, side, index }: { period: string;
   return (
     <div
       className={`rounded-xl p-5 text-left relative overflow-hidden neon-card ${side === "right" ? "text-right" : ""}`}
-      style={{ background: "#0d0d1f", border: `1px solid ${c.border}`, boxShadow: `0 0 20px ${c.primary}18` }}
+      style={{ background: "hsl(var(--card))", border: `1px solid ${c.border}`, boxShadow: `0 0 20px ${c.primary}18` }}
     >
       <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ background: `radial-gradient(ellipse at ${side === "left" ? "100%" : "0%"} 50%, ${c.primary} 0%, transparent 70%)` }} />
       <div className={`flex items-center gap-3 mb-3 ${side === "right" ? "flex-row-reverse" : ""}`}>
@@ -930,7 +930,7 @@ function EduCard({ period, title, school, icon, side, index }: { period: string;
 
 function ContactInfoRow({ icon, label, value, bg }: { icon: React.ReactNode; label: string; value: string; bg: string }) {
   return (
-    <div className="flex items-center gap-3 p-3.5 rounded-xl neon-card" style={{ background: "#0d0d1f", border: "1px solid rgba(255,255,255,0.08)" }}>
+    <div className="flex items-center gap-3 p-3.5 rounded-xl neon-card" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
       <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: bg }}>{icon}</div>
       <div><p className="text-[10px] tracking-widest uppercase font-medium" style={{ color: "#64748b" }}>{label}</p><p className="text-sm font-medium text-white break-all">{value}</p></div>
     </div>

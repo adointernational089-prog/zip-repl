@@ -228,17 +228,24 @@ export default function AdminProjects() {
               </div>
 
               <div>
-                <Label>Status</Label>
-                <select
-                  value={form.status}
-                  onChange={(e) => setForm({ ...form, status: e.target.value })}
-                  className="mt-1 w-full rounded-lg px-3 py-2 text-sm bg-background border border-white/10 text-foreground focus:border-primary outline-none"
-                >
-                  <option value="in-progress">In Progress</option>
-                  <option value="completed">Completed</option>
-                  <option value="upcoming">Upcoming Projects</option>
-                  <option value="archived">Archived</option>
-                </select>
+                <Label>Status <span className="text-muted-foreground text-xs">(pick or type custom)</span></Label>
+                <div className="relative mt-1">
+                  <input
+                    list="status-options"
+                    value={form.status}
+                    onChange={(e) => setForm({ ...form, status: e.target.value })}
+                    placeholder="e.g. in-progress, completed..."
+                    className="w-full rounded-lg px-3 py-2 text-sm bg-background border border-white/10 text-foreground focus:border-primary outline-none"
+                  />
+                  <datalist id="status-options">
+                    <option value="in-progress" />
+                    <option value="completed" />
+                    <option value="upcoming" />
+                    <option value="archived" />
+                    <option value="on-hold" />
+                    <option value="cancelled" />
+                  </datalist>
+                </div>
               </div>
 
               {/* Screenshots — Supabase Upload */}
