@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Code2, Wrench, Lightbulb, Mail, Phone, MapPin, ArrowRight,
   Send, Flame, ChevronRight, ExternalLink, Linkedin, Lock, Star,
-  GraduationCap, BookOpen, Award
+  GraduationCap, BookOpen, Award, Download, ChevronDown
 } from "lucide-react";
 
 /* ── Default content ── */
@@ -549,6 +549,14 @@ export default function Home() {
               >
                 Contact Me <Send className="w-4 h-4" />
               </button>
+              <a
+                href="/bishal-cv.pdf"
+                download
+                className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold transition-all hover:opacity-90 hover:scale-105"
+                style={{ background: "linear-gradient(90deg, #10b981, #059669)", color: "white" }}
+              >
+                Download CV <Download className="w-4 h-4" />
+              </a>
             </div>
 
           </div>
@@ -585,6 +593,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ───── STATS ───── */}
+      <StatsSection />
 
       {/* ───── ABOUT ───── */}
       <section id="about" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
@@ -641,6 +652,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ───── WHY CHOOSE ME ───── */}
+      <WhyChooseMe />
 
       {/* ───── MY PROJECTS ───── */}
       <section id="projects" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
@@ -841,6 +855,12 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ───── TESTIMONIALS ───── */}
+      <TestimonialsSection />
+
+      {/* ───── FAQ ───── */}
+      <FaqSection />
 
       {/* ───── CONTACT ───── */}
       <section id="contact" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
@@ -1066,3 +1086,238 @@ function SocialRow({ icon, name, handle }: { icon: React.ReactNode; name: string
     </div>
   );
 }
+
+/* ══════════════════════════════════════════
+   STATS SECTION
+══════════════════════════════════════════ */
+
+const STATS_DATA = [
+  { value: 200, suffix: "+", label: "Client Reviews",      icon: "⭐", color: "#f59e0b" },
+  { value: 100, suffix: "+", label: "Happy Clients",       icon: "😊", color: "#10b981" },
+  { value: 90,  suffix: "%", label: "Satisfaction Rate",   icon: "🎯", color: "#06b6d4" },
+  { value: 50,  suffix: "+", label: "Projects Completed",  icon: "🚀", color: "#8b5cf6" },
+];
+
+function StatCard({ value, suffix, label, icon, color }: {
+  value: number; suffix: string; label: string; icon: string; color: string;
+}) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      const duration = 1800;
+      const startTime = performance.now();
+      const tick = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setCount(Math.floor(eased * value));
+        if (progress < 1) requestAnimationFrame(tick);
+        else setCount(value);
+      };
+      requestAnimationFrame(tick);
+    }, { threshold: 0.4 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value]);
+
+  return (
+    <div ref={ref} className="reveal text-center p-7 rounded-2xl neon-card relative overflow-hidden group"
+      style={{ background: "hsl(var(--card))", border: `1px solid ${color}40` }}>
+      <div className="animate-shimmer absolute inset-0 pointer-events-none" />
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+        style={{ background: `radial-gradient(circle at 50% 50%, ${color}12 0%, transparent 70%)` }} />
+      <div className="text-4xl mb-3 relative z-10">{icon}</div>
+      <div className="font-black relative z-10 mb-1.5"
+        style={{ fontSize: "clamp(2rem, 5vw, 3rem)", color, textShadow: `0 0 20px ${color}80, 0 0 40px ${color}40` }}>
+        {count}{suffix}
+      </div>
+      <div className="text-sm font-semibold relative z-10" style={{ color: "hsl(var(--muted-foreground))" }}>{label}</div>
+    </div>
+  );
+}
+
+const StatsSection = memo(function StatsSection() {
+  return (
+    <section className="py-16 relative z-10" style={{ background: "linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%)" }}>
+      <div className="max-w-5xl mx-auto px-6">
+        <div className="reveal text-center mb-10">
+          <PillBadge color="cyan">BY THE NUMBERS</PillBadge>
+          <h2 className="text-3xl font-black mt-4">Results That Speak</h2>
+          <p className="mt-2 text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>Numbers that reflect real client satisfaction across Nepal</p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {STATS_DATA.map((s, i) => <StatCard key={i} {...s} />)}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+/* ══════════════════════════════════════════
+   WHY CHOOSE ME
+══════════════════════════════════════════ */
+
+const WHY_ME_DATA = [
+  { icon: "⚡", title: "Fast Delivery",      desc: "Projects delivered on time, every time. I respect deadlines and communicate proactively throughout the build.", color: "#f59e0b" },
+  { icon: "💰", title: "Affordable Pricing", desc: "Best quality-to-price ratio in Nepal. Transparent, honest pricing with absolutely no hidden charges.", color: "#10b981" },
+  { icon: "🎯", title: "Custom Solutions",   desc: "Every project is built from scratch to match your exact requirements — no cookie-cutter templates.", color: "#06b6d4" },
+  { icon: "🛡️", title: "Clean & Secure Code", desc: "Modern, maintainable and secure code following industry best practices — built to scale with your growth.", color: "#8b5cf6" },
+  { icon: "📞", title: "24/7 Support",       desc: "Always reachable via WhatsApp or email. Quick responses and ongoing support even after project delivery.", color: "#f43f5e" },
+  { icon: "📈", title: "Proven Results",     desc: "50+ completed projects, 100+ happy clients, and a 90% satisfaction rate with businesses across Nepal.", color: "#3b82f6" },
+];
+
+const WhyChooseMe = memo(function WhyChooseMe() {
+  return (
+    <section id="why-me" className="py-24 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
+      <div className="max-w-5xl mx-auto px-6">
+        <div className="reveal text-center mb-12">
+          <PillBadge color="orange">WHY CHOOSE ME</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-3">Why Clients Trust Me</h2>
+          <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.9rem" }}>
+            Here's what sets me apart as a web developer, mobile app developer, and designer in Nepal.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+          {WHY_ME_DATA.map((item, i) => (
+            <div key={i} className="reveal rounded-2xl p-6 neon-card relative overflow-hidden group"
+              style={{ background: "hsl(var(--card))", border: `1px solid ${item.color}30`, transitionDelay: `${i * 0.08}s` }}>
+              <div className="animate-shimmer absolute inset-0 pointer-events-none" />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{ background: `radial-gradient(circle at 20% 20%, ${item.color}12 0%, transparent 60%)` }} />
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4 relative z-10"
+                style={{ background: `${item.color}18`, border: `1px solid ${item.color}40` }}>
+                {item.icon}
+              </div>
+              <h3 className="font-bold text-base mb-2 relative z-10" style={{ color: item.color }}>{item.title}</h3>
+              <p className="text-sm leading-relaxed relative z-10" style={{ color: "hsl(var(--muted-foreground))" }}>{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+/* ══════════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════════ */
+
+const TESTIMONIALS_DATA = [
+  { name: "Rajesh Sharma",    role: "Business Owner, Kathmandu",      rating: 5, text: "Bishal built our company website in record time. Very professional, responsive, and the quality of work exceeded our expectations. Highly recommended!", color: "#06b6d4" },
+  { name: "Priya Shrestha",   role: "Content Creator, Nepal",         rating: 5, text: "Amazing thumbnail and social media designs! My YouTube engagement increased significantly after working with Bishal. Quick delivery and great communication.", color: "#8b5cf6" },
+  { name: "Sita Gurung",      role: "Operations Director, Pokhara",   rating: 5, text: "Our logistics software was built exactly as we envisioned. Bishal understood our requirements perfectly and delivered a robust, scalable system on time.", color: "#10b981" },
+  { name: "Deepak Karki",     role: "Entrepreneur, Lalitpur",         rating: 5, text: "Clean, fast, and mobile-friendly website. Bishal's attention to detail is impressive. He is definitely the best web developer I've worked with in Nepal.", color: "#f59e0b" },
+  { name: "Aarav Thapa",      role: "Startup Founder, Kathmandu",     rating: 5, text: "Bishal developed our mobile app and it was a great experience from start to finish. Always available whenever we needed and made the whole process smooth.", color: "#f43f5e" },
+  { name: "Meera Adhikari",   role: "NGO Manager, Bhaktapur",         rating: 5, text: "Very affordable pricing for outstanding quality. Our office management system has saved us hours every week. Professional, reliable, and talented!", color: "#3b82f6" },
+];
+
+const TestimonialsSection = memo(function TestimonialsSection() {
+  return (
+    <section id="reviews" className="py-24 scroll-mt-16 relative z-10 overflow-hidden" style={{ background: "hsl(var(--muted))" }}>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full opacity-5 blur-3xl" style={{ background: "hsl(var(--primary))" }} />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full opacity-5 blur-3xl" style={{ background: "#8b5cf6" }} />
+      </div>
+      <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="reveal text-center mb-12">
+          <PillBadge color="pink">CLIENT REVIEWS</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-3">What Clients Say</h2>
+          <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.9rem" }}>
+            Real feedback from 100+ happy clients across Nepal and beyond.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {TESTIMONIALS_DATA.map((t, i) => (
+            <div key={i} className="reveal rounded-2xl p-6 neon-card relative overflow-hidden flex flex-col"
+              style={{ background: "hsl(var(--card))", border: `1px solid ${t.color}30`, transitionDelay: `${i * 0.09}s` }}>
+              <div className="animate-shimmer absolute inset-0 pointer-events-none" />
+              <div className="flex gap-0.5 mb-4 relative z-10">
+                {Array.from({ length: t.rating }).map((_, si) => (
+                  <Star key={si} className="w-4 h-4 fill-current" style={{ color: "#facc15" }} />
+                ))}
+              </div>
+              <p className="text-sm leading-relaxed flex-1 relative z-10 mb-5 italic" style={{ color: "hsl(var(--foreground) / 0.82)" }}>
+                "{t.text}"
+              </p>
+              <div className="flex items-center gap-3 relative z-10 border-t pt-4" style={{ borderColor: "rgba(128,128,128,0.15)" }}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0"
+                  style={{ background: `${t.color}20`, border: `1px solid ${t.color}50`, color: t.color }}>
+                  {t.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                </div>
+                <div>
+                  <p className="text-sm font-bold">{t.name}</p>
+                  <p className="text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>{t.role}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+/* ══════════════════════════════════════════
+   FAQ SECTION
+══════════════════════════════════════════ */
+
+const FAQS_DATA = [
+  { q: "How long does it take to build a website?",     a: "A personal or small business website typically takes 3–7 days. Company websites take 1–2 weeks. Complex systems like logistics software or mobile apps take 3–6 weeks depending on requirements." },
+  { q: "What is your pricing?",                         a: "Pricing depends on the project. Thumbnail designs start from Rs. 500, personal websites from Rs. 8,000, company websites from Rs. 20,000, and mobile apps from Rs. 25,000. Contact for a custom quote." },
+  { q: "Do you provide website maintenance?",           a: "Yes! Monthly maintenance packages are available from Rs. 2,000–8,000/month, including bug fixes, updates, performance monitoring, and content updates." },
+  { q: "What technologies do you use?",                 a: "React, Node.js, TypeScript, PostgreSQL, and Tailwind CSS for web apps. React Native/Expo for mobile apps. Figma and Canva for UI/graphic designs." },
+  { q: "Can you redesign my existing website?",         a: "Absolutely! I can redesign and modernize your existing website or migrate it to a new tech stack while keeping your content and SEO intact." },
+  { q: "Do you work with clients outside Kathmandu?",   a: "Yes, I work with clients all across Nepal and internationally. All communication and delivery can be handled remotely via email, WhatsApp, or video call." },
+  { q: "How do I get started?",                         a: "Send a message via the contact form below, WhatsApp at 9802485583, or email at bishalbishwokarma089@gmail.com. I'll reply within a few hours to discuss your project." },
+  { q: "Can I see examples of your previous work?",     a: "Yes! Check the Projects section of this website. Sign in to access the full portfolio and app hub with live previews of completed projects." },
+];
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl overflow-hidden neon-card" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
+      <button className="w-full flex items-center justify-between gap-4 p-5 text-left" onClick={() => setOpen(o => !o)}>
+        <span className="font-semibold text-sm flex-1" style={{ color: "hsl(var(--foreground))" }}>{q}</span>
+        <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300"
+          style={{ background: "hsl(var(--primary) / 0.15)", transform: open ? "rotate(180deg)" : "rotate(0deg)" }}>
+          <ChevronDown className="w-3.5 h-3.5" style={{ color: "hsl(var(--primary))" }} />
+        </div>
+      </button>
+      {open && (
+        <div className="px-5 pb-5">
+          <div className="h-px mb-4" style={{ background: "rgba(128,128,128,0.15)" }} />
+          <p className="text-sm leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>{a}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const FaqSection = memo(function FaqSection() {
+  return (
+    <section id="faq" className="py-24 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
+      <div className="max-w-3xl mx-auto px-6">
+        <div className="reveal text-center mb-12">
+          <PillBadge color="green">FAQ</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-3">Frequently Asked Questions</h2>
+          <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.9rem" }}>
+            Everything you need to know before we work together.
+          </p>
+        </div>
+        <div className="space-y-3">
+          {FAQS_DATA.map((item, i) => (
+            <div key={i} className="reveal" style={{ transitionDelay: `${i * 0.05}s` }}>
+              <FaqItem q={item.q} a={item.a} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
