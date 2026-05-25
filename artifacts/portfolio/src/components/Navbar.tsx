@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
-import { LogOut, LayoutDashboard, Settings, User, Menu, X, Linkedin, Github } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
+import { LogOut, LayoutDashboard, Settings, User, Menu, X, Linkedin, Github, Sun, Moon } from "lucide-react";
 
 const homeLinks = [
   { href: "#hero", label: "Home" },
@@ -18,6 +19,31 @@ const homeLinks = [
 function smoothScroll(href: string) {
   const el = document.querySelector(href);
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function ThemeToggle({ className = "" }: { className?: string }) {
+  const { activeTheme, setTheme } = useTheme();
+  const isDark = activeTheme.mode === "dark";
+  return (
+    <button
+      onClick={() => setTheme(isDark ? "clean-light" : "neon-cyan")}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className={`relative p-1.5 rounded-lg transition-all duration-300 overflow-hidden ${className}`}
+      style={{
+        background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.06)",
+        border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
+      }}
+    >
+      <span
+        className="flex items-center justify-center transition-transform duration-500"
+        style={{ transform: isDark ? "rotate(0deg)" : "rotate(180deg)" }}
+      >
+        {isDark
+          ? <Sun className="w-3.5 h-3.5 text-yellow-400" />
+          : <Moon className="w-3.5 h-3.5 text-indigo-500" />}
+      </span>
+    </button>
+  );
 }
 
 export function Navbar() {
@@ -79,6 +105,7 @@ export function Navbar() {
 
         {/* Desktop right side */}
         <div className="hidden md:flex items-center gap-2">
+          <ThemeToggle />
           {user ? (
             <>
               {isAdmin && (
@@ -117,6 +144,7 @@ export function Navbar() {
 
         {/* Mobile: sign-in + burger */}
         <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle />
           {!user && (
             <Link href="/login">
               <button
