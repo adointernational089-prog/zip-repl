@@ -7,6 +7,7 @@ import { LogOut, LayoutDashboard, Settings, User, Menu, X, Linkedin, Github, Sun
 const homeLinks = [
   { href: "#hero", label: "Home" },
   { href: "#about", label: "About" },
+  { href: "#process", label: "Process" },
   { href: "#skills", label: "Skills" },
   { href: "#latest-projects", label: "Projects" },
   { href: "#services", label: "Services" },
@@ -26,7 +27,7 @@ function ThemeToggle({ className = "" }: { className?: string }) {
   const isDark = activeTheme.mode === "dark";
   return (
     <button
-      onClick={() => setTheme(isDark ? "clean-light" : "neon-cyan")}
+      onClick={() => setTheme(isDark ? "clean-white" : "neon-cyan")}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       className={`relative p-1.5 rounded-lg transition-all duration-300 overflow-hidden ${className}`}
       style={{
