@@ -1452,14 +1452,21 @@ function SocialRow({ icon, name, handle }: { icon: React.ReactNode; name: string
 ══════════════════════════════════════════ */
 
 const STATS_DATA = [
-  { value: 200, suffix: "+", label: "Client Reviews",      icon: "⭐", color: "#f59e0b" },
-  { value: 100, suffix: "+", label: "Happy Clients",       icon: "😊", color: "#10b981" },
-  { value: 90,  suffix: "%", label: "Satisfaction Rate",   icon: "🎯", color: "#06b6d4" },
-  { value: 50,  suffix: "+", label: "Projects Completed",  icon: "🚀", color: "#8b5cf6" },
+  { value: 47, suffix: "+", label: "Projects Delivered", icon: "🚀", color: "#00BFFF", sub: "Websites, apps & dashboards" },
+  { value: 34, suffix: "+", label: "Happy Clients",      icon: "🤝", color: "#10b981", sub: "Across Nepal & online" },
+  { value: 98, suffix: "%", label: "Satisfaction Rate",  icon: "🎯", color: "#a78bfa", sub: "Based on client feedback" },
+  { value: 2,  suffix: "+", label: "Years Experience",   icon: "📅", color: "#f59e0b", sub: "Building real-world products" },
 ];
 
-function StatCard({ value, suffix, label, icon, color }: {
-  value: number; suffix: string; label: string; icon: string; color: string;
+const MICRO_STATS = [
+  { label: "Avg. Response Time", value: "< 2 hrs" },
+  { label: "On-time Delivery", value: "100%" },
+  { label: "Repeat Clients", value: "60%+" },
+  { label: "Free Post-launch Support", value: "30 Days" },
+];
+
+function StatCard({ value, suffix, label, icon, color, sub, delay }: {
+  value: number; suffix: string; label: string; icon: string; color: string; sub: string; delay: number;
 }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -1470,7 +1477,7 @@ function StatCard({ value, suffix, label, icon, color }: {
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return;
       observer.disconnect();
-      const duration = 1800;
+      const duration = 2000;
       const startTime = performance.now();
       const tick = (now: number) => {
         const elapsed = now - startTime;
@@ -1481,39 +1488,105 @@ function StatCard({ value, suffix, label, icon, color }: {
         else setCount(value);
       };
       requestAnimationFrame(tick);
-    }, { threshold: 0.4 });
+    }, { threshold: 0.3 });
     observer.observe(el);
     return () => observer.disconnect();
   }, [value]);
 
   return (
-    <div ref={ref} className="reveal text-center p-7 rounded-2xl neon-card relative overflow-hidden group"
-      style={{ background: "hsl(var(--card))", border: `1px solid ${color}40` }}>
+    <div
+      ref={ref}
+      className="reveal text-center rounded-2xl relative overflow-hidden group transition-all duration-300 hover:-translate-y-1"
+      style={{ background: "hsl(var(--card))", border: `1px solid ${color}35`, boxShadow: `0 4px 24px ${color}08`, transitionDelay: `${delay}s` }}
+    >
       <div className="animate-shimmer absolute inset-0 pointer-events-none" />
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
-        style={{ background: `radial-gradient(circle at 50% 50%, ${color}12 0%, transparent 70%)` }} />
-      <div className="text-4xl mb-3 relative z-10">{icon}</div>
-      <div className="font-black relative z-10 mb-1.5"
-        style={{ fontSize: "clamp(2rem, 5vw, 3rem)", color, textShadow: `0 0 20px ${color}80, 0 0 40px ${color}40` }}>
-        {count}{suffix}
+      {/* top colour bar */}
+      <div className="h-1 w-full rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${color}80, ${color}20)` }} />
+      <div className="p-5 sm:p-6">
+        {/* Icon bubble */}
+        <div className="w-11 h-11 rounded-xl mx-auto mb-4 flex items-center justify-center text-xl"
+          style={{ background: `${color}15`, border: `1px solid ${color}35` }}>
+          {icon}
+        </div>
+        {/* Counter */}
+        <div className="font-black mb-1 leading-none relative z-10"
+          style={{ fontSize: "clamp(1.8rem, 5vw, 2.6rem)", color, textShadow: `0 0 18px ${color}60` }}>
+          {count}{suffix}
+        </div>
+        <div className="text-sm font-bold mb-1 relative z-10 text-foreground">{label}</div>
+        <div className="text-[11px] leading-snug relative z-10" style={{ color: "hsl(var(--muted-foreground))" }}>{sub}</div>
       </div>
-      <div className="text-sm font-semibold relative z-10" style={{ color: "hsl(var(--muted-foreground))" }}>{label}</div>
     </div>
   );
 }
 
 const StatsSection = memo(function StatsSection() {
   return (
-    <section className="py-16 relative z-10" style={{ background: "linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%)" }}>
-      <div className="max-w-5xl mx-auto px-6">
-        <div className="reveal text-center mb-10">
+    <section className="py-16 sm:py-20 relative z-10 overflow-hidden" style={{ background: "linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%)" }}>
+      {/* ambient glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] rounded-full opacity-[0.04] blur-3xl pointer-events-none" style={{ background: "hsl(var(--primary))" }} />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+
+        {/* Header */}
+        <div className="reveal text-center mb-10 sm:mb-12">
           <PillBadge color="cyan">BY THE NUMBERS</PillBadge>
-          <h2 className="text-3xl font-black mt-4">Results That Speak</h2>
-          <p className="mt-2 text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>Numbers that reflect real client satisfaction across Nepal</p>
+          <h2 className="text-3xl sm:text-4xl font-black mt-4 mb-2">Results That Speak</h2>
+          <p className="text-sm sm:text-base max-w-md mx-auto" style={{ color: "hsl(var(--muted-foreground))" }}>
+            Real numbers from real projects — no inflated figures, just honest results.
+          </p>
+
+          {/* Star rating bar */}
+          <div className="inline-flex items-center gap-3 mt-5 px-4 py-2.5 rounded-xl" style={{ background: "hsl(var(--card))", border: "1px solid rgba(245,158,11,0.3)" }}>
+            <div className="flex items-center gap-0.5">
+              {[1,2,3,4,5].map(s => <span key={s} className="text-base sm:text-lg" style={{ color: "#f59e0b" }}>★</span>)}
+            </div>
+            <div className="text-left">
+              <div className="font-black text-sm text-foreground">5.0 / 5.0 Rating</div>
+              <div className="text-[10px]" style={{ color: "hsl(var(--muted-foreground))" }}>avg. across all completed projects</div>
+            </div>
+            <div className="w-px h-8 mx-1" style={{ background: "hsl(var(--border))" }} />
+            <div className="text-left">
+              <div className="font-black text-sm" style={{ color: "#10b981" }}>✓ Verified</div>
+              <div className="text-[10px]" style={{ color: "hsl(var(--muted-foreground))" }}>client-confirmed results</div>
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {STATS_DATA.map((s, i) => <StatCard key={i} {...s} />)}
+
+        {/* Main stat cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-6 sm:mb-8">
+          {STATS_DATA.map((s, i) => <StatCard key={i} {...s} delay={i * 0.1} />)}
         </div>
+
+        {/* Micro-stats strip */}
+        <div className="reveal rounded-2xl overflow-hidden" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0" style={{ borderColor: "hsl(var(--border))" }}>
+            {MICRO_STATS.map((m, i) => (
+              <div key={i} className="px-4 sm:px-6 py-4 text-center">
+                <div className="font-black text-base sm:text-lg mb-0.5" style={{ color: "hsl(var(--primary))" }}>{m.value}</div>
+                <div className="text-[10px] sm:text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>{m.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Platform badges row */}
+        <div className="reveal flex flex-wrap justify-center items-center gap-3 sm:gap-5 mt-6 sm:mt-8">
+          <span className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "hsl(var(--muted-foreground))" }}>Trusted via</span>
+          {[
+            { name: "Facebook", color: "#1877f2", icon: "f" },
+            { name: "WhatsApp", color: "#25d366", icon: "w" },
+            { name: "LinkedIn", color: "#0a66c2", icon: "in" },
+            { name: "Email", color: "#ea4335", icon: "@" },
+          ].map((p) => (
+            <span key={p.name} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold" style={{ background: `${p.color}12`, border: `1px solid ${p.color}30`, color: p.color }}>
+              <span className="font-black text-[10px]">{p.icon}</span>
+              {p.name}
+            </span>
+          ))}
+          <span className="text-[10px]" style={{ color: "hsl(var(--muted-foreground))" }}>· Updated May 2026</span>
+        </div>
+
       </div>
     </section>
   );
