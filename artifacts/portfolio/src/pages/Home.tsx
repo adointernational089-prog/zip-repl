@@ -890,11 +890,6 @@ export default function Home() {
                       )}
                     </div>
                     <div className="flex flex-wrap gap-3">
-                      <Link href={`/project/${proj.id}`}>
-                        <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap hover:scale-105 transition-transform" style={{ background: "rgba(6,182,212,0.12)", border: "1px solid rgba(6,182,212,0.35)", color: "#06b6d4" }}>
-                          View Details <ArrowRight className="w-4 h-4" />
-                        </button>
-                      </Link>
                       {proj.link_url && (
                         <a href={proj.link_url} target="_blank" rel="noreferrer">
                           <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white text-sm whitespace-nowrap hover:scale-105 transition-transform" style={{ background: "linear-gradient(90deg, hsl(var(--primary)), #2563eb)" }}>
