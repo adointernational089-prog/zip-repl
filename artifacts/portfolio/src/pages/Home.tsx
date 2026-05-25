@@ -752,102 +752,226 @@ export default function Home() {
       </section>
 
       {/* ───── MY PROCESS ───── */}
-      <section id="process" className="py-20 scroll-mt-16 relative z-10 overflow-hidden" style={{ background: "hsl(var(--background))" }}>
-        {/* Ambient glow blobs */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full opacity-[0.04] blur-3xl pointer-events-none" style={{ background: "hsl(var(--primary))" }} />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full opacity-[0.03] blur-3xl pointer-events-none" style={{ background: "#8b5cf6" }} />
+      {(() => {
+        const steps = [
+          {
+            step: "01", icon: "🎯", title: "Discover & Consult",
+            subtitle: "Understanding your vision",
+            color: "#00BFFF",
+            duration: "1–2 Days",
+            desc: "Every great project starts with a real conversation. I take time to deeply understand your goals, target audience, brand identity, and what success means to you. No assumptions — just clear, honest communication that sets the foundation for everything that follows.",
+            deliverables: ["Requirements document", "Project scope definition", "Timeline estimate", "Budget alignment"],
+            tools: ["Google Meet", "Notion", "Miro"],
+          },
+          {
+            step: "02", icon: "📐", title: "Plan & Architect",
+            subtitle: "Building the blueprint",
+            color: "#a78bfa",
+            duration: "2–4 Days",
+            desc: "Before writing a single line of code, I map out the complete system. Tech stack selection, database schema, API architecture, feature prioritization — everything is planned with scalability and maintainability in mind so there are no surprises later.",
+            deliverables: ["System architecture diagram", "Tech stack selection", "Feature roadmap", "Sprint breakdown"],
+            tools: ["Figma", "Notion", "draw.io"],
+          },
+          {
+            step: "03", icon: "🎨", title: "Design & Prototype",
+            subtitle: "Crafting the visual experience",
+            color: "#34d399",
+            duration: "3–7 Days",
+            desc: "From rough wireframes to high-fidelity interactive prototypes, every pixel is intentional. I build a consistent design system — colors, typography, spacing — and create interactive mockups you can click through before development begins.",
+            deliverables: ["Wireframes", "Hi-fidelity UI mockups", "Design system", "Interactive prototype"],
+            tools: ["Figma", "Adobe XD", "Tailwind CSS"],
+          },
+          {
+            step: "04", icon: "⚡", title: "Build & Develop",
+            subtitle: "Turning designs into reality",
+            color: "#f59e0b",
+            duration: "1–4 Weeks",
+            desc: "Clean, well-documented, scalable code is non-negotiable. I follow best practices — component architecture, proper error handling, security measures — with daily progress updates and regular check-ins. You always know exactly where your project stands.",
+            deliverables: ["Production-ready source code", "API documentation", "Staging environment", "Progress reports"],
+            tools: ["React", "Node.js", "PostgreSQL", "GitHub"],
+          },
+          {
+            step: "05", icon: "🧪", title: "Test & Refine",
+            subtitle: "Polishing to perfection",
+            color: "#fb7185",
+            duration: "2–5 Days",
+            desc: "Thorough testing across all devices, browsers, and screen sizes. Performance audits, accessibility checks, SEO validation, and security scans. Every piece of feedback is addressed before anything goes live.",
+            deliverables: ["Cross-device test reports", "Performance audit", "Bug fixes", "Optimized production build"],
+            tools: ["Lighthouse", "BrowserStack", "Postman"],
+          },
+          {
+            step: "06", icon: "🚀", title: "Launch & Support",
+            subtitle: "Go live with confidence",
+            color: "#f43f5e",
+            duration: "1–2 Days + Ongoing",
+            desc: "Deployment is handled end-to-end — domain setup, SSL, CI/CD pipelines, monitoring. After launch you receive full documentation and 30 days of free bug fixes. Your success after delivery matters as much as the work itself.",
+            deliverables: ["Live production deployment", "Full documentation", "Deployment guide", "30-day free support"],
+            tools: ["Vercel", "GitHub Actions", "Analytics"],
+          },
+        ];
+        return (
+          <section id="process" className="py-20 scroll-mt-16 relative z-10 overflow-hidden" style={{ background: "hsl(var(--background))" }}>
+            {/* Ambient blobs */}
+            <div className="absolute top-10 left-0 w-[500px] h-[500px] rounded-full opacity-[0.035] blur-3xl pointer-events-none" style={{ background: "hsl(var(--primary))" }} />
+            <div className="absolute bottom-10 right-0 w-[400px] h-[400px] rounded-full opacity-[0.025] blur-3xl pointer-events-none" style={{ background: "#8b5cf6" }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full opacity-[0.02] blur-3xl pointer-events-none" style={{ background: "#34d399" }} />
 
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="reveal text-center mb-16">
-            <PillBadge color="cyan">HOW I WORK</PillBadge>
-            <h2 className="text-3xl font-black mt-4">My Process</h2>
-            <p className="mt-2 text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>
-              A clear, proven workflow from idea to launch
-            </p>
-          </div>
-
-          {/* Desktop: horizontal connector line */}
-          <div className="hidden md:block relative">
-            {/* Connector line */}
-            <div className="absolute top-[52px] left-[10%] right-[10%] h-px" style={{ background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.4) 20%, hsl(var(--primary) / 0.4) 80%, transparent)" }} />
-
-            <div className="grid grid-cols-5 gap-4">
-              {[
-                { step: "01", icon: "🎯", title: "Discover", desc: "Understand your goals, audience & requirements through deep conversation", color: "#00BFFF" },
-                { step: "02", icon: "📐", title: "Plan", desc: "Wireframes, architecture blueprints & a clear project roadmap", color: "#a78bfa" },
-                { step: "03", icon: "🎨", title: "Design", desc: "Pixel-perfect UI prototypes built on a solid design system", color: "#34d399" },
-                { step: "04", icon: "⚡", title: "Build", desc: "Clean, scalable code with real-time progress updates", color: "#f59e0b" },
-                { step: "05", icon: "🚀", title: "Launch", desc: "Deploy, test thoroughly & hand over with full documentation", color: "#f43f5e" },
-              ].map((p, i) => (
-                <div key={i} className={`reveal flex flex-col items-center text-center group`} style={{ transitionDelay: `${i * 0.12}s` }}>
-                  {/* Icon circle */}
-                  <div
-                    className="relative w-[104px] h-[104px] rounded-full flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
-                    style={{
-                      background: `radial-gradient(circle, ${p.color}18 0%, ${p.color}08 60%, transparent 100%)`,
-                      border: `1.5px solid ${p.color}40`,
-                      boxShadow: `0 0 24px ${p.color}20`,
-                    }}
-                  >
-                    {/* Step badge */}
-                    <span
-                      className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-black"
-                      style={{ background: p.color, color: "#000", boxShadow: `0 0 10px ${p.color}60` }}
-                    >
-                      {p.step}
-                    </span>
-                    <span className="text-3xl leading-none">{p.icon}</span>
-                  </div>
-
-                  <h3 className="font-black text-sm mb-2 text-foreground">{p.title}</h3>
-                  <p className="text-[11px] leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>{p.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile: vertical timeline */}
-          <div className="md:hidden relative pl-8">
-            {/* Vertical line */}
-            <div className="absolute left-[18px] top-0 bottom-0 w-px" style={{ background: "linear-gradient(180deg, transparent, hsl(var(--primary) / 0.5) 10%, hsl(var(--primary) / 0.5) 90%, transparent)" }} />
-
-            <div className="space-y-8">
-              {[
-                { step: "01", icon: "🎯", title: "Discover", desc: "Understand your goals, audience & requirements through deep conversation", color: "#00BFFF" },
-                { step: "02", icon: "📐", title: "Plan", desc: "Wireframes, architecture blueprints & a clear project roadmap", color: "#a78bfa" },
-                { step: "03", icon: "🎨", title: "Design", desc: "Pixel-perfect UI prototypes built on a solid design system", color: "#34d399" },
-                { step: "04", icon: "⚡", title: "Build", desc: "Clean, scalable code with real-time progress updates", color: "#f59e0b" },
-                { step: "05", icon: "🚀", title: "Launch", desc: "Deploy, test thoroughly & hand over with full documentation", color: "#f43f5e" },
-              ].map((p, i) => (
-                <div key={i} className="reveal flex items-start gap-5" style={{ transitionDelay: `${i * 0.1}s` }}>
-                  {/* Dot on the line */}
-                  <div
-                    className="absolute left-[10px] w-[18px] h-[18px] rounded-full flex-shrink-0 flex items-center justify-center text-[8px] font-black"
-                    style={{ background: p.color, color: "#000", boxShadow: `0 0 12px ${p.color}70`, marginTop: "4px" }}
-                  >
-                    {i + 1}
-                  </div>
-
-                  {/* Card */}
-                  <div
-                    className="flex-1 rounded-xl p-4"
-                    style={{
-                      background: `linear-gradient(135deg, ${p.color}08 0%, hsl(var(--card)) 60%)`,
-                      border: `1px solid ${p.color}30`,
-                    }}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl">{p.icon}</span>
-                      <h3 className="font-black text-sm text-foreground">{p.title}</h3>
+            <div className="max-w-6xl mx-auto px-4 sm:px-6">
+              {/* Header */}
+              <div className="reveal text-center mb-16 sm:mb-20">
+                <PillBadge color="cyan">HOW I WORK</PillBadge>
+                <h2 className="text-3xl sm:text-4xl font-black mt-4 mb-3">My Process</h2>
+                <p className="text-sm sm:text-base max-w-xl mx-auto leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>
+                  A transparent, structured workflow that keeps you informed at every stage — from the very first conversation to long after your product launches.
+                </p>
+                {/* Stats row */}
+                <div className="flex flex-wrap justify-center gap-6 sm:gap-10 mt-8">
+                  {[
+                    { value: "6", label: "Clear Stages" },
+                    { value: "100%", label: "Transparency" },
+                    { value: "30 Days", label: "Free Support" },
+                  ].map((s, i) => (
+                    <div key={i} className="text-center">
+                      <div className="text-2xl sm:text-3xl font-black" style={{ color: "hsl(var(--primary))" }}>{s.value}</div>
+                      <div className="text-[11px] sm:text-xs mt-0.5" style={{ color: "hsl(var(--muted-foreground))" }}>{s.label}</div>
                     </div>
-                    <p className="text-[12px] leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>{p.desc}</p>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              {/* ── UNIFIED TIMELINE (zigzag on desktop, vertical on mobile) ── */}
+              <div className="relative">
+                {/* Center vertical line — desktop only */}
+                <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2" style={{ background: "linear-gradient(180deg, transparent 0%, hsl(var(--primary) / 0.35) 8%, hsl(var(--primary) / 0.35) 92%, transparent 100%)" }} />
+
+                {/* Mobile vertical line */}
+                <div className="lg:hidden absolute left-5 top-0 bottom-0 w-px" style={{ background: "linear-gradient(180deg, transparent 0%, hsl(var(--primary) / 0.4) 5%, hsl(var(--primary) / 0.4) 95%, transparent 100%)" }} />
+
+                <div className="space-y-8 sm:space-y-10 lg:space-y-0">
+                  {steps.map((p, i) => {
+                    const isLeft = i % 2 === 0;
+                    return (
+                      <div key={i} className={`reveal relative flex items-start lg:items-center gap-0 ${isLeft ? "lg:flex-row" : "lg:flex-row-reverse"}`} style={{ transitionDelay: `${i * 0.1}s`, marginBottom: i < steps.length - 1 ? "clamp(24px, 4vw, 48px)" : 0 }}>
+
+                        {/* ── Card ── */}
+                        <div className={`flex-1 pl-14 lg:pl-0 ${isLeft ? "lg:pr-12" : "lg:pl-12"}`}>
+                          <div
+                            className="group rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
+                            style={{
+                              background: `linear-gradient(135deg, ${p.color}10 0%, hsl(var(--card)) 50%)`,
+                              border: `1px solid ${p.color}35`,
+                              boxShadow: `0 4px 32px ${p.color}0D`,
+                            }}
+                          >
+                            {/* shimmer overlay */}
+                            <div className="animate-shimmer absolute inset-0 pointer-events-none" />
+
+                            {/* Top row: number + duration badge */}
+                            <div className="flex items-start justify-between gap-3 mb-3">
+                              <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-lg sm:text-xl flex-shrink-0" style={{ background: `${p.color}18`, border: `1px solid ${p.color}40` }}>
+                                  {p.icon}
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-[9px] sm:text-[10px] font-black tracking-widest" style={{ color: p.color }}>STEP {p.step}</span>
+                                  </div>
+                                  <h3 className="font-black text-base sm:text-lg leading-tight text-foreground">{p.title}</h3>
+                                  <p className="text-[11px] sm:text-xs mt-0.5" style={{ color: "hsl(var(--muted-foreground))" }}>{p.subtitle}</p>
+                                </div>
+                              </div>
+                              <span
+                                className="flex-shrink-0 text-[9px] sm:text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap"
+                                style={{ background: `${p.color}18`, border: `1px solid ${p.color}40`, color: p.color }}
+                              >
+                                ⏱ {p.duration}
+                              </span>
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-xs sm:text-[13px] leading-relaxed mb-4" style={{ color: "hsl(var(--muted-foreground))" }}>{p.desc}</p>
+
+                            {/* Divider */}
+                            <div className="h-px mb-4" style={{ background: `${p.color}20` }} />
+
+                            {/* Deliverables + Tools */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              {/* Deliverables */}
+                              <div>
+                                <p className="text-[10px] font-bold tracking-widest uppercase mb-2" style={{ color: p.color }}>What You Get</p>
+                                <ul className="space-y-1.5">
+                                  {p.deliverables.map((d, di) => (
+                                    <li key={di} className="flex items-start gap-2 text-[11px] sm:text-xs" style={{ color: "hsl(var(--foreground) / 0.8)" }}>
+                                      <span className="mt-0.5 w-3.5 h-3.5 flex-shrink-0 rounded-full flex items-center justify-center text-[8px] font-black" style={{ background: `${p.color}25`, color: p.color }}>✓</span>
+                                      {d}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              {/* Tools */}
+                              <div>
+                                <p className="text-[10px] font-bold tracking-widest uppercase mb-2" style={{ color: p.color }}>Tools Used</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {p.tools.map((t, ti) => (
+                                    <span key={ti} className="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-md font-semibold" style={{ background: `${p.color}12`, border: `1px solid ${p.color}30`, color: "hsl(var(--foreground) / 0.75)" }}>
+                                      {t}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* ── Center node (desktop) / Left node (mobile) ── */}
+                        {/* Mobile dot */}
+                        <div
+                          className="lg:hidden absolute left-[12px] top-[22px] w-[18px] h-[18px] rounded-full flex items-center justify-center text-[8px] font-black flex-shrink-0 z-10"
+                          style={{ background: p.color, color: "#000", boxShadow: `0 0 14px ${p.color}80` }}
+                        >
+                          {i + 1}
+                        </div>
+
+                        {/* Desktop center dot */}
+                        <div className="hidden lg:flex flex-shrink-0 relative z-10 items-center justify-center" style={{ width: 64 }}>
+                          <div
+                            className="w-12 h-12 rounded-full flex items-center justify-center text-xl transition-transform duration-300 hover:scale-110"
+                            style={{
+                              background: `radial-gradient(circle, ${p.color}22 0%, ${p.color}10 60%, transparent 100%)`,
+                              border: `2px solid ${p.color}60`,
+                              boxShadow: `0 0 20px ${p.color}40, 0 0 40px ${p.color}15`,
+                            }}
+                          >
+                            {p.icon}
+                          </div>
+                        </div>
+
+                        {/* ── Spacer for opposite side (desktop zigzag) ── */}
+                        <div className="hidden lg:block flex-1" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bottom CTA */}
+              <div className="reveal text-center mt-16 sm:mt-20">
+                <div className="inline-block rounded-2xl px-6 sm:px-10 py-6 sm:py-8" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+                  <p className="text-base sm:text-lg font-black mb-1 text-foreground">Ready to start your project?</p>
+                  <p className="text-xs sm:text-sm mb-4" style={{ color: "hsl(var(--muted-foreground))" }}>The first consultation is completely free — let's talk about your idea.</p>
+                  <button
+                    onClick={() => { const el = document.querySelector("#contact"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                    style={{ background: "linear-gradient(90deg, hsl(var(--primary)), #7c3aed)", boxShadow: "0 0 24px hsl(var(--primary) / 0.4)" }}
+                  >
+                    🎯 Let's Build Together →
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        );
+      })()}
 
       {/* ───── SKILLS ───── */}
       <section id="skills" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--muted))" }}>
