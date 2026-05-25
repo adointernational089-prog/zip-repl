@@ -27,4 +27,4 @@ User-agent: *
 Crawl-delay: 1
 
 # Sitemap location
-Sitemap: https://bishalbishwokarma.in.net/sitemap.xml
+Sitemap: https://www.bishalbishwokarma.com.np/sitemap.xml
