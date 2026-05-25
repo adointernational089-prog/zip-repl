@@ -517,9 +517,15 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center mt-4 relative z-10">
           {/* Left — text */}
           <div className="animate-slide-left">
-            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border text-xs font-medium animate-border-glow" style={{ borderColor: "rgba(30,64,175,0.5)", background: "rgba(30,64,175,0.12)", color: "#93c5fd" }}>
-              <span style={{ color: "#facc15" }}>✦</span>
-              <span>{hero.badge}</span>
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium animate-border-glow" style={{ borderColor: "rgba(30,64,175,0.5)", background: "rgba(30,64,175,0.12)", color: "#93c5fd" }}>
+                <span style={{ color: "#facc15" }}>✦</span>
+                <span>{hero.badge}</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.4)", color: "#10b981" }}>
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                Available for Hire
+              </div>
             </div>
 
             <h2 className="font-black leading-tight mb-4 animate-fade-in-up delay-100" style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)" }}>
@@ -757,13 +763,20 @@ export default function Home() {
                         </div>
                       )}
                     </div>
-                    {proj.link_url && (
-                      <a href={proj.link_url} target="_blank" rel="noreferrer">
-                        <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white text-sm whitespace-nowrap hover:scale-105 transition-transform" style={{ background: "linear-gradient(90deg, hsl(var(--primary)), #2563eb)" }}>
-                          View Project <ExternalLink className="w-4 h-4" />
+                    <div className="flex flex-wrap gap-3">
+                      <Link href={`/project/${proj.id}`}>
+                        <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap hover:scale-105 transition-transform" style={{ background: "rgba(6,182,212,0.12)", border: "1px solid rgba(6,182,212,0.35)", color: "#06b6d4" }}>
+                          View Details <ArrowRight className="w-4 h-4" />
                         </button>
-                      </a>
-                    )}
+                      </Link>
+                      {proj.link_url && (
+                        <a href={proj.link_url} target="_blank" rel="noreferrer">
+                          <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white text-sm whitespace-nowrap hover:scale-105 transition-transform" style={{ background: "linear-gradient(90deg, hsl(var(--primary)), #2563eb)" }}>
+                            View Live <ExternalLink className="w-4 h-4" />
+                          </button>
+                        </a>
+                      )}
+                    </div>
                   </div>
                   <div className="px-2 pt-2">
                     <ReactionBar targetType="project" targetId={proj.id} compact />
@@ -862,6 +875,9 @@ export default function Home() {
       {/* ───── FAQ ───── */}
       <FaqSection />
 
+      {/* ───── BLOG ───── */}
+      <BlogSection />
+
       {/* ───── CONTACT ───── */}
       <section id="contact" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
         <div className="max-w-4xl mx-auto px-6 text-center">
@@ -950,12 +966,13 @@ export default function Home() {
    SUB-COMPONENTS
 ══════════════════════════════════════════ */
 
-function PillBadge({ children, color }: { children: React.ReactNode; color: "cyan" | "green" | "orange" | "pink" }) {
+function PillBadge({ children, color }: { children: React.ReactNode; color: "cyan" | "green" | "orange" | "pink" | "purple" }) {
   const styles = {
     cyan:   { border: "rgba(6,182,212,0.5)",  bg: "rgba(6,182,212,0.08)",  text: "#67e8f9" },
     green:  { border: "rgba(34,197,94,0.5)",  bg: "rgba(34,197,94,0.08)",  text: "#86efac" },
     orange: { border: "rgba(249,115,22,0.5)", bg: "rgba(249,115,22,0.08)", text: "#fdba74" },
     pink:   { border: "rgba(236,72,153,0.5)", bg: "rgba(236,72,153,0.08)", text: "#f9a8d4" },
+    purple: { border: "rgba(139,92,246,0.5)", bg: "rgba(139,92,246,0.08)", text: "#c4b5fd" },
   }[color];
   return (
     <div className="inline-flex">
@@ -1316,6 +1333,107 @@ const FaqSection = memo(function FaqSection() {
               <FaqItem q={item.q} a={item.a} />
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+/* ══════════════════════════════════════════
+   BLOG / ARTICLES SECTION
+══════════════════════════════════════════ */
+
+const BLOG_POSTS = [
+  {
+    slug: "why-your-nepal-business-needs-a-website",
+    tag: "Business Tips",
+    tagColor: "#06b6d4",
+    date: "May 2026",
+    readTime: "4 min read",
+    title: "5 Reasons Why Your Nepal Business Needs a Website in 2026",
+    excerpt: "In 2026, not having a website means losing customers every day. Here's exactly why a professional website is no longer optional for businesses in Nepal — and what it costs to get one built.",
+    icon: "🌐",
+  },
+  {
+    slug: "website-vs-mobile-app-nepal",
+    tag: "Web vs App",
+    tagColor: "#8b5cf6",
+    date: "April 2026",
+    readTime: "5 min read",
+    title: "Website vs Mobile App: Which is Right for Your Nepal Business?",
+    excerpt: "Confused about whether to build a website or a mobile app first? This guide compares cost, reach, and ROI for Nepal-based businesses to help you make the right decision.",
+    icon: "📱",
+  },
+  {
+    slug: "website-cost-nepal-2026",
+    tag: "Pricing Guide",
+    tagColor: "#10b981",
+    date: "March 2026",
+    readTime: "6 min read",
+    title: "How Much Does a Website Cost in Nepal? Complete 2026 Pricing Guide",
+    excerpt: "From simple personal websites (Rs. 8,000) to complex SaaS platforms (Rs. 1,00,000+), here's a transparent breakdown of website development costs in Nepal with no hidden charges.",
+    icon: "💰",
+  },
+  {
+    slug: "seo-nepal-tips",
+    tag: "SEO Nepal",
+    tagColor: "#f59e0b",
+    date: "February 2026",
+    readTime: "7 min read",
+    title: "How to Get Your Nepal Business on Google Page 1: SEO Guide for 2026",
+    excerpt: "Learn the exact SEO strategies that work for businesses in Nepal — from local keyword targeting and Google My Business optimization to technical SEO that drives real traffic.",
+    icon: "🔍",
+  },
+];
+
+const BlogSection = memo(function BlogSection() {
+  return (
+    <section id="blog" className="py-24 scroll-mt-16 relative z-10 overflow-hidden" style={{ background: "hsl(var(--muted))" }}>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full opacity-[0.04] blur-3xl" style={{ background: "#7c3aed" }} />
+      </div>
+      <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="reveal text-center mb-12">
+          <PillBadge color="purple">ARTICLES & TIPS</PillBadge>
+          <h2 className="text-3xl font-black mt-4 mb-3">Helpful Resources</h2>
+          <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.9rem" }}>
+            Insights on web development, digital growth, and technology for businesses in Nepal.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {BLOG_POSTS.map((post, i) => (
+            <article key={i} className="reveal rounded-2xl p-5 neon-card flex flex-col group cursor-pointer"
+              style={{ background: "hsl(var(--card))", border: `1px solid ${post.tagColor}22`, transitionDelay: `${i * 0.08}s` }}
+              onClick={() => window.location.hash = "#contact"}>
+              <div className="animate-shimmer absolute inset-0 rounded-2xl pointer-events-none" />
+              <div className="relative z-10">
+                <div className="text-3xl mb-4">{post.icon}</div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    style={{ background: `${post.tagColor}18`, color: post.tagColor, border: `1px solid ${post.tagColor}40` }}>
+                    {post.tag}
+                  </span>
+                </div>
+                <h3 className="font-bold text-sm leading-snug mb-3 group-hover:text-cyan-400 transition-colors">{post.title}</h3>
+                <p className="text-xs leading-relaxed mb-4 flex-1" style={{ color: "hsl(var(--muted-foreground))" }}>{post.excerpt}</p>
+                <div className="flex items-center justify-between mt-auto pt-3 border-t" style={{ borderColor: "rgba(128,128,128,0.12)" }}>
+                  <span className="text-[10px]" style={{ color: "hsl(var(--muted-foreground))" }}>{post.date}</span>
+                  <span className="text-[10px]" style={{ color: "hsl(var(--muted-foreground))" }}>{post.readTime}</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="reveal text-center mt-10">
+          <p className="text-sm mb-4" style={{ color: "hsl(var(--muted-foreground))" }}>
+            Have a question about your project? I'm happy to advise — no charge.
+          </p>
+          <a href="#contact">
+            <button className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90 hover:scale-105"
+              style={{ background: "linear-gradient(90deg, #7c3aed, #2563eb)" }}>
+              Ask Me Anything <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
+            </button>
+          </a>
         </div>
       </div>
     </section>

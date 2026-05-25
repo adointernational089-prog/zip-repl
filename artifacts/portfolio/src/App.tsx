@@ -6,6 +6,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { WhatsAppWidget } from "@/components/WhatsAppWidget";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import NotFound from "@/pages/not-found";
 
 // Pages
@@ -13,6 +16,7 @@ import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
+import ProjectDetail from "@/pages/ProjectDetail";
 import AdminOverview from "@/pages/admin/Overview";
 import AdminMessages from "@/pages/admin/Messages";
 import AdminApps from "@/pages/admin/Apps";
@@ -32,6 +36,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/project/:id" component={ProjectDetail} />
       <Route path="/admin" component={AdminOverview} />
       <Route path="/admin/messages" component={AdminMessages} />
       <Route path="/admin/apps" component={AdminApps} />
@@ -69,10 +74,13 @@ function App() {
       <TooltipProvider>
         <ThemeProvider>
           <AuthProvider>
+            <ScrollProgress />
             {showLoader && <LoadingScreen onDone={handleLoaderDone} />}
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
               <Router />
             </WouterRouter>
+            <WhatsAppWidget />
+            <ScrollToTop />
             <Toaster />
           </AuthProvider>
         </ThemeProvider>
