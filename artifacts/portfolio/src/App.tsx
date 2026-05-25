@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import NotFound from "@/pages/not-found";
@@ -79,7 +78,6 @@ function App() {
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
               <Router />
             </WouterRouter>
-            <WhatsAppWidget />
             <ScrollToTop />
             <Toaster />
           </AuthProvider>

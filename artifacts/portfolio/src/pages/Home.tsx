@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Code2, Wrench, Lightbulb, Mail, Phone, MapPin, ArrowRight,
   Send, Flame, ChevronRight, ExternalLink, Linkedin, Lock, Star,
-  GraduationCap, BookOpen, Award, Download, ChevronDown
+  GraduationCap, BookOpen, Award, ChevronDown, MapPinIcon, CalendarDays, Briefcase, Globe
 } from "lucide-react";
 
 /* ── Default content ── */
@@ -89,6 +89,74 @@ const DEFAULT = {
     },
   ],
 };
+
+/* ── Typing role badge ── */
+const ROLES = [
+  "IT Student",
+  "Web App Developer",
+  "Software Developer",
+  "Designer",
+];
+
+const TypingRoleBadge = memo(function TypingRoleBadge() {
+  const [text, setText] = useState("");
+  const [cursor, setCursor] = useState(true);
+
+  useEffect(() => {
+    let phase: "typing" | "pause" | "erasing" = "typing";
+    let roleIdx = 0;
+    let chars = 0;
+    let t: ReturnType<typeof setTimeout>;
+
+    const tick = () => {
+      const role = ROLES[roleIdx];
+      if (phase === "typing") {
+        if (chars < role.length) {
+          chars++;
+          setText(role.slice(0, chars));
+          t = setTimeout(tick, 80);
+        } else {
+          phase = "pause";
+          t = setTimeout(tick, 1800);
+        }
+      } else if (phase === "pause") {
+        phase = "erasing";
+        t = setTimeout(tick, 300);
+      } else {
+        if (chars > 0) {
+          chars--;
+          setText(role.slice(0, chars));
+          t = setTimeout(tick, 45);
+        } else {
+          roleIdx = (roleIdx + 1) % ROLES.length;
+          phase = "typing";
+          t = setTimeout(tick, 200);
+        }
+      }
+    };
+
+    t = setTimeout(tick, 300);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => setCursor((c) => !c), 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div
+      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium animate-border-glow"
+      style={{ borderColor: "rgba(30,64,175,0.5)", background: "rgba(30,64,175,0.12)", color: "#93c5fd", minWidth: 200 }}
+    >
+      <span style={{ color: "#facc15" }}>✦</span>
+      <span style={{ minWidth: 155, display: "inline-block" }}>
+        {text}
+        <span style={{ opacity: cursor ? 1 : 0, fontWeight: 100 }}>|</span>
+      </span>
+    </div>
+  );
+});
 
 /* ── Typewriter name component ── */
 const TypewriterName = memo(function TypewriterName() {
@@ -226,7 +294,7 @@ const WalkingScorpion = memo(function WalkingScorpion({
             alt=""
             aria-hidden
             className="scorpion-body"
-            style={{ width: 70, display: "block" }}
+            style={{ width: 38, display: "block" }}
           />
         </div>
       </div>
@@ -518,10 +586,7 @@ export default function Home() {
           {/* Left — text */}
           <div className="animate-slide-left">
             <div className="flex flex-wrap items-center gap-3 mb-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium animate-border-glow" style={{ borderColor: "rgba(30,64,175,0.5)", background: "rgba(30,64,175,0.12)", color: "#93c5fd" }}>
-                <span style={{ color: "#facc15" }}>✦</span>
-                <span>{hero.badge}</span>
-              </div>
+              <TypingRoleBadge />
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.4)", color: "#10b981" }}>
                 <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                 Available for Hire
@@ -555,14 +620,6 @@ export default function Home() {
               >
                 Contact Me <Send className="w-4 h-4" />
               </button>
-              <a
-                href="/bishal-cv.pdf"
-                download
-                className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold transition-all hover:opacity-90 hover:scale-105"
-                style={{ background: "linear-gradient(90deg, #10b981, #059669)", color: "white" }}
-              >
-                Download CV <Download className="w-4 h-4" />
-              </a>
             </div>
 
           </div>
@@ -605,22 +662,91 @@ export default function Home() {
 
       {/* ───── ABOUT ───── */}
       <section id="about" className="py-20 scroll-mt-16 relative z-10" style={{ background: "hsl(var(--background))" }}>
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <div className="reveal">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="reveal text-center mb-12">
             <PillBadge color="cyan">ABOUT ME</PillBadge>
-            <h2 className="text-3xl font-black mt-4 mb-10">Who I Am</h2>
+            <h2 className="text-3xl font-black mt-4">Who I Am</h2>
+            <p className="mt-2 text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>The person behind the code</p>
           </div>
-          <div className="reveal delay-200 rounded-2xl p-7 text-left relative overflow-hidden neon-card" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
-            <div className="animate-shimmer absolute inset-0 pointer-events-none" />
-            <p style={{ color: "hsl(var(--foreground) / 0.85)", lineHeight: 1.8, fontSize: "0.92rem" }}>
-              {about.text.split("Bishal Bishwokarma").map((part: string, i: number) =>
-                i === 0
-                  ? <span key={i}>{part}<strong className="text-foreground">Bishal Bishwokarma</strong></span>
-                  : <span key={i}>{part.split("IT student").map((p2: string, j: number) =>
-                      j === 0 ? <span key={j}>{p2}<span style={{ color: "hsl(var(--primary))" }}>IT student</span></span> : <span key={j}>{p2}</span>
-                    )}</span>
-              )}
-            </p>
+
+          <div className="grid md:grid-cols-5 gap-8 items-start">
+            {/* Left — identity card */}
+            <div className="md:col-span-2 reveal-left delay-100">
+              <div className="rounded-2xl p-6 relative overflow-hidden neon-card" style={{ background: "hsl(var(--card))", border: "1px solid rgba(6,182,212,0.2)", boxShadow: "0 0 30px rgba(6,182,212,0.06)" }}>
+                <div className="animate-shimmer absolute inset-0 pointer-events-none" />
+                {/* Avatar ring */}
+                <div className="flex justify-center mb-5 relative z-10">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-full overflow-hidden" style={{ border: "2px solid hsl(var(--primary) / 0.5)", boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}>
+                      <img src="/bishal-photo-nobg.png" alt="Bishal" className="w-full h-full object-cover object-top" />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ background: "#10b981", border: "2px solid hsl(var(--background))" }}>✓</div>
+                  </div>
+                </div>
+                <div className="text-center mb-5 relative z-10">
+                  <h3 className="font-black text-lg text-foreground">Bishal Bishwokarma</h3>
+                  <p className="text-xs mt-1" style={{ color: "hsl(var(--primary))" }}>IT Student & Full-Stack Developer</p>
+                </div>
+                {/* Quick facts */}
+                <div className="space-y-2.5 relative z-10">
+                  {[
+                    { icon: <MapPinIcon className="w-3.5 h-3.5" />, label: "Kathmandu, Nepal" },
+                    { icon: <GraduationCap className="w-3.5 h-3.5" />, label: "Phoenix College of Mgmt" },
+                    { icon: <Briefcase className="w-3.5 h-3.5" />, label: "Freelance · Available Now" },
+                    { icon: <Globe className="w-3.5 h-3.5" />, label: "Nepali · English" },
+                    { icon: <CalendarDays className="w-3.5 h-3.5" />, label: "2+ Years Experience" },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-lg" style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.1)" }}>
+                      <span style={{ color: "hsl(var(--primary))" }}>{item.icon}</span>
+                      <span className="text-xs font-medium text-foreground/80">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right — story + highlights */}
+            <div className="md:col-span-3 space-y-5 reveal-right delay-200">
+              {/* Bio card */}
+              <div className="rounded-2xl p-6 relative overflow-hidden neon-card" style={{ background: "hsl(var(--card))", border: "1px solid rgba(128,128,128,0.15)" }}>
+                <div className="animate-shimmer absolute inset-0 pointer-events-none" />
+                <p className="relative z-10 leading-[1.85] text-[0.9rem]" style={{ color: "hsl(var(--foreground) / 0.82)" }}>
+                  {about.text.split("Bishal Bishwokarma").map((part: string, i: number) =>
+                    i === 0
+                      ? <span key={i}>{part}<strong className="text-foreground">Bishal Bishwokarma</strong></span>
+                      : <span key={i}>{part.split("IT student").map((p2: string, j: number) =>
+                          j === 0 ? <span key={j}>{p2}<span style={{ color: "hsl(var(--primary))" }}>IT student</span></span> : <span key={j}>{p2}</span>
+                        )}</span>
+                  )}
+                </p>
+              </div>
+
+              {/* Highlight chips */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { icon: "🎯", title: "Goal-Driven", desc: "Building real products that solve real problems" },
+                  { icon: "⚡", title: "Fast Learner", desc: "Adapts quickly to new tech and client needs" },
+                  { icon: "🤝", title: "Collaborative", desc: "Clear communication from kickoff to delivery" },
+                  { icon: "🛡️", title: "Quality-First", desc: "Clean, secure and maintainable code always" },
+                ].map((item, i) => (
+                  <div key={i} className="rounded-xl p-4 relative overflow-hidden neon-card" style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.12)" }}>
+                    <div className="text-xl mb-2">{item.icon}</div>
+                    <p className="font-bold text-sm text-foreground mb-0.5">{item.title}</p>
+                    <p className="text-[11px] leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tech tags */}
+              <div className="rounded-xl px-5 py-4 relative overflow-hidden" style={{ background: "hsl(var(--muted))", border: "1px solid rgba(128,128,128,0.12)" }}>
+                <p className="text-[10px] font-semibold tracking-widest uppercase mb-3" style={{ color: "hsl(var(--muted-foreground))" }}>Core Technologies</p>
+                <div className="flex flex-wrap gap-2">
+                  {["React", "TypeScript", "Node.js", "Express", "PostgreSQL", "Tailwind CSS", "Python", "Figma"].map((tech) => (
+                    <span key={tech} className="px-2.5 py-1 rounded-lg text-[11px] font-semibold" style={{ background: "rgba(6,182,212,0.08)", border: "1px solid rgba(6,182,212,0.25)", color: "#67e8f9" }}>{tech}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
