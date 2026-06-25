@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetAdminStats, useListMessages, getGetAdminStatsQueryKey, getListMessagesQueryKey } from "@workspace/api-client-react";
@@ -32,17 +33,16 @@ export default function AdminOverview() {
     enabled: !!isAdmin,
   });
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!isLoading && (!user || !isAdmin)) setLocation("/dashboard");
+  }, [isLoading, user, isAdmin, setLocation]);
+
+  if (isLoading || !user || !isAdmin) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
-  }
-
-  if (!user || !isAdmin) {
-    setLocation("/dashboard");
-    return null;
   }
 
   const statCards = [

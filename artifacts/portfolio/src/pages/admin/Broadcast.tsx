@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
@@ -86,13 +86,15 @@ export default function AdminBroadcast() {
     onError: () => toast({ title: "Error", description: "Failed to delete.", variant: "destructive" }),
   });
 
-  if (isLoading) return (
+  useEffect(() => {
+    if (!isLoading && (!user || !isAdmin)) setLocation("/dashboard");
+  }, [isLoading, user, isAdmin, setLocation]);
+
+  if (isLoading || !user || !isAdmin) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <Loader2 className="w-8 h-8 animate-spin text-primary" />
     </div>
   );
-
-  if (!user || !isAdmin) { setLocation("/dashboard"); return null; }
 
   const selectedType = getTypeStyle(form.type);
 

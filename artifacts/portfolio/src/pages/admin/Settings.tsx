@@ -34,18 +34,8 @@ export default function AdminSettings() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   useEffect(() => {
-    if (!isLoading && (!user || !isAdmin)) {
-      setLocation("/dashboard");
-    }
+    if (!isLoading && (!user || !isAdmin)) setLocation("/dashboard");
   }, [isLoading, user, isAdmin, setLocation]);
 
   if (isLoading || !user || !isAdmin) {

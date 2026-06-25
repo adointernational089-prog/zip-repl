@@ -26,9 +26,10 @@ export default function Login() {
         setLocation("/dashboard");
       },
       onError: (error: any) => {
+        const msg = error?.data?.error || error?.data?.message || error?.message || "Invalid credentials. Please try again.";
         toast({ 
           title: "Sign in failed", 
-          description: error?.data?.message || "Invalid credentials. Please try again.",
+          description: msg,
           variant: "destructive"
         });
       }

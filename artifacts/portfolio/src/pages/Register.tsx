@@ -50,9 +50,10 @@ export default function Register() {
         setLocation("/dashboard");
       },
       onError: (error: any) => {
+        const msg = error?.data?.error || error?.data?.message || error?.message || "Could not create account. Please try again.";
         toast({ 
           title: "Registration failed", 
-          description: error?.data?.message || "Could not create account. Please try again.",
+          description: msg,
           variant: "destructive"
         });
       }
