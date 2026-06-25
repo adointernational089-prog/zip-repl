@@ -1,6 +1,6 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
-import { getSupabase } from "../lib/db.js";
+import { getPool } from "../lib/db.js";
 import { signToken } from "../lib/auth.js";
 import { requireAuth, type AuthRequest } from "../middlewares/requireAuth.js";
 
@@ -14,19 +14,14 @@ router.post("/login", async (req, res) => {
     return;
   }
   try {
-    const sb = getSupabase();
-    const { data, error } = await sb.from("users").select("*").eq("email", email).limit(1).single();
-    if (error || !data) {
-      res.status(401).json({ error: "Invalid credentials" });
-      return;
-    }
-    const isValid = await bcrypt.compare(password, data.password_hash);
-    if (!isValid) {
-      res.status(401).json({ error: "Invalid credentials" });
-      return;
-    }
-    const token = signToken({ userId: data.id, email: data.email, role: data.role });
-    res.json({ token, user: { id: data.id, email: data.email, name: data.name, role: data.role, created_at: data.created_at } });
+    const pool = getPool();
+    const { rows } = await pool.query("SELECT * FROM users WHERE email = $1 LIMIT 1", [email]);
+    const user = rows[0];
+    if (!user) { res.status(401).json({ error: "Invalid credentials" }); return; }
+    const isValid = await bcrypt.compare(password, user.password_hash);
+    if (!isValid) { res.status(401).json({ error: "Invalid credentials" }); return; }
+    const token = signToken({ userId: user.id, email: user.email, role: user.role });
+    res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role, created_at: user.created_at } });
   } catch (err) {
     req.log?.error({ err }, "Login error");
     res.status(500).json({ error: "Internal server error" });
@@ -40,26 +35,19 @@ router.post("/register", async (req, res) => {
     return;
   }
   try {
-    const sb = getSupabase();
-    const { data: existing } = await sb.from("users").select("id").eq("email", email).limit(1).single();
-    if (existing) {
-      res.status(409).json({ error: "Email already exists" });
-      return;
-    }
+    const pool = getPool();
+    const { rows: existing } = await pool.query("SELECT id FROM users WHERE email = $1 LIMIT 1", [email]);
+    if (existing.length > 0) { res.status(409).json({ error: "Email already exists" }); return; }
     const passwordHash = await bcrypt.hash(password, 10);
     const role = email === ADMIN_EMAIL ? "admin" : "user";
-    const { data, error } = await sb
-      .from("users")
-      .insert({ email, name, password_hash: passwordHash, role })
-      .select("id, email, name, role, created_at")
-      .single();
-    if (error || !data) {
-      req.log?.error({ err: error }, "Register insert error");
-      res.status(500).json({ error: "Internal server error" });
-      return;
-    }
-    const token = signToken({ userId: data.id, email: data.email, role: data.role });
-    res.status(201).json({ token, user: data });
+    const { rows } = await pool.query(
+      "INSERT INTO users (email, name, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, email, name, role, created_at",
+      [email, name, passwordHash, role]
+    );
+    const user = rows[0];
+    if (!user) { res.status(500).json({ error: "Internal server error" }); return; }
+    const token = signToken({ userId: user.id, email: user.email, role: user.role });
+    res.status(201).json({ token, user });
   } catch (err) {
     req.log?.error({ err }, "Register error");
     res.status(500).json({ error: "Internal server error" });
@@ -77,23 +65,14 @@ router.post("/change-password", requireAuth, async (req: AuthRequest, res) => {
     return;
   }
   try {
-    const sb = getSupabase();
-    const { data, error } = await sb.from("users").select("*").eq("id", req.user!.userId).single();
-    if (error || !data) {
-      res.status(404).json({ error: "User not found" });
-      return;
-    }
-    const isValid = await bcrypt.compare(currentPassword, data.password_hash);
-    if (!isValid) {
-      res.status(401).json({ error: "Current password is incorrect" });
-      return;
-    }
+    const pool = getPool();
+    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [req.user!.userId]);
+    const user = rows[0];
+    if (!user) { res.status(404).json({ error: "User not found" }); return; }
+    const isValid = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!isValid) { res.status(401).json({ error: "Current password is incorrect" }); return; }
     const newHash = await bcrypt.hash(newPassword, 10);
-    const { error: updateError } = await sb
-      .from("users")
-      .update({ password_hash: newHash })
-      .eq("id", req.user!.userId);
-    if (updateError) throw updateError;
+    await pool.query("UPDATE users SET password_hash = $1 WHERE id = $2", [newHash, req.user!.userId]);
     res.json({ success: true, message: "Password changed successfully" });
   } catch (err) {
     req.log?.error({ err }, "Change password error");
@@ -103,17 +82,13 @@ router.post("/change-password", requireAuth, async (req: AuthRequest, res) => {
 
 router.get("/me", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const sb = getSupabase();
-    const { data, error } = await sb
-      .from("users")
-      .select("id, email, name, role, created_at")
-      .eq("id", req.user!.userId)
-      .single();
-    if (error || !data) {
-      res.status(401).json({ error: "User not found" });
-      return;
-    }
-    res.json(data);
+    const pool = getPool();
+    const { rows } = await pool.query(
+      "SELECT id, email, name, role, created_at FROM users WHERE id = $1",
+      [req.user!.userId]
+    );
+    if (!rows[0]) { res.status(401).json({ error: "User not found" }); return; }
+    res.json(rows[0]);
   } catch (err) {
     req.log?.error({ err }, "Get me error");
     res.status(500).json({ error: "Internal server error" });

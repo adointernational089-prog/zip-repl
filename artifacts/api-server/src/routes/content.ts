@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getSupabase } from "../lib/db.js";
+import { getPool } from "../lib/db.js";
 import { requireAdmin, type AuthRequest } from "../middlewares/requireAuth.js";
 
 const router = Router();
@@ -60,11 +60,9 @@ const DEFAULT_CONTENT = {
 
 async function getAllContent() {
   try {
-    const sb = getSupabase();
-    const { data, error } = await sb.from("site_content").select("section, content");
-    if (error) return DEFAULT_CONTENT;
+    const { rows } = await getPool().query("SELECT section, content FROM site_content");
     const result: any = { ...DEFAULT_CONTENT };
-    for (const row of data || []) {
+    for (const row of rows) {
       const def = (DEFAULT_CONTENT as any)[row.section];
       if (def && typeof def === "object" && !Array.isArray(def)) {
         result[row.section] = { ...def, ...row.content };
@@ -85,11 +83,12 @@ router.get("/", async (_req, res) => {
 router.get("/:section", async (req, res) => {
   const { section } = req.params;
   try {
-    const sb = getSupabase();
-    const { data } = await sb.from("site_content").select("content").eq("section", section).single();
+    const { rows } = await getPool().query(
+      "SELECT content FROM site_content WHERE section = $1", [section]
+    );
     const def = (DEFAULT_CONTENT as any)[section] ?? {};
-    if (data?.content) {
-      const merged = Array.isArray(def) ? data.content : { ...def, ...data.content };
+    if (rows[0]?.content) {
+      const merged = Array.isArray(def) ? rows[0].content : { ...def, ...rows[0].content };
       res.json(merged);
     } else {
       res.json(def);
@@ -103,28 +102,26 @@ router.put("/:section", requireAdmin, async (req: AuthRequest, res) => {
   const { section } = req.params;
   const content = req.body;
   try {
-    const sb = getSupabase();
-    const { error } = await sb
-      .from("site_content")
-      .upsert({ section, content, updated_at: new Date().toISOString() }, { onConflict: "section" });
-    if (error) throw error;
+    await getPool().query(
+      `INSERT INTO site_content (section, content, updated_at)
+       VALUES ($1, $2, now())
+       ON CONFLICT (section) DO UPDATE SET content = $2, updated_at = now()`,
+      [section, JSON.stringify(content)]
+    );
     res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.post("/setup-table", requireAdmin, async (req: AuthRequest, res) => {
+router.post("/setup-table", requireAdmin, async (_req: AuthRequest, res) => {
   const sql = `CREATE TABLE IF NOT EXISTS site_content (
   section TEXT PRIMARY KEY,
   content JSONB NOT NULL DEFAULT '{}',
   updated_at TIMESTAMPTZ DEFAULT now()
 );`;
   try {
-    const { Pool } = await import("pg");
-    const pool = new Pool({ connectionString: process.env.SUPABASE_DATABASE_URL });
-    await pool.query(sql);
-    await pool.end();
+    await getPool().query(sql);
     res.json({ success: true, message: "site_content table created successfully." });
   } catch (err: any) {
     res.status(500).json({ error: err.message, sql });
