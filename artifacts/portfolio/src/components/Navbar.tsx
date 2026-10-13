@@ -11,8 +11,6 @@ const homeLinks = [
   { href: "#skills", label: "Skills" },
   { href: "#latest-projects", label: "Projects" },
   { href: "#services", label: "Services" },
-  { href: "#why-me", label: "Why Me" },
-  { href: "#reviews", label: "Reviews" },
   { href: "#faq", label: "FAQ" },
   { href: "#contact", label: "Contact" },
 ];
