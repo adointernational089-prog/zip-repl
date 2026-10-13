@@ -650,8 +650,8 @@ export default function Home() {
                 {/* Avatar ring */}
                 <div className="flex justify-center mb-5 relative z-10">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full flex items-center justify-center" style={{ border: "1px solid rgba(128,128,128,0.25)", background: "hsl(var(--muted))" }}>
-                      <span className="text-2xl font-black tracking-tight" style={{ color: "#d9ad67" }}>BB</span>
+                    <div className="w-24 h-24 rounded-full overflow-hidden" style={{ border: "1px solid rgba(128,128,128,0.25)" }}>
+                      <img src="/bishal-photo-web.png" alt="Bishal Bishwokarma" className="w-full h-full object-cover object-center" style={{ objectPosition: "50% 15%" }} />
                     </div>
                     <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ background: "#10b981", border: "2px solid hsl(var(--background))" }}>✓</div>
                   </div>
