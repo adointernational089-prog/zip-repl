@@ -573,8 +573,6 @@ export default function Home() {
 
       {/* ───── HERO ───── */}
       <section id="hero" className="pt-16 pb-20 relative overflow-hidden z-10">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] rounded-full opacity-15 blur-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse, hsl(var(--primary)) 0%, transparent 70%)" }} />
-
         {/* Scan line */}
         <div className="scan-line" />
 
@@ -624,28 +622,10 @@ export default function Home() {
 
           </div>
 
-          {/* Right — profile photo with scorpion flame */}
+          {/* Right — transparent profile photo */}
           <div className="flex justify-center order-first md:order-last">
             <div className="relative w-full" style={{ maxWidth: 380, height: "clamp(280px, 55vw, 500px)" }}>
-              {/* Scorpion behind photo — light silhouette */}
-              <div className="absolute inset-0 flex items-center justify-center z-0 animate-scorpion-glow" style={{ opacity: 0.08 }}>
-                <img
-                  src="/scorpion-favicon.svg"
-                  alt=""
-                  aria-hidden="true"
-                  style={{ width: "85%", height: "85%", objectFit: "contain", filter: `drop-shadow(0 0 40px hsl(var(--primary) / 0.8)) drop-shadow(0 0 80px hsl(var(--primary) / 0.4))`, transform: "scale(1.6) translateY(5%)" }}
-                />
-              </div>
-
-              {/* Rotating ring behind photo */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                <div className="animate-spin-slow rounded-full" style={{ width: "90%", height: "90%", border: `1px solid hsl(var(--primary) / 0.08)`, boxShadow: `0 0 40px hsl(var(--primary) / 0.05)` }} />
-              </div>
-
-              {/* Outer glow */}
-              <div className="absolute inset-0 rounded-3xl blur-3xl opacity-50 pointer-events-none" style={{ background: `radial-gradient(ellipse at center, hsl(var(--primary) / 0.45) 0%, transparent 70%)`, transform: "scale(0.9) translateY(12px)", zIndex: 0 }} />
-
-              {/* Photo */}
+              {/* Transparent portrait, held still without a colored backdrop or glow. */}
               <img
                 src="/bishal-photo-web.png"
                 alt="Bishal Bishwokarma"
@@ -654,7 +634,7 @@ export default function Home() {
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
-                style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center bottom", filter: `drop-shadow(0 0 22px hsl(var(--primary) / 0.65)) drop-shadow(0 0 55px hsl(var(--primary) / 0.3))`, position: "relative", zIndex: 2 }}
+                style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center bottom" }}
                 className="block"
               />
             </div>
@@ -681,7 +661,7 @@ export default function Home() {
                 {/* Avatar ring */}
                 <div className="flex justify-center mb-5 relative z-10">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full overflow-hidden" style={{ border: "2px solid hsl(var(--primary) / 0.5)", boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}>
+                    <div className="w-24 h-24 rounded-full overflow-hidden" style={{ border: "1px solid rgba(128,128,128,0.25)" }}>
                       <img src="/bishal-photo-web.png" alt="Bishal Bishwokarma" className="w-full h-full object-cover object-center" style={{ objectPosition: "50% 15%" }} />
                     </div>
                     <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ background: "#10b981", border: "2px solid hsl(var(--background))" }}>✓</div>
