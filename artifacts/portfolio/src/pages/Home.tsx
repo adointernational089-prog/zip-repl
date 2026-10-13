@@ -625,7 +625,7 @@ export default function Home() {
           </div>
 
           {/* Right — profile photo with scorpion flame */}
-          <div className="flex justify-center animate-slide-right order-first md:order-last">
+          <div className="flex justify-center order-first md:order-last">
             <div className="relative w-full" style={{ maxWidth: 380, height: "clamp(280px, 55vw, 500px)" }}>
               {/* Scorpion behind photo — light silhouette */}
               <div className="absolute inset-0 flex items-center justify-center z-0 animate-scorpion-glow" style={{ opacity: 0.08 }}>
@@ -647,10 +647,15 @@ export default function Home() {
 
               {/* Photo */}
               <img
-                src="/bishal-photo-nobg.png"
+                src="/bishal-photo-web.png"
                 alt="Bishal Bishwokarma"
+                width={767}
+                height={934}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center bottom", filter: `drop-shadow(0 0 22px hsl(var(--primary) / 0.65)) drop-shadow(0 0 55px hsl(var(--primary) / 0.3))`, position: "relative", zIndex: 2 }}
-                className="animate-float-slow"
+                className="block"
               />
             </div>
           </div>
@@ -677,7 +682,7 @@ export default function Home() {
                 <div className="flex justify-center mb-5 relative z-10">
                   <div className="relative">
                     <div className="w-24 h-24 rounded-full overflow-hidden" style={{ border: "2px solid hsl(var(--primary) / 0.5)", boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}>
-                      <img src="/bishal-photo-nobg.png" alt="Bishal" className="w-full h-full object-cover object-center" style={{ objectPosition: "50% 15%" }} />
+                      <img src="/bishal-photo-web.png" alt="Bishal Bishwokarma" className="w-full h-full object-cover object-center" style={{ objectPosition: "50% 15%" }} />
                     </div>
                     <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ background: "#10b981", border: "2px solid hsl(var(--background))" }}>✓</div>
                   </div>
