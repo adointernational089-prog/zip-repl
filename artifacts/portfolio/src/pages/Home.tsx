@@ -622,21 +622,10 @@ export default function Home() {
 
           </div>
 
-          {/* Right — transparent profile photo */}
+          {/* Right — custom scorpion circuit illustration */}
           <div className="flex justify-center order-first md:order-last">
             <div className="relative w-full" style={{ maxWidth: 380, height: "clamp(280px, 55vw, 500px)" }}>
-              {/* Transparent portrait, held still without a colored backdrop or glow. */}
-              <img
-                src="/bishal-photo-web.png"
-                alt="Bishal Bishwokarma"
-                width={767}
-                height={934}
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center bottom" }}
-                className="block"
-              />
+              <ScorpionCircuitArt />
             </div>
           </div>
         </div>
@@ -661,8 +650,8 @@ export default function Home() {
                 {/* Avatar ring */}
                 <div className="flex justify-center mb-5 relative z-10">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full overflow-hidden" style={{ border: "1px solid rgba(128,128,128,0.25)" }}>
-                      <img src="/bishal-photo-web.png" alt="Bishal Bishwokarma" className="w-full h-full object-cover object-center" style={{ objectPosition: "50% 15%" }} />
+                    <div className="w-24 h-24 rounded-full flex items-center justify-center" style={{ border: "1px solid rgba(128,128,128,0.25)", background: "hsl(var(--muted))" }}>
+                      <span className="text-2xl font-black tracking-tight" style={{ color: "#d9ad67" }}>BB</span>
                     </div>
                     <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ background: "#10b981", border: "2px solid hsl(var(--background))" }}>✓</div>
                   </div>
@@ -1482,4 +1471,124 @@ const FaqSection = memo(function FaqSection() {
     </section>
   );
 });
+
+function ScorpionCircuitArt() {
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      <svg
+        viewBox="0 0 400 500"
+        role="img"
+        aria-labelledby="scorpion-art-title scorpion-art-description"
+        className="h-full w-full max-w-[380px]"
+      >
+        <title id="scorpion-art-title">Scorpion circuit illustration</title>
+        <desc id="scorpion-art-description">
+          A still line-art scorpion built from warm metallic and green circuit paths.
+        </desc>
+        <defs>
+          <linearGradient id="scorpion-circuit" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#e8b663" />
+            <stop offset="0.55" stopColor="#a9c58d" />
+            <stop offset="1" stopColor="#73bca4" />
+          </linearGradient>
+        </defs>
+
+        <g
+          fill="none"
+          stroke="url(#scorpion-circuit)"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="4"
+        >
+          <path d="M205 282 C246 266 267 239 250 215 C233 192 207 184 211 157 C215 133 242 122 251 102 C260 82 248 60 228 47" />
+          <path d="M228 47 C241 33 257 27 276 29 C264 42 247 49 228 47 Z" />
+          <path d="M184 230 C165 219 154 204 142 200 C130 196 122 204 126 216 C130 230 145 239 164 237 L179 247" />
+          <path d="M216 230 C235 219 246 204 258 200 C270 196 278 204 274 216 C270 230 255 239 236 237 L221 247" />
+          <path d="M181 247 L151 239 L130 250 L108 247" />
+          <path d="M176 263 L146 261 L125 278 L104 281" />
+          <path d="M180 279 L156 292 L143 315 L123 323" />
+          <path d="M219 247 L249 239 L270 250 L292 247" />
+          <path d="M224 263 L254 261 L275 278 L296 281" />
+          <path d="M220 279 L244 292 L257 315 L277 323" />
+          <path d="M182 238 C190 229 210 229 218 238 L231 257 L226 278 C220 291 180 291 174 278 L169 257 Z" />
+          <path d="M182 245 L200 237 L218 245 L224 263 L218 280 L200 286 L182 280 L176 263 Z" />
+        </g>
+
+        <g fill="#101714" stroke="url(#scorpion-circuit)" strokeWidth="2.5">
+          <circle cx="211" cy="157" r="7" />
+          <circle cx="235" cy="125" r="7" />
+          <circle cx="251" cy="102" r="7" />
+          <circle cx="254" cy="80" r="6" />
+          <circle cx="246" cy="60" r="6" />
+          <circle cx="142" cy="200" r="5" />
+          <circle cx="258" cy="200" r="5" />
+          <circle cx="151" cy="239" r="5" />
+          <circle cx="249" cy="239" r="5" />
+          <circle cx="146" cy="261" r="5" />
+          <circle cx="254" cy="261" r="5" />
+          <circle cx="156" cy="292" r="5" />
+          <circle cx="244" cy="292" r="5" />
+        </g>
+
+        <g fill="none" stroke="#9b9079" strokeLinecap="round" strokeWidth="1.5">
+          <path d="M108 247 H78 V226 H57" />
+          <path d="M104 281 H75 V303 H55" />
+          <path d="M123 323 H99 V342 H76" />
+          <path d="M292 247 H322 V226 H343" />
+          <path d="M296 281 H325 V303 H345" />
+          <path d="M277 323 H301 V342 H324" />
+          <path d="M200 286 V365 H170" />
+          <path d="M200 286 V365 H230" />
+        </g>
+
+        <g fill="#d8b56f">
+          <circle cx="57" cy="226" r="4" />
+          <circle cx="55" cy="303" r="4" />
+          <circle cx="76" cy="342" r="4" />
+          <circle cx="343" cy="226" r="4" />
+          <circle cx="345" cy="303" r="4" />
+          <circle cx="324" cy="342" r="4" />
+          <circle cx="170" cy="365" r="4" />
+          <circle cx="230" cy="365" r="4" />
+          <circle cx="200" cy="157" r="3" />
+        </g>
+
+        <text
+          x="200"
+          y="269"
+          textAnchor="middle"
+          fill="#f1d6a0"
+          fontFamily="ui-monospace, SFMono-Regular, monospace"
+          fontSize="18"
+          fontWeight="700"
+        >
+          {"</>"}
+        </text>
+        <text
+          x="200"
+          y="414"
+          textAnchor="middle"
+          fill="#d8b56f"
+          fontFamily="ui-monospace, SFMono-Regular, monospace"
+          fontSize="11"
+          letterSpacing="3"
+        >
+          BUILD · DESIGN · SHIP
+        </text>
+        <path d="M115 432 H285" stroke="#655b47" strokeWidth="1" />
+        <text
+          x="200"
+          y="452"
+          textAnchor="middle"
+          fill="#8c8777"
+          fontFamily="ui-monospace, SFMono-Regular, monospace"
+          fontSize="9"
+          letterSpacing="2"
+        >
+          BISHAL / SYSTEMS 001
+        </text>
+      </svg>
+    </div>
+  );
+}
 
